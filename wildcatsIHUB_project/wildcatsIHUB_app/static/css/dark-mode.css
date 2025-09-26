@@ -1,0 +1,137 @@
+/* Dark Mode Styles */
+.dark-mode {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+
+    background: linear-gradient(135deg, #0b1c2c, #12283b, #1a3349, #203f55, #264b61);
+    background-size: 400% 400%;
+    animation: darkGradientShift 20s ease infinite;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+
+    color: #e2e8f0;
+    cursor: default;
+    position: relative;
+    overflow: auto;
+}
+
+
+.dark-mode .form-card {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3) !important;
+    /* Keep the original padding and sizing */
+    padding: 40px !important;
+    border-radius: 20px !important;
+}
+
+.dark-mode .form-title {
+    background: linear-gradient(90deg, #4299e1, #63b3ed) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.dark-mode .form-subtitle {
+    color: #a0aec0 !important;
+}
+
+.dark-mode label {
+    color: #e2e8f0 !important;
+}
+
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+    background: #2d3748 !important;
+    border: 2px solid #4a5568 !important;
+    color: #e2e8f0 !important;
+    border-image: none !important;
+}
+
+.dark-mode input:focus,
+.dark-mode textarea:focus,
+.dark-mode select:focus {
+    border: 2px solid #4299e1 !important;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
+}
+
+.dark-mode .file-input-label {
+    background: #2d3748 !important;
+    border: 2px dashed #4a5568 !important;
+    color: #e2e8f0 !important;
+}
+
+.dark-mode .file-input-label:hover {
+    border-color: #4299e1 !important;
+    background: #374151 !important;
+}
+
+.dark-mode .section-title {
+    color: #4299e1 !important;
+    border-bottom: 1px solid #4a5568 !important;
+}
+
+.dark-mode .section-title::after {
+    background: linear-gradient(90deg, #4299e1, #63b3ed) !important;
+}
+
+.dark-mode .category-other-input {
+    background: #2d3748 !important;
+    border: 2px dashed #4299e1 !important;
+}
+
+/* Dark mode toggle button */
+.toggle-mode {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 25px;
+    padding: 10px 20px;
+    color: #e2e8f0;
+    cursor: pointer;
+    font-weight: 600;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.toggle-mode:hover {
+    background: #4299e1;
+    transform: scale(1.05);
+}
+
+.dark-mode .toggle-mode {
+    background: #f8f9ff;
+    border-color: #e0e7ff;
+    color: #2d5bff;
+}
+
+.dark-mode .toggle-mode:hover {
+    background: #2d5bff;
+    color: white;
+}
+
+/* Dark mode styles for the toggle */
+.dark-mode .theme-label {
+    background: linear-gradient(135deg, #4299e1, #63b3ed);
+}
+
+.dark-mode .theme-ball {
+    transform: translateX(40px);
+    background: #1e293b;
+}
+
+.dark-mode .theme-icon.sun {
+    opacity: 0.7;
+    transform: scale(0.8);
+}
+
+.dark-mode .theme-icon.moon {
+    opacity: 1;
+    transform: scale(1);
+}

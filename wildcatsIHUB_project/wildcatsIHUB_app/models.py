@@ -3,7 +3,12 @@ from django.db import models
 class Project(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    link = models.URLField(blank=True, null=True)
+    category = models.CharField(max_length=100, blank=True, null=True)
+    github_url = models.URLField(blank=True, null=True)
+    live_demo = models.URLField(blank=True, null=True)
+    video_demo = models.URLField(blank=True, null=True)
+    tech_used = models.CharField(max_length=200, blank=True, null=True)
+    screenshot = models.ImageField(upload_to="project_screenshots/", blank=True, null=True)
 
     def __str__(self):
         return self.title
