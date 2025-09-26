@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Your Project</title>
+    <link rel="stylesheet" href="{% static 'css/light-mode.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dark-mode.css' %}">
+     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+       
+        <div class="theme-switcher">
+            <input type="checkbox" id="theme-toggle" class="theme-toggle">
+            <label for="theme-toggle" class="theme-label">
+                <span class="theme-icon sun">☀️</span>
+                <span class="theme-icon moon">🌙</span>
+                <span class="theme-ball"></span>
+            </label>
+        </div>
+    
+    <div class="container">
+        <div class="form-card">
+            <h2 class="form-title">Submit Your Project</h2>
+            <p class="form-subtitle">Share your innovation with the Wildcats community</p>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+           
+                <div class="form-section">
+                    <label for="project-title" class="required">Project Title</label>
+                    <input type="text" id="project-title" name="title" placeholder="Enter your project title" required>
+                </div>
+
+               
+                <div class="form-section">
+                    <label for="project-description" class="required">Project Description</label>
+                    <textarea id="project-description" name="description" placeholder="Describe your project, its purpose, features, and impact..." rows="4" required></textarea>
+                </div>
+
+                <div class="form-section">
+                    <label for="category" class="required">Category</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select project category</option>
+                        <option value="web">Web Development</option>
+                        <option value="mobile">Mobile App</option>
+                        <option value="ai">AI/ML</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div id="other-category-container" class="category-other-input">
+                        <label for="other-category">Please specify:</label>
+                        <input type="text" id="other-category" name="other_category" placeholder="Enter your category">
+                    </div>
+                </div>
+
+              
+                <h3 class="section-title">Project Links</h3>
+                <div class="form-section">
+                    <label for="github_url" class="required">GitHub Repository URL</label>
+                    <input type="url" id="github_url" name="github_url" placeholder="GitHub Repository URL" required>
+                    
+                    <label for="live_demo">Live Demo URL (optional)</label>
+                    <input type="url" id="live_demo" name="live_demo" placeholder="Live Demo URL">
+                    
+                    <label for="video_demo">Video Demo URL (optional)</label>
+                    <input type="url" id="video_demo" name="video_demo" placeholder="Video Demo URL (optional)">
+                </div>
+
+               
+                <h3 class="section-title">Technologies Used</h3>
+                <div class="form-section">
+                    <label for="tech_used" class="required">Technologies Used</label>
+                    <input type="text" id="tech_used" name="tech_used" placeholder="Add technologies (e.g., HTML, React, Python)" required>
+                </div>
+
+               
+                <h3 class="section-title">Screenshots</h3>
+                <div class="form-section">
+                    <label for="screenshot" class="required">Screenshots</label>
+                    <div class="file-input-container">
+                        <label for="screenshot" class="file-input-label">
+                            <span>Choose File</span>
+                        </label>
+                        <input type="file" id="screenshot" name="screenshot" class="file-input" required>
+                        <div class="file-name" id="file-name">No file chosen</div>
+                    </div>
+                </div>
+
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Submit Project</button>
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+<script>
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+    
+
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        themeToggle.checked = document.body.classList.contains("dark-mode");
+    }
+
+
+    if (document.body.classList.contains("dark-mode")) {
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-mode");
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.checked = true;
+        }
+    }
+
+
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('change', function() {
+            toggleDarkMode();
+        });
+    }
+
+    const screenshotInput = document.getElementById('screenshot');
+    if (screenshotInput) {
+        screenshotInput.addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
+            const fileNameDisplay = document.getElementById('file-name');
+            if (fileNameDisplay) {
+                fileNameDisplay.textContent = fileName;
+            }
+        });
+    }
+    
+
+    const categorySelect = document.getElementById('category');
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function(e) {
+            const otherContainer = document.getElementById('other-category-container');
+            if (otherContainer) {
+                if (e.target.value === 'other') {
+                    otherContainer.style.display = 'block';
+                    const otherInput = otherContainer.querySelector('input');
+                    if (otherInput) {
+                        otherInput.required = true;
+                    }
+                } else {
+                    otherContainer.style.display = 'none';
+                    const otherInput = otherContainer.querySelector('input');
+                    if (otherInput) {
+                        otherInput.required = false;
+                    }
+                }
+            }
+        });
+    }
+    
+
+    document.querySelectorAll('.btn').forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px)';
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            if (!this.classList.contains('active')) {
+                this.style.transform = 'translateY(0)';
+            }
+        });
+    });
+});
+</script>
+</body>
+
+</html>

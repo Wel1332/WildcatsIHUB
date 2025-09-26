@@ -1,0 +1,356 @@
+/* Base styles that work for both light and dark modes */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    cursor: default;
+    transition: all 0.3s ease;
+}
+
+/* Custom cursor for interactive elements */
+.btn, input, textarea, select, .file-input-label {
+    cursor: pointer;
+}
+
+/* Fixed background circles with proper positioning */
+.bg-elements {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    animation: gentle-float 25s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* Circle positions */
+.circle-1 {
+    width: 300px;
+    height: 300px;
+    top: 50px;
+    left: 50px;
+    animation-delay: 0s;
+}
+
+.circle-2 {
+    width: 250px;
+    height: 250px;
+    bottom: 50px;
+    right: 50px;
+    animation-delay: 8s;
+}
+
+.circle-3 {
+    width: 200px;
+    height: 200px;
+    top: 50%;
+    right: 100px;
+    transform: translateY(-50%);
+    animation-delay: 16s;
+}
+
+@keyframes gentle-float {
+    0%, 100% { 
+        transform: translate(0, 0) scale(1);
+        opacity: 0.8;
+    }
+    25% { 
+        transform: translate(15px, 10px) scale(1.02);
+        opacity: 0.9;
+    }
+    50% { 
+        transform: translate(5px, 15px) scale(1.05);
+        opacity: 1;
+    }
+    75% { 
+        transform: translate(10px, 5px) scale(1.02);
+        opacity: 0.9;
+    }
+}
+
+/* Centered card form structure */
+.container {
+    width: 100%;
+    max-width: 750px;
+    padding: 20px;
+}
+
+.form-card {
+    border-radius: 20px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.form-title {
+    text-align: center;
+    font-size: 32px;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.form-subtitle {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+/* Form sections */
+.form-section {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+/* Required field indicator */
+.required::after {
+    content: " *";
+    color: #ff4757;
+    font-weight: bold;
+}
+
+/* Inputs structure */
+input, textarea, select {
+    width: 100%;
+    padding: 14px 16px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.3s ease;
+    font-size: 15px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Category specific styling */
+.category-other-input {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    display: none;
+}
+
+.category-other-input input {
+    margin: 0;
+}
+
+/* File input structure */
+.file-input-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.file-input-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.file-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+
+.file-name {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Section titles */
+.section-title {
+    font-size: 20px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid;
+    position: relative;
+    font-weight: 600;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+}
+
+/* Buttons structure */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    gap: 15px;
+}
+
+.btn {
+    padding: 16px 32px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    text-align: center;
+    z-index: 1;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    clip-path: circle(0% at 50% 50%);
+    transition: clip-path 0.7s ease;
+    z-index: -1;
+}
+
+.btn:hover::before {
+    clip-path: circle(100% at 50% 50%);
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+}
+
+.btn:active {
+    transform: translateY(-1px);
+    transition: transform 0.1s ease;
+}
+
+/* Theme switcher structure */
+.theme-switcher {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.theme-toggle {
+    display: none;
+}
+
+.theme-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80px;
+    height: 40px;
+    border-radius: 50px;
+    padding: 5px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.theme-icon {
+    font-size: 18px;
+    z-index: 2;
+    transition: all 0.3s ease;
+    width: 30px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-ball {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 1;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .form-card {
+        padding: 25px;
+        border-radius: 16px;
+    }
+    
+    .form-title {
+        font-size: 26px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 14px 20px;
+    }
+    
+    .theme-switcher {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .theme-label {
+        width: 70px;
+        height: 35px;
+    }
+    
+    .theme-ball {
+        width: 29px;
+        height: 29px;
+        top: 6px;
+        left: 6px;
+    }
+    
+    .theme-icon {
+        font-size: 16px;
+        width: 25px;
+    }
+}
+

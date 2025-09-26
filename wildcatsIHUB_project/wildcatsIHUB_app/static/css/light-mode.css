@@ -1,0 +1,555 @@
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+
+    background: 
+        radial-gradient(circle at 20% 30%, #b7cce0, transparent 40%),
+        radial-gradient(circle at 80% 70%, #79b3b8, transparent 50%),
+        radial-gradient(circle at 50% 50%, #7FDBFF, transparent 60%),
+        radial-gradient(circle at 70% 20%, #BDEBFF, transparent 70%),
+        linear-gradient(135deg, #86aed6, #4379a8, #b6ccd4, #336a80, #3787b6);
+
+    background-blend-mode: overlay;
+    background-size: cover;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+
+    color: #333;
+    cursor: default;
+    position: relative;
+    overflow: auto;
+}
+
+/* Animated gradient background */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Enhanced floating blue gradient circles */
+.bg-elements {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(50px);
+    opacity: 0.6;
+    animation: float-complex 25s ease-in-out infinite;
+    pointer-events: none;
+}
+
+
+.circle-1 {
+    width: 400px;
+    height: 400px;
+    top: 10%;
+    left: 5%;
+    background: radial-gradient(circle, rgba(173, 216, 230, 0.4) 0%, rgba(135, 206, 250, 0.3) 50%, transparent 70%);
+    animation-delay: 0s;
+}
+
+/* Circle 2 - Medium blue */
+.circle-2 {
+    width: 350px;
+    height: 350px;
+    bottom: 15%;
+    right: 8%;
+    background: radial-gradient(circle, rgba(100, 149, 237, 0.35) 0%, rgba(65, 105, 225, 0.25) 50%, transparent 70%);
+    animation-delay: 6s;
+}
+
+/* Circle 3 - Small deep blue */
+.circle-3 {
+    width: 300px;
+    height: 300px;
+    top: 60%;
+    left: 15%;
+    background: radial-gradient(circle, rgba(70, 130, 180, 0.4) 0%, rgba(30, 144, 255, 0.3) 50%, transparent 70%);
+    animation-delay: 12s;
+}
+
+/* Circle 4 - Additional sky blue */
+.circle-4 {
+    width: 450px;
+    height: 450px;
+    top: 20%;
+    right: 10%;
+    background: radial-gradient(circle, rgba(135, 206, 235, 0.3) 0%, rgba(176, 224, 230, 0.2) 50%, transparent 70%);
+    animation-delay: 8s;
+}
+
+/* Circle 5 - Royal blue */
+.circle-5 {
+    width: 250px;
+    height: 250px;
+    bottom: 25%;
+    left: 20%;
+    background: radial-gradient(circle, rgba(65, 105, 225, 0.4) 0%, rgba(0, 0, 255, 0.25) 50%, transparent 70%);
+    animation-delay: 15s;
+}
+
+/* Complex floating animation */
+@keyframes float-complex {
+    0%, 100% {
+        transform: translate(0, 0) scale(1) rotate(0deg);
+        opacity: 0.5;
+    }
+    25% {
+        transform: translate(40px, -25px) scale(1.15) rotate(8deg);
+        opacity: 0.7;
+    }
+    50% {
+        transform: translate(-30px, 35px) scale(1.08) rotate(-5deg);
+        opacity: 0.6;
+    }
+    75% {
+        transform: translate(25px, 20px) scale(1.12) rotate(4deg);
+        opacity: 0.8;
+    }
+}
+
+/* Pulsing effect for circles */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.08);
+    }
+}
+
+.bg-circle {
+    animation: float-complex 25s ease-in-out infinite, pulse 12s ease-in-out infinite;
+}
+
+/* Enhanced form card with glass effect */
+.form-card {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(70, 130, 180, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle glow effect on form */
+.form-card::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(45deg, rgba(255,255,255,0.15), rgba(173, 216, 230, 0.08));
+    z-index: -1;
+    border-radius: 30px;
+    animation: glow 10s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Enhanced inputs with blue focus */
+input:focus, textarea:focus, select:focus {
+    border-image: linear-gradient(135deg, #4a7dff, #6991ff) 1;
+    box-shadow: 0 0 0 3px rgba(70, 130, 180, 0.2);
+    background: #fff;
+    transform: translateY(-2px);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Enhanced buttons with blue theme */
+.btn-primary {
+    background: linear-gradient(135deg, #2d5bff, #4a7dff);
+    color: white;
+    border: none;
+    box-shadow: 0 6px 20px rgba(45, 91, 255, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.6s;
+}
+
+.btn-primary:hover::after {
+    left: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(45, 91, 255, 0.5);
+}
+
+/* Enhanced theme switcher */
+.theme-label {
+    background: linear-gradient(135deg, #2d5bff, #4a7dff);
+    box-shadow: 0 4px 15px rgba(45, 91, 255, 0.4), 0 0 25px rgba(70, 130, 180, 0.2);
+}
+
+.theme-label:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 25px rgba(45, 91, 255, 0.5), 0 0 30px rgba(70, 130, 180, 0.3);
+}
+
+/* Enhanced section titles with blue accent */
+.section-title {
+    font-size: 20px;
+    color: #2d5bff;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e0e7ff;
+    position: relative;
+    font-weight: 600;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #2d5bff, #4a7dff);
+    border-radius: 2px;
+}
+
+/* Enhanced file input with blue theme */
+.file-input-label:hover {
+    border-color: #4a7dff;
+    background: #f0f4ff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(74, 125, 255, 0.15);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .bg-circle {
+        filter: blur(35px);
+    }
+    
+    .circle-1, .circle-2, .circle-3, .circle-4, .circle-5 {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .form-card {
+        padding: 30px;
+        backdrop-filter: blur(8px);
+    }
+}
+
+/* Keep all your existing styles below this line */
+/* Custom cursor for interactive elements */
+.btn, input, textarea, select, .file-input-label {
+    cursor: pointer;
+}
+
+.form-title {
+    text-align: center;
+    font-size: 32px;
+    background: linear-gradient(90deg, #2d5bff, #4a7dff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.form-subtitle {
+    text-align: center;
+    color: #6c757d;
+    margin-bottom: 30px;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.form-section {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #495057;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.required::after {
+    content: " *";
+    color: #ff4757;
+    font-weight: bold;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 14px 16px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background: #fff;
+    border: 2px solid;
+    border-image: linear-gradient(135deg, #e0e7ff, #f0f4ff) 1;
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.3s ease;
+    color: #333;
+    font-size: 15px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+input::placeholder, textarea::placeholder {
+    color: #adb5bd;
+}
+
+.category-other-input {
+    margin-top: 10px;
+    padding: 12px;
+    border: 2px dashed #4a7dff;
+    border-radius: 8px;
+    background: #f8fbff;
+    display: none;
+}
+
+.category-other-input input {
+    border: 1px solid #e0e7ff;
+    margin: 0;
+}
+
+.file-input-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.file-input-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: #f8f9ff;
+    border: 2px dashed #e0e7ff;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #495057;
+    font-weight: 500;
+}
+
+.file-input-label::after {
+    content: "Browse";
+    background: linear-gradient(135deg, #2d5bff, #4a7dff);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(45, 91, 255, 0.3);
+}
+
+.file-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+
+.file-name {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #4a7dff;
+    font-weight: 500;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    gap: 15px;
+}
+
+.btn {
+    padding: 16px 32px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    text-align: center;
+    z-index: 1;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    clip-path: circle(0% at 50% 50%);
+    transition: clip-path 0.7s ease;
+    z-index: -1;
+}
+
+.btn-primary:hover::before {
+    clip-path: circle(100% at 50% 50%);
+}
+
+.btn-primary:hover {
+    color: #2d5bff;
+}
+
+.btn-secondary {
+    background: white;
+    color: #2d5bff;
+    border: 2px solid #2d5bff;
+    box-shadow: 0 4px 15px rgba(45, 91, 255, 0.2);
+}
+
+.btn-secondary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #2d5bff, #4a7dff);
+    clip-path: circle(0% at 50% 50%);
+    transition: clip-path 0.7s ease;
+    z-index: -1;
+}
+
+.btn-secondary:hover::before {
+    clip-path: circle(100% at 50% 50%);
+}
+
+.btn-secondary:hover {
+    color: white;
+    border-color: transparent;
+}
+
+.btn:active {
+    transform: translateY(-1px);
+    transition: transform 0.1s ease;
+}
+
+.theme-switcher {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.theme-toggle {
+    display: none;
+}
+
+.theme-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80px;
+    height: 40px;
+    border-radius: 50px;
+    padding: 5px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.theme-icon {
+    font-size: 18px;
+    z-index: 2;
+    transition: all 0.3s ease;
+    width: 30px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-icon.sun {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.theme-icon.moon {
+    opacity: 0.7;
+    transform: scale(0.8);
+}
+
+.theme-ball {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 34px;
+    height: 34px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 4px 15px rgba(45, 91, 255, 0.3); }
+    50% { box-shadow: 0 4px 20px rgba(45, 91, 255, 0.6); }
+    100% { box-shadow: 0 4px 15px rgba(45, 91, 255, 0.3); }
+}
+
+.theme-label {
+    animation: pulse-glow 2s ease-in-out;
+}
+
+.container {
+    width: 100%;
+    max-width: 750px;
+    padding: 20px;
+}
