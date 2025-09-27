@@ -1,0 +1,561 @@
+/* CSS Variables */
+:root {
+    --primary-color: #ffffff; 
+    --secondary-color: #155DFD; 
+    --accent-color: #0f4ac9; 
+    --light-color: #ffffff;
+    --dark-color: #ffffff; 
+    --text-color: #333; 
+    --light-text: #fff;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+
+    --font-primary: 'Poppins', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Montserrat', system-ui, -apple-system, sans-serif;
+}
+
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-primary);
+
+    /* Gradient background */
+    background: 
+        radial-gradient(circle at 20% 30%, #b7cce0, transparent 40%),
+        radial-gradient(circle at 80% 70%, #79b3b8, transparent 50%),
+        radial-gradient(circle at 50% 50%, #7FDBFF, transparent 60%),
+        radial-gradient(circle at 70% 20%, #BDEBFF, transparent 70%),
+        linear-gradient(135deg, #86aed6, #4379a8, #b6ccd4, #336a80, #3787b6);
+
+    background-blend-mode: overlay;
+    background-size: cover;
+    background-attachment: fixed;
+
+    /* Keep layout flow */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    color: var(--text-color);
+    cursor: default;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 1rem;
+    color: var(--text-color); /* Use text color instead of primary */
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+/* Button Styles - MAINTAIN GRADIENT THEME */
+.btn-primary, .btn-secondary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    text-align: center;
+    font-family: var(--font-primary);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+    color: var(--light-text);
+    border: none;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Clean hover */
+.btn-primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.btn-secondary {
+    color: var(--secondary-color);
+    border: 2px solid var(--secondary-color);
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+    color: var(--light-text);
+    border-color: transparent;
+}
+
+.navbar {
+  background: 
+        radial-gradient(circle at 20% 30%, #b7cce0, transparent 40%),
+        radial-gradient(circle at 80% 70%, #79b3b8, transparent 50%),
+        radial-gradient(circle at 50% 50%, #7FDBFF, transparent 60%),
+        radial-gradient(circle at 70% 20%, #BDEBFF, transparent 70%),
+        linear-gradient(135deg, #86aed6, #4379a8, #b6ccd4, #336a80, #3787b6);
+  padding: 1rem 0;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow);
+}
+
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-brand h1 {
+    color: var(--text-color);
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;  
+}
+.nav-menu .btn-secondary {
+    background-color: var(--secondary-color);
+    color: var(--light-text);
+    border: 2px solid var(--secondary-color);
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.nav-menu .btn-secondary:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--light-text);
+
+    /* ✨ Extra effects */
+    box-shadow: 0 6px 12px rgba(21, 93, 253, 0.4);
+    transform: translateY(-2px); /* slight lift */
+}
+
+
+.nav-menu li {
+    margin-left: 1.5rem;
+}
+
+.nav-menu li:nth-child(1), 
+.nav-menu li:nth-child(2), 
+.nav-menu li:nth-child(3) { 
+    margin-top: 0.5rem;
+}
+
+.nav-menu a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    font-size: 0.95rem;
+}
+
+.nav-menu a:hover {
+    color: var(--secondary-color);
+}
+
+/* Hero Section */
+.hero {
+ background: 
+      radial-gradient(circle at 20% 30%, #d0dfe9, transparent 40%),
+      radial-gradient(circle at 80% 70%, #f6f8f8, transparent 50%),
+      radial-gradient(circle at 50% 50%, #ffffff, transparent 60%),
+      radial-gradient(circle at 70% 20%, #82a8c2, transparent 70%),
+      linear-gradient(135deg, #86aed6, #b0c6da, #b6ccd4, #336a80, #82a8c2);
+ color: var(--text-color);
+  padding: 10rem 0 5rem;
+  text-align: center;
+}   
+
+.hero h1 {
+    color: var(--text-color);
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+}
+
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* About Section */
+.about {
+   padding: 5rem 0;
+    text-align: center;
+}
+
+.about-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Features Section */
+.features {
+    background: 
+      radial-gradient(circle at 20% 30%, #d0dfe9, transparent 40%),
+      radial-gradient(circle at 80% 70%, #f6f8f8, transparent 50%),
+      radial-gradient(circle at 50% 50%, #ffffff, transparent 60%),
+      radial-gradient(circle at 70% 20%, #82a8c2, transparent 70%),
+      linear-gradient(135deg, #86aed6, #b0c6da, #b6ccd4, #336a80, #82a8c2);
+    
+    padding: 5rem 0;
+    
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.95); /* Semi-transparent white */
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.feature-card h3 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+/* CTA Section */
+.cta {
+     padding: 5rem 0;
+    text-align: center;
+   
+
+    color: var(--text-color); 
+}
+
+.cta h2 {
+    color: var(--text-color);
+}
+
+.cta p {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Footer */
+footer {
+     background: 
+      radial-gradient(circle at 20% 30%, #d0dfe9, transparent 40%),
+      radial-gradient(circle at 80% 70%, #f6f8f8, transparent 50%),
+      radial-gradient(circle at 50% 50%, #ffffff, transparent 60%),
+      radial-gradient(circle at 70% 20%, #82a8c2, transparent 70%),
+      linear-gradient(135deg, #86aed6, #b0c6da, #b6ccd4, #336a80, #82a8c2);
+    
+    backdrop-filter: blur(10px);
+    color: var(--text-color);
+    padding: 3rem 0 1rem;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-info h3 {
+    color: var(--text-color);
+}
+
+.footer-links h4 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.footer-links ul {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.footer-links a:hover {
+    color: var(--secondary-color);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    color: #666;
+}
+
+/* Feature Icons Section */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.feature-card {
+    color: var(--text-color);
+
+    padding: 1.5rem 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 280px;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Gradient Icon Style - MAINTAIN BLUE GRADIENT */
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.8rem;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.feature-card:hover .feature-icon {
+   background: 
+        radial-gradient(circle at 20% 30%, #b7cce0, transparent 40%),
+        radial-gradient(circle at 80% 70%, #79b3b8, transparent 50%),
+        radial-gradient(circle at 50% 50%, #7FDBFF, transparent 60%),
+        radial-gradient(circle at 70% 20%, #BDEBFF, transparent 70%),
+        linear-gradient(135deg, #86aed6, #4379a8, #b6ccd4, #336a80, #3787b6);
+
+    color: var(--text-color); 
+    transform: rotate(10deg);
+}
+
+.feature-card h3 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: center;
+}
+
+.feature-card p {
+    line-height: 1.5;
+    font-size: 0.95rem;
+    text-align: center;
+    margin-bottom: 0;
+    max-width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar .container {
+        flex-direction: column;
+    }
+    
+    .nav-menu {
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .nav-menu li {
+        margin: 0.5rem;
+    }
+    
+    .hero {
+        padding: 8rem 0 3rem;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-buttons, .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    h2 {
+        font-size: 1.75rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .feature-card {
+        padding: 1.5rem 1rem;
+        min-height: 250px;
+    }
+    
+    .feature-icon {
+        width: 55px;
+        height: 55px;
+        font-size: 1.6rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .feature-card h3 {
+        font-size: 1.05rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .feature-card p {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+}
+
+.logo-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+    color: white;
+    border-radius: 8px;
+    margin-right: 0.8rem;
+    font-weight: 700;
+    font-size: 1.2rem;
+    font-family: 'Courier New', monospace;
+    transition: var(--transition);
+}
+
+.nav-brand h1:hover .logo-icon {
+    background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+    transform: rotate(10deg);
+}
+
+.nav-brand h1 {
+    display: flex;
+    align-items: center;
+    color: var(--text-color);
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .logo-icon {
+        font-size: 1rem;
+        margin-right: 0.5rem;
+    }
+    
+    .nav-brand h1 {
+        font-size: 1.2rem;
+    }
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+}
+
+section {
+    scroll-margin-top: 80px;
+}
+
