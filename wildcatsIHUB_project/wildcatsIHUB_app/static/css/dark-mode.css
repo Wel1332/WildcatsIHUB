@@ -1,6 +1,7 @@
 /* Dark Mode Styles */
 .dark-mode {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+   font-family: 'Montserrat', sans-serif;
+
     margin: 0;
     padding: 0;
 
@@ -134,4 +135,12 @@
 .dark-mode .theme-icon.moon {
     opacity: 1;
     transform: scale(1);
+}
+
+button::before,
+button::after,
+.btn::before,
+.btn::after {
+    content: none !important;
+    background: none !important;
 }

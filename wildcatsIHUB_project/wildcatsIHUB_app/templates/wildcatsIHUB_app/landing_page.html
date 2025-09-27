@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildcats' Hub - Student Project Showcase</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/landing_page.css' %}">
+    
+    <!-- Font Awesome Icons -->
+     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container">
+        <div class="nav-brand">
+            <h1>
+                <span class="logo-icon"><></span>
+                Wildcats' iHub
+            </h1>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#projects" class="btn-secondary">Get Started</a></li>
+        </ul>
+    </div>
+</nav>
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Showcase Your Student Projects to the World</h1>
+                <p>The ultimate platform for IT and CS students to display their innovations, connect with peers, and inspire the next generation of developers.</p>
+                <div class="hero-buttons">
+                    <a href="{% url 'submit_project' %}" class="btn-primary">Submit Your Project</a>
+                    <a href="{% url 'home' %}" class="btn-secondary">View Projects</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2>What Is Wildcats' Hub?</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Wildcats' Hub is a platform where students can contribute to shaping the future by showcasing academic projects with real-world impact.
+                        We believe in the power of student innovation and provide a space to share, collaborate, and grow together.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section with Icons -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Why Choose Wildcats' Hub?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-upload"></i>
+                    </div>
+                    <h3>Easy Showcase</h3>
+                    <p>Simple interface to upload and display your projects with Live Demos and detailed descriptions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Student Community</h3>
+                    <p>Connect with fellow students, discover innovative solutions, and collaborate on future projects.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <h3>Live Demos</h3>
+                    <p>Share working applications with direct links, making your projects accessible to everyone.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <h3>Tech Focused</h3>
+                    <p>Designed specifically for IT and CS students with categories and features that matter to developers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Share Your Innovation?</h2>
+            <p>Join students from different schools and showcase your projects to the world.</p>
+            <div class="cta-buttons">
+                <a href="{% url 'submit_project' %}" class="btn-primary">Submit Project</a>
+                <a href="{% url 'home' %}" class="btn-secondary">Browse Projects</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Wildcats' Hub</h3>
+                    <p>The ultimate platform for IT and CS students to showcase their innovations.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="{% url 'home' %}">Get Started</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Wildcats' Hub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
