@@ -1,0 +1,123 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #e6ecfa;
+    display: flex;
+    justify-content: center;
+    padding-top: 40px;
+
+    /* New gradient background */
+    background: 
+        radial-gradient(circle at 20% 30%, #b7cce0, transparent 40%),
+        radial-gradient(circle at 80% 70%, #79b3b8, transparent 50%),
+        radial-gradient(circle at 50% 50%, #7FDBFF, transparent 60%),
+        radial-gradient(circle at 70% 20%, #BDEBFF, transparent 70%),
+        linear-gradient(135deg, #86aed6, #4379a8, #b6ccd4, #336a80, #3787b6);
+}
+
+.brand {
+    text-align: center;
+    color: #113b7a;
+    font-size: 32px;
+    margin-bottom: 4px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #555;
+    margin-bottom: 40px;
+}
+
+.card {
+    background: #fff;
+    padding: 40px 35px;
+    width: 380px;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.card h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.description {
+    color: #777;
+    font-size: 14px;
+    margin: 8px 0 25px;
+}
+
+/* Form fields */
+.field {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-bottom: 16px;
+}
+
+.field label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.field input,
+.field select {
+    padding: 12px 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border .2s;
+}
+
+.field input:focus,
+.field select:focus {
+    border-color: #2563eb;
+}
+
+/* Row for first/last name */
+.row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.row .field {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+/* Button */
+.btn {
+    width: 100%;
+    padding: 12px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.btn:hover {
+    background: #1e4fd4;
+}
+
+.footer {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #555;
+}
+
+.footer a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
