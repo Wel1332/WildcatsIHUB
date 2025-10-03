@@ -1,73 +1,79 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wildcats' Hub - Student Project Showcase</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/landing_page.css' %}">
-    
-    <!-- Font Awesome Icons -->
-     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="static/css/landing_page.css">
 </head>
 <body>
-
-<nav class="navbar">
-    <div class="container">
-        <div class="nav-brand">
-            <h1>
-                <span class="logo-icon"><></span>
-                Wildcats' iHub
-            </h1>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <div class="logo-icon">&lt;&gt;</div>
+                <h1>Wildcats' iHub</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="{% url 'login' %}" class="btn-get-started">Get Started</a></li>
+            </ul>
         </div>
-        <ul class="nav-menu">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="{% url 'login' %}" class="btn-secondary">Get Started</a></li>
-        </ul>
-    </div>
-</nav>
-    <!-- Hero Section -->
+    </nav>
+
     <section id="home" class="hero">
         <div class="container">
-            <div class="hero-content">
-                <h1>Showcase Your Student Projects to the World</h1>
-                <p>The ultimate platform for IT and CS students to display their innovations, connect with peers, and inspire the next generation of developers.</p>
-                <div class="hero-buttons">
-                    <a href="{% url 'submit_project' %}" class="btn-primary">Submit Your Project</a>
-                    <a href="{% url 'home' %}" class="btn-secondary">View Projects</a>
+            <div class="hero-badge">
+                <i class="fas fa-sparkles"></i> Built for IT & CS Students
+            </div>
+            <h1>Showcase Your Student<br>Projects to the World</h1>
+            <p>The ultimate platform for IT and CS students to display their innovations, connect with peers, and inspire the next generation of developers.</p>
+            <div class="hero-buttons">
+                <a href="{% url 'signup' %}" class="btn-primary">Join the Community</a>
+                <a href="#" class="btn-secondary">Explore Projects</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3 class="blue">500+</h3>
+                    <p>Active Students</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="green">1,200+</h3>
+                    <p>Projects Showcased</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="purple">50K+</h3>
+                    <p>Project Views</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="orange">25+</h3>
+                    <p>Universities</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="about">
+    <section id="about" class="why-section">
         <div class="container">
-            <h2>What Is Wildcats' Hub?</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>Wildcats' Hub is a platform where students can contribute to shaping the future by showcasing academic projects with real-world impact.
-                        We believe in the power of student innovation and provide a space to share, collaborate, and grow together.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section with Icons -->
-    <section id="features" class="features">
-        <div class="container">
-            <h2>Why Choose Wildcats' Hub?</h2>
+            <h2>Why Choose Wildcats' iHub?</h2>
+            <p class="subtitle">Built specifically for university students to bridge the gap between academic projects and real-world impact.</p>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-upload"></i>
+                        <i class="fas fa-code"></i>
                     </div>
                     <h3>Easy Showcase</h3>
-                    <p>Simple interface to upload and display your projects with Live Demos and detailed descriptions.</p>
+                    <p>Simple interface to upload and display your projects with live demos and detailed descriptions.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -78,14 +84,14 @@
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-play-circle"></i>
+                        <i class="fas fa-tv"></i>
                     </div>
                     <h3>Live Demos</h3>
                     <p>Share working applications with direct links, making your projects accessible to everyone.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-laptop-code"></i>
+                        <i class="fas fa-rocket"></i>
                     </div>
                     <h3>Tech Focused</h3>
                     <p>Designed specifically for IT and CS students with categories and features that matter to developers.</p>
@@ -94,38 +100,118 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta">
+    <section id="features" class="featured-projects">
         <div class="container">
-            <h2>Ready to Share Your Innovation?</h2>
-            <p>Join students from different schools and showcase your projects to the world.</p>
-            <div class="cta-buttons">
-                <a href="{% url 'submit_project' %}" class="btn-primary">Submit Project</a>
-                <a href="{% url 'home' %}" class="btn-secondary">Browse Projects</a>
+            <h2>Featured Student Projects</h2>
+            <p class="subtitle">Discover amazing projects created by talented students from around the world</p>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image">
+                        <span class="project-tag">Web Development</span>
+                    </div>
+                    <div class="project-content">
+                        <h3>AI-Powered Study Assistant</h3>
+                        <p>An intelligent study companion that helps students organize notes and generate quizzes using AI</p>
+                        <div class="project-footer">
+                            <span class="project-views">
+                                <i class="fas fa-eye"></i> 1.2K
+                            </span>
+                            <span>📈 Trending</span>
+                            <a href="#" class="project-link">
+                                View <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">
+                        <span class="project-tag">Mobile App</span>
+                    </div>
+                    <div class="project-content">
+                        <h3>Campus Navigation System</h3>
+                        <p>Interactive map application helping students navigate large university campuses with AR features</p>
+                        <div class="project-footer">
+                            <span class="project-views">
+                                <i class="fas fa-eye"></i> 856
+                            </span>
+                            <span>⭐ Popular</span>
+                            <a href="#" class="project-link">
+                                View <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">
+                        <span class="project-tag">Game Development</span>
+                    </div>
+                    <div class="project-content">
+                        <h3>Educational Puzzle Game</h3>
+                        <p>Interactive puzzle game teaching programming concepts through engaging gameplay mechanics</p>
+                        <div class="project-footer">
+                            <span class="project-views">
+                                <i class="fas fa-eye"></i> 2.1K
+                            </span>
+                            <span>🔥 Hot</span>
+                            <a href="#" class="project-link">
+                                View <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="explore-all">
+                <a href="#" class="btn-explore">
+                    Explore All Projects <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Share Your Innovation?</h2>
+            <p>Join hundreds of students already showcasing their projects and building their digital portfolios.</p>
+            <a href="{% url 'login' %}" class="btn-primary">Create Your Account</a>
+        </div>
+    </section>
+
     <footer>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-info">
-                    <h3>Wildcats' Hub</h3>
-                    <p>The ultimate platform for IT and CS students to showcase their innovations.</p>
+                    <div class="footer-brand">
+                        <div class="logo-icon">&lt;&gt;</div>
+                        <h3>Wildcats' iHub</h3>
+                    </div>
+                    <p>Empowering student innovation through technology showcase. Built by students, for students.</p>
+                    <div class="footer-socials">
+                        <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                    </div>
                 </div>
                 <div class="footer-links">
-                    <h4>Quick Links</h4>
+                    <h4>Platform</h4>
                     <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="{% url 'home' %}">Get Started</a></li>
+                        <li><a href="#">Explore Projects</a></li>
+                        <li><a href="#">Submit Project</a></li>
+                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="#">My Profile</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Guidelines</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2023 Wildcats' Hub. All rights reserved.</p>
+                <p>&copy; 2025 Wildcats' iHub. All rights reserved.</p>
             </div>
         </div>
     </footer>
