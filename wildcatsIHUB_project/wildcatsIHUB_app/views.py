@@ -1,5 +1,21 @@
 from django.shortcuts import render, redirect
-from .models import Project
+from .models import Project, AuthenticationForm, UserCreationForm
+from django.contrib.auth import login
+
+def login_view(request):
+    form = AuthenticationForm(request, data=request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        login(request, form.get_user())
+        return redirect('/')
+    return render(request, 'wildcatsIHUB_app/login.html', {'form': form})
+
+
+def signup_view(request):
+    form = UserCreationForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        return redirect('login')
+    return render(request, 'wildcatsIHUB_app/signup.html', {'form': form})
 
 def home(request):
     projects = Project.objects.all()
