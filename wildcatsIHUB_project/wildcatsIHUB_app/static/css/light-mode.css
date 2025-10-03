@@ -270,6 +270,7 @@ input:focus, textarea:focus, select:focus {
     text-align: center;
     font-size: 32px;
     background: linear-gradient(90deg, #2d5bff, #4a7dff);
+    background-clip: text !important;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 8px;

@@ -98,6 +98,7 @@ body {
 .form-title {
     text-align: center;
     font-size: 32px;
+    background-clip: text !important;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 8px;
