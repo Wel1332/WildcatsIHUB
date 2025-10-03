@@ -1,0 +1,59 @@
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+
+    /* New gradient background */
+    background: 
+        radial-gradient(circle at 20% 30%, #b7cce0, transparent 40%),
+        radial-gradient(circle at 80% 70%, #79b3b8, transparent 50%),
+        radial-gradient(circle at 50% 50%, #7FDBFF, transparent 60%),
+        radial-gradient(circle at 70% 20%, #BDEBFF, transparent 70%),
+        linear-gradient(135deg, #86aed6, #4379a8, #b6ccd4, #336a80, #3787b6);
+}
+
+.login-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    padding: 40px 35px;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+.brand-title {
+    font-weight: 700;
+    color: #1a3d91;
+}
+
+.subtitle {
+    color: #52627a;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+}
+
+.form-control {
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.btn-primary {
+    background-color: #1a53ff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #1545d6;
+}
+
+.footer-link {
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
