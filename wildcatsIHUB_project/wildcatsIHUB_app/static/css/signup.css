@@ -1,18 +1,12 @@
-body {
+body, html {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-family: 'Montserrat', sans-serif;
     background: #e6ecfa;
     display: flex;
-    justify-content: center;
-    padding-top: 40px;
+    justify-content: center; /* horizontal center */
+    align-items: center;     /* vertical center */
+    min-height: 100vh; 
 
-    /* New gradient background */
-    background: 
-        radial-gradient(circle at 20% 30%, #b7cce0, transparent 40%),
-        radial-gradient(circle at 80% 70%, #79b3b8, transparent 50%),
-        radial-gradient(circle at 50% 50%, #7FDBFF, transparent 60%),
-        radial-gradient(circle at 70% 20%, #BDEBFF, transparent 70%),
-        linear-gradient(135deg, #86aed6, #4379a8, #b6ccd4, #336a80, #3787b6);
 }
 
 .brand {
@@ -30,8 +24,8 @@ body {
 
 .card {
     background: #fff;
-    padding: 40px 35px;
-    width: 380px;
+    padding: 45px 35px;
+    width: 500px;
     border-radius: 14px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     text-align: center;

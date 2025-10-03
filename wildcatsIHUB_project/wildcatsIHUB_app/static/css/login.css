@@ -1,18 +1,12 @@
 body {
+    font-family: 'Montserrat', sans-serif;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
-
-    /* New gradient background */
-    background: 
-        radial-gradient(circle at 20% 30%, #b7cce0, transparent 40%),
-        radial-gradient(circle at 80% 70%, #79b3b8, transparent 50%),
-        radial-gradient(circle at 50% 50%, #7FDBFF, transparent 60%),
-        radial-gradient(circle at 70% 20%, #BDEBFF, transparent 70%),
-        linear-gradient(135deg, #86aed6, #4379a8, #b6ccd4, #336a80, #3787b6);
 }
+
 
 .login-card {
     background: #fff;
@@ -56,4 +50,3 @@ body {
     margin-top: 15px;
     font-size: 0.9rem;
 }
-

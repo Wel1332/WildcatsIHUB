@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Project, AuthenticationForm, UserCreationForm
+from .models import Project
 from django.contrib.auth import login
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
 def login_view(request):
     form = AuthenticationForm(request, data=request.POST or None)
