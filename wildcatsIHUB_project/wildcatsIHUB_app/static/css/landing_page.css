@@ -96,7 +96,7 @@ body {
 
 .btn-get-started {
     background: var(--primary-color);
-    color: white;
+    color: white !important;
     padding: 0.6rem 1.5rem;
     border-radius: 6px;
     font-weight: 600;
