@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">Wildcats' iHub</div>
+    <div class="nav-links">
+      <a href="{% url 'home' %}">Home</a>
+      <a href="#">Gallery</a>
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <a href="{% url 'submit_project' %}" class="btn-primary">Submit Project</a>
+    </div>
+  </nav>
+
+  <!-- Floating Button -->
+  <div class="submit-floating">
+    <a href="{% url 'submit_project' %}" class="btn-primary">+ Submit Project</a>
+  </div>
+
+  <!-- Content -->
+  <div class="container">
+    <h1>Dashboard</h1>
+    <p class="subtitle">Welcome to your project dashboard.</p>
+
+    <!-- Stats Cards -->
+    <div class="stats">
+      <div class="card blue">
+        <div class="icon">
+          <!-- Folder Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h5l2 2h11v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/>
+          </svg>
+        </div>
+        <h2>1</h2>
+        <p>Total Projects</p>
+        <span>All submissions</span>
+      </div>
+      <div class="card green">
+        <div class="icon">
+          <!-- Eye Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
+        </div>
+        <h2>3</h2>
+        <p>Total Views</p>
+        <span>Project views</span>
+      </div>
+      <div class="card purple">
+        <div class="icon">
+          <!-- Lightning Bolt Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <h2>1</h2>
+        <p>Active Projects</p>
+        <span>In progress</span>
+      </div>
+      <div class="card yellow">
+        <div class="icon">
+          <!-- Trending Up Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l6-6 4 4 8-8"/>
+          </svg>
+        </div>
+        <h2>+12%</h2>
+        <p>Growth</p>
+        <span>This month</span>
+      </div>
+    </div>
+
+    <!-- Projects Section -->
+    <div class="projects">
+      <h2>Recent Projects</h2>
+      <p>Latest submissions from the community.</p>
+
+      <div class="project-item">
+        <div class="project-header">
+          <h3>Smart Attendance System <span class="tag purple">AI</span></h3>
+        </div>
+        <div class="project-meta">
+          <span>Submitted: Sept 30, 2025</span>
+          <span>Views: 10</span>
+        </div>
+        <div class="project-actions">
+          <a href="#" class="btn-primary">View</a>
+          <a href="#" class="btn-secondary">Edit</a>
+        </div>
+      </div>
+
+      <div class="project-item">
+        <div class="project-header">
+          <h3>E-Commerce Website <span class="tag green">Web</span></h3>
+        </div>
+        <div class="project-meta">
+          <span>Submitted: Sept 28, 2025</span>
+          <span>Views: 25</span>
+        </div>
+        <div class="project-actions">
+          <a href="#" class="btn-primary">View</a>
+          <a href="#" class="btn-secondary">Edit</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
