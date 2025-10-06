@@ -1,43 +1,34 @@
+/* CSS Variables */
+:root {
+    --primary-color: #1e5cff;
+    --secondary-color: #155DFD;
+    --accent-color: #0f4ac9;
+    --text-color: #1a1a1a;
+    --text-light: #666;
+    --light-text: #fff;
+    --bg-light: #f8f9fa;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+    --font-primary: 'Poppins', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Montserrat', system-ui, -apple-system, sans-serif;
+}
+
 body {
-   font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-primary);
     margin: 0;
     padding: 0;
-
-    background: 
-        radial-gradient(circle at 20% 30%, #b7cce0, transparent 40%),
-        radial-gradient(circle at 80% 70%, #79b3b8, transparent 50%),
-        radial-gradient(circle at 50% 50%, #7FDBFF, transparent 60%),
-        radial-gradient(circle at 70% 20%, #BDEBFF, transparent 70%),
-        linear-gradient(135deg, #86aed6, #4379a8, #b6ccd4, #336a80, #3787b6);
-
-    background-blend-mode: overlay;
-    background-size: cover;
-
+    background: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-
-    color: #333;
+    color: var(--text-color);
     cursor: default;
     position: relative;
     overflow: auto;
 }
 
-/* Animated gradient background */
-@keyframes gradientShift {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
-/* Enhanced floating blue gradient circles */
+/* Enhanced floating blue gradient circles - Keep for subtle background */
 .bg-elements {
     position: fixed;
     top: 0;
@@ -52,8 +43,8 @@ body {
 .bg-circle {
     position: absolute;
     border-radius: 50%;
-    filter: blur(50px);
-    opacity: 0.6;
+    filter: blur(60px);
+    opacity: 0.15;
     animation: float-complex 25s ease-in-out infinite;
     pointer-events: none;
 }
@@ -63,7 +54,7 @@ body {
     height: 400px;
     top: 10%;
     left: 5%;
-    background: radial-gradient(circle, rgba(173, 216, 230, 0.4) 0%, rgba(135, 206, 250, 0.3) 50%, transparent 70%);
+    background: radial-gradient(circle, rgba(30, 92, 255, 0.2) 0%, rgba(21, 93, 253, 0.1) 50%, transparent 70%);
     animation-delay: 0s;
 }
 
@@ -73,7 +64,7 @@ body {
     height: 350px;
     bottom: 15%;
     right: 8%;
-    background: radial-gradient(circle, rgba(100, 149, 237, 0.35) 0%, rgba(65, 105, 225, 0.25) 50%, transparent 70%);
+    background: radial-gradient(circle, rgba(20, 80, 240, 0.18) 0%, rgba(15, 74, 201, 0.08) 50%, transparent 70%);
     animation-delay: 6s;
 }
 
@@ -83,7 +74,7 @@ body {
     height: 300px;
     top: 60%;
     left: 15%;
-    background: radial-gradient(circle, rgba(70, 130, 180, 0.4) 0%, rgba(30, 144, 255, 0.3) 50%, transparent 70%);
+    background: radial-gradient(circle, rgba(15, 74, 201, 0.2) 0%, rgba(10, 60, 180, 0.1) 50%, transparent 70%);
     animation-delay: 12s;
 }
 
@@ -93,7 +84,7 @@ body {
     height: 450px;
     top: 20%;
     right: 10%;
-    background: radial-gradient(circle, rgba(135, 206, 235, 0.3) 0%, rgba(176, 224, 230, 0.2) 50%, transparent 70%);
+    background: radial-gradient(circle, rgba(100, 150, 255, 0.15) 0%, rgba(160, 192, 255, 0.08) 50%, transparent 70%);
     animation-delay: 8s;
 }
 
@@ -103,7 +94,7 @@ body {
     height: 250px;
     bottom: 25%;
     left: 20%;
-    background: radial-gradient(circle, rgba(65, 105, 225, 0.4) 0%, rgba(0, 0, 255, 0.25) 50%, transparent 70%);
+    background: radial-gradient(circle, rgba(15, 74, 201, 0.2) 0%, rgba(10, 60, 180, 0.1) 50%, transparent 70%);
     animation-delay: 15s;
 }
 
@@ -111,19 +102,19 @@ body {
 @keyframes float-complex {
     0%, 100% {
         transform: translate(0, 0) scale(1) rotate(0deg);
-        opacity: 0.5;
+        opacity: 0.1;
     }
     25% {
         transform: translate(40px, -25px) scale(1.15) rotate(8deg);
-        opacity: 0.7;
+        opacity: 0.2;
     }
     50% {
         transform: translate(-30px, 35px) scale(1.08) rotate(-5deg);
-        opacity: 0.6;
+        opacity: 0.15;
     }
     75% {
         transform: translate(25px, 20px) scale(1.12) rotate(4deg);
-        opacity: 0.8;
+        opacity: 0.18;
     }
 }
 
@@ -141,16 +132,20 @@ body {
     animation: float-complex 25s ease-in-out infinite, pulse 12s ease-in-out infinite;
 }
 
-/* Enhanced form card with glass effect */
+/* Enhanced form card with glass effect - Made more prominent */
 .form-card {
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(16px);
+    border-radius: 16px;
     padding: 40px;
-    box-shadow: 0 20px 40px rgba(70, 130, 180, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 
+        0 8px 32px rgba(30, 92, 255, 0.12),
+        0 2px 8px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.6);
     position: relative;
     overflow: hidden;
+    margin: 20px;
 }
 
 /* Subtle glow effect on form */
@@ -161,67 +156,69 @@ body {
     left: -10px;
     right: -10px;
     bottom: -10px;
-    background: linear-gradient(45deg, rgba(255,255,255,0.15), rgba(173, 216, 230, 0.08));
+    background: linear-gradient(45deg, rgba(255,255,255,0.2), rgba(30, 92, 255, 0.05));
     z-index: -1;
-    border-radius: 30px;
+    border-radius: 24px;
     animation: glow 10s ease-in-out infinite;
 }
 
 @keyframes glow {
     0%, 100% {
-        opacity: 0.4;
+        opacity: 0.3;
     }
     50% {
-        opacity: 0.7;
+        opacity: 0.5;
     }
 }
 
 /* Enhanced inputs with blue focus */
 input:focus, textarea:focus, select:focus {
-    border-image: linear-gradient(135deg, #4a7dff, #6991ff) 1;
-    box-shadow: 0 0 0 3px rgba(70, 130, 180, 0.2);
+    border-image: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) 1;
+    box-shadow: 0 0 0 3px rgba(30, 92, 255, 0.15);
     background: #fff;
     transform: translateY(-2px);
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: var(--transition);
 }
 
 /* Enhanced buttons with blue theme - LIQUID EFFECT DISABLED */
 .btn-primary {
-    background: linear-gradient(135deg, #2d5bff, #4a7dff);
-    color: white;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--light-text);
     border: none;
-    box-shadow: 0 6px 20px rgba(45, 91, 255, 0.4);
+    box-shadow: 0 6px 20px rgba(30, 92, 255, 0.3);
     position: relative;
     overflow: hidden;
 }
 
 .btn-primary:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(45, 91, 255, 0.5);
+    box-shadow: 0 10px 30px rgba(30, 92, 255, 0.4);
+    background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
     /* No liquid effect - removed overflow and pseudo-elements */
 }
 
 /* Enhanced theme switcher */
 .theme-label {
-    background: linear-gradient(135deg, #2d5bff, #4a7dff);
-    box-shadow: 0 4px 15px rgba(45, 91, 255, 0.4), 0 0 25px rgba(70, 130, 180, 0.2);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    box-shadow: 0 4px 15px rgba(30, 92, 255, 0.3), 0 0 25px rgba(30, 92, 255, 0.15);
 }
 
 .theme-label:hover {
     transform: scale(1.08);
-    box-shadow: 0 6px 25px rgba(45, 91, 255, 0.5), 0 0 30px rgba(70, 130, 180, 0.3);
+    box-shadow: 0 6px 25px rgba(30, 92, 255, 0.4), 0 0 30px rgba(30, 92, 255, 0.2);
 }
 
 /* Enhanced section titles with blue accent */
 .section-title {
     font-size: 20px;
-    color: #2d5bff;
+    color: var(--primary-color);
     margin-top: 30px;
     margin-bottom: 15px;
     padding-bottom: 8px;
-    border-bottom: 1px solid #e0e7ff;
+    border-bottom: 1px solid #e8e8e8;
     position: relative;
     font-weight: 600;
+    font-family: var(--font-heading);
 }
 
 .section-title::after {
@@ -231,33 +228,39 @@ input:focus, textarea:focus, select:focus {
     left: 0;
     width: 60px;
     height: 3px;
-    background: linear-gradient(90deg, #2d5bff, #4a7dff);
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     border-radius: 2px;
 }
 
 /* Enhanced file input with blue theme */
 .file-input-label:hover {
-    border-color: #4a7dff;
+    border-color: var(--primary-color);
     background: #f0f4ff;
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(74, 125, 255, 0.15);
+    box-shadow: 0 6px 15px rgba(30, 92, 255, 0.1);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .bg-circle {
-        filter: blur(35px);
+        filter: blur(40px);
     }
     
     .circle-1, .circle-2, .circle-3, .circle-4, .circle-5 {
-        width: 250px;
-        height: 250px;
+        width: 200px;
+        height: 200px;
     }
     
     .form-card {
-        padding: 30px;
-        backdrop-filter: blur(8px);
+        padding: 30px 20px;
+        backdrop-filter: blur(12px);
+        margin: 15px;
     }
+}
+
+.form-card {
+    border: 3px solid rgba(30, 92, 255, 0.2);
+    box-shadow: 0 35px 80px rgba(30, 92, 255, 0.25);
 }
 
 /* Keep all your existing styles below this line */
@@ -269,17 +272,18 @@ input:focus, textarea:focus, select:focus {
 .form-title {
     text-align: center;
     font-size: 32px;
-    background: linear-gradient(90deg, #2d5bff, #4a7dff);
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     background-clip: text !important;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 8px;
     font-weight: 700;
+    font-family: var(--font-heading);
 }
 
 .form-subtitle {
     text-align: center;
-    color: #6c757d;
+    color: var(--text-light);
     margin-bottom: 30px;
     font-size: 16px;
     font-weight: 400;
@@ -293,7 +297,7 @@ input:focus, textarea:focus, select:focus {
 label {
     display: block;
     margin-bottom: 8px;
-    color: #495057;
+    color: var(--text-color);
     font-weight: 500;
     font-size: 15px;
 }
@@ -311,14 +315,14 @@ input, textarea, select {
     margin-bottom: 5px;
     background: #fff;
     border: 2px solid;
-    border-image: linear-gradient(135deg, #e0e7ff, #f0f4ff) 1;
-    border-radius: 12px;
+    border-image: linear-gradient(135deg, #e8e8e8, #f0f0f0) 1;
+    border-radius: 6px;
     outline: none;
-    transition: all 0.3s ease;
-    color: #333;
+    transition: var(--transition);
+    color: var(--text-color);
     font-size: 15px;
     box-sizing: border-box;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow);
 }
 
 input::placeholder, textarea::placeholder {
@@ -328,14 +332,14 @@ input::placeholder, textarea::placeholder {
 .category-other-input {
     margin-top: 10px;
     padding: 12px;
-    border: 2px dashed #4a7dff;
-    border-radius: 8px;
+    border: 2px dashed var(--primary-color);
+    border-radius: 6px;
     background: #f8fbff;
     display: none;
 }
 
 .category-other-input input {
-    border: 1px solid #e0e7ff;
+    border: 1px solid #e8e8e8;
     margin: 0;
 }
 
@@ -350,24 +354,24 @@ input::placeholder, textarea::placeholder {
     align-items: center;
     justify-content: space-between;
     padding: 14px 16px;
-    background: #f8f9ff;
-    border: 2px dashed #e0e7ff;
-    border-radius: 12px;
+    background: var(--bg-light);
+    border: 2px dashed #e8e8e8;
+    border-radius: 6px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    color: #495057;
+    transition: var(--transition);
+    color: var(--text-color);
     font-weight: 500;
 }
 
 .file-input-label::after {
     content: "Browse";
-    background: linear-gradient(135deg, #2d5bff, #4a7dff);
-    color: white;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--light-text);
     padding: 8px 16px;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 14px;
     font-weight: 600;
-    box-shadow: 0 2px 8px rgba(45, 91, 255, 0.3);
+    box-shadow: 0 2px 8px rgba(30, 92, 255, 0.25);
 }
 
 .file-input {
@@ -383,7 +387,7 @@ input::placeholder, textarea::placeholder {
 .file-name {
     margin-top: 8px;
     font-size: 14px;
-    color: #4a7dff;
+    color: var(--primary-color);
     font-weight: 500;
 }
 
@@ -397,11 +401,11 @@ input::placeholder, textarea::placeholder {
 .btn {
     padding: 16px 32px;
     border: none;
-    border-radius: 12px;
+    border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
     font-size: 16px;
-    transition: all 0.4s ease;
+    transition: var(--transition);
     position: relative;
     overflow: hidden;
     flex: 1;
@@ -411,20 +415,20 @@ input::placeholder, textarea::placeholder {
 
 /* LIQUID EFFECT DISABLED - Clean button hover */
 .btn-primary:hover {
-    color: white; /* Keep text color consistent */
+    color: var(--light-text); /* Keep text color consistent */
     /* No liquid animation */
 }
 
 .btn-secondary {
     background: white;
-    color: #2d5bff;
-    border: 2px solid #2d5bff;
-    box-shadow: 0 4px 15px rgba(45, 91, 255, 0.2);
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 4px 15px rgba(30, 92, 255, 0.15);
 }
 
 .btn-secondary:hover {
-    background: linear-gradient(135deg, #2d5bff, #4a7dff);
-    color: white;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--light-text);
     border-color: transparent;
     /* No liquid animation */
 }
@@ -455,14 +459,14 @@ input::placeholder, textarea::placeholder {
     padding: 5px;
     cursor: pointer;
     position: relative;
-    transition: all 0.3s ease;
+    transition: var(--transition);
     overflow: hidden;
 }
 
 .theme-icon {
     font-size: 18px;
     z-index: 2;
-    transition: all 0.3s ease;
+    transition: var(--transition);
     width: 30px;
     text-align: center;
     display: flex;
@@ -488,15 +492,15 @@ input::placeholder, textarea::placeholder {
     height: 34px;
     background: white;
     border-radius: 50%;
-    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: var(--transition);
+    box-shadow: var(--shadow);
     z-index: 1;
 }
 
 @keyframes pulse-glow {
-    0% { box-shadow: 0 4px 15px rgba(45, 91, 255, 0.3); }
-    50% { box-shadow: 0 4px 20px rgba(45, 91, 255, 0.6); }
-    100% { box-shadow: 0 4px 15px rgba(45, 91, 255, 0.3); }
+    0% { box-shadow: 0 4px 15px rgba(30, 92, 255, 0.25); }
+    50% { box-shadow: 0 4px 20px rgba(30, 92, 255, 0.4); }
+    100% { box-shadow: 0 4px 15px rgba(30, 92, 255, 0.25); }
 }
 
 .theme-label {

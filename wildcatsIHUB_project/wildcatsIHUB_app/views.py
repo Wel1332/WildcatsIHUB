@@ -50,6 +50,9 @@ def submit_project(request):
 
     return render(request, 'wildcatsIHUB_app/project_form.html')
 
+def user_profile(request):
+    return render(request, 'wildcatsIHUB_app/userProfile.html')
+
 def landing_page(request):
     """Simple landing page view"""
     return render(request, 'wildcatsIHUB_app/landing_page.html')
@@ -86,3 +89,5 @@ def dashboard(request):
     }
 
     return render(request, "wildcatsIHUB_app/dashboard.html", {"projects": projects, "stats": stats})
+
+   
