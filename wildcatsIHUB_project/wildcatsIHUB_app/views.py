@@ -3,6 +3,8 @@ from .models import Project
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from datetime import date
+from django.shortcuts import get_object_or_404
+
 
 def login_view(request):
     form = AuthenticationForm(request, data=request.POST or None)
@@ -10,6 +12,17 @@ def login_view(request):
         login(request, form.get_user())
         return redirect('/')
     return render(request, 'wildcatsIHUB_app/login.html', {'form': form})
+
+def view_project(request, project_id):
+    project = Project.objects.get(id=project_id)
+    return render(request, 'wildcatsIHUB_app/view_project.html', {'project': project})
+
+
+def delete_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    project.delete()
+    return redirect('user_profile')
+
 
 
 def signup_view(request):
@@ -28,13 +41,17 @@ def submit_project(request):
         title = request.POST.get("title")
         description = request.POST.get("description")
         category = request.POST.get("category")
+        other_category = request.POST.get("other_category")  # <-- add this
         github_url = request.POST.get("github_url")
         live_demo = request.POST.get("live_demo")
         video_demo = request.POST.get("video_demo")
         tech_used = request.POST.get("tech_used")
         screenshot = request.FILES.get("screenshot")
 
-        # Save project to DB
+        # Use 'other_category' if 'category' is 'other'
+        if category == "other" and other_category:
+            category = other_category
+
         Project.objects.create(
             title=title,
             description=description,
@@ -46,12 +63,15 @@ def submit_project(request):
             screenshot=screenshot
         )
 
-        return redirect('home')  # after submission go back to home page
+        return redirect('user_profile')
 
     return render(request, 'wildcatsIHUB_app/project_form.html')
 
+
 def user_profile(request):
-    return render(request, 'wildcatsIHUB_app/userProfile.html')
+    projects = Project.objects.all() 
+    return render(request, 'wildcatsIHUB_app/userProfile.html', {'projects': projects})
+
 
 def landing_page(request):
     """Simple landing page view"""
