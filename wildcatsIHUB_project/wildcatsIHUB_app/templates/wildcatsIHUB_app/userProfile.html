@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Profile - Skills Radar</title>
-    <link rel="stylesheet" href="{% static 'css/userProfile.css' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/userProfile.css' %}">
 </head>
 <body>
     <div class="profile-container">
@@ -15,23 +15,22 @@
         <div class="profile-header">
             <div class="header-content">
                 <div class="user-avatar">
-                    <img src="{% static 'images/student-avatar.jpg' %}" alt="Student Avatar" class="avatar-img">
+                    <div class="avatar-img"></div>
                     <div class="status-badge">Student</div>
-                    <button class="edit-profile-btn">
+                    <button class="edit-profile-btn" onclick="openEditModal()">
                         <i class="fas fa-edit"></i>
-                        Edit Profile
                     </button>
                 </div>
                 <div class="user-info">
-                    <h1 class="user-name">Sarah Chen</h1>
-                    <p class="user-title">Computer Science Major</p>
+                    <h1 class="user-name" id="displayName">Sarah Chen</h1>
+                    <p class="user-title" id="displayTitle">Computer Science Major</p>
                     <div class="user-school">
                         <i class="fas fa-university"></i>
-                        <span>Stanford University</span>
+                        <span id="displaySchool">Stanford University</span>
                     </div>
                     <div class="user-stats">
                         <div class="stat">
-                            <span class="stat-number">2nd</span>
+                            <span class="stat-number" id="displayYear">2nd</span>
                             <span class="stat-label">Year</span>
                         </div>
                         <div class="stat">
@@ -46,21 +45,11 @@
                 </div>
                 <div class="header-actions">
                     <div class="social-links">
-                        <a href="#" class="social-link">
-                            <i class="fab fa-github"></i>
-                        </a>
-                        <a href="#" class="social-link">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="#" class="social-link">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="social-link">
-                            <i class="fab fa-facebook"></i>
-                        </a>
-                        <a href="#" class="social-link">
-                            <i class="fas fa-globe"></i>
-                        </a>
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fas fa-globe"></i></a>
                     </div>
                 </div>
             </div>
@@ -77,19 +66,19 @@
                         <h3>About Me</h3>
                     </div>
                     <div class="card-content">
-                        <p class="empty-state" data-field="about">No information added yet</p>
+                        <p id="displayAbout" class="empty-state">No information added yet</p>
                         <div class="about-details">
                             <div class="detail-item">
                                 <i class="fas fa-map-marker-alt"></i>
-                                <span class="empty-state" data-field="location">Add location</span>
+                                <span id="displayLocation">Add location</span>
                             </div>
                             <div class="detail-item">
                                 <i class="fas fa-calendar"></i>
-                                <span class="empty-state" data-field="graduation">Add graduation year</span>
+                                <span id="displayGraduation">Add graduation year</span>
                             </div>
                             <div class="detail-item">
                                 <i class="fas fa-code"></i>
-                                <span class="empty-state" data-field="specialization">Add specialization</span>
+                                <span id="displaySpecialization">Add specialization</span>
                             </div>
                         </div>
                     </div>
@@ -104,14 +93,14 @@
                     <div class="card-content">
                         <div class="academic-item">
                             <h4>Current Courses</h4>
-                            <div class="course-tags empty-state" data-field="courses">
+                            <div id="displayCourses" class="course-tags empty-state">
                                 No courses added
                             </div>
                         </div>
                         <div class="academic-item">
                             <h4>Major & Minor</h4>
-                            <p><strong>Major:</strong> <span class="empty-state" data-field="major">Computer Science</span></p>
-                            <p><strong>Minor:</strong> <span class="empty-state" data-field="minor">Not specified</span></p>
+                            <p><strong>Major:</strong> <span id="displayMajor">Computer Science</span></p>
+                            <p><strong>Minor:</strong> <span id="displayMinor">Not specified</span></p>
                         </div>
                     </div>
                 </div>
@@ -123,7 +112,7 @@
                         <h3>Campus Involvement</h3>
                     </div>
                     <div class="card-content">
-                        <div class="empty-state" data-field="clubs">
+                        <div id="displayClubs" class="empty-state">
                             No club information added
                         </div>
                     </div>
@@ -132,144 +121,38 @@
 
             <!-- Right Column -->
             <div class="right-column">
-                <!-- Skills Radar Chart -->
-                <div class="skills-card">
-                    <div class="card-header">
-                        <i class="fas fa-chart-radar"></i>
-                        <h3>Technical Skills Radar</h3>
-                    </div>
-                    <div class="skills-content">
-                        <!-- Chart Container -->
-                        <div class="chart-main">
-                            <div class="chart-wrapper">
-                                <svg class="radar-chart" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- Background circles -->
-                                    <g opacity="0.3">
-                                        <circle cx="250" cy="250" r="200" fill="none" stroke="#e8e8e8" stroke-width="1.5"/>
-                                        <circle cx="250" cy="250" r="150" fill="none" stroke="#e8e8e8" stroke-width="1.5"/>
-                                        <circle cx="250" cy="250" r="100" fill="none" stroke="#e8e8e8" stroke-width="1.5"/>
-                                        <circle cx="250" cy="250" r="50" fill="none" stroke="#e8e8e8" stroke-width="1.5"/>
-                                    </g>
-
-                                    <!-- Axes -->
-                                    <g stroke="#e8e8e8" stroke-width="1.5" opacity="0.5">
-                                        <line x1="250" y1="250" x2="250" y2="50" />
-                                        <line x1="250" y1="250" x2="440" y2="154" />
-                                        <line x1="250" y1="250" x2="440" y2="346" />
-                                        <line x1="250" y1="250" x2="250" y2="450" />
-                                        <line x1="250" y1="250" x2="60" y2="346" />
-                                        <line x1="250" y1="250" x2="60" y2="154" />
-                                    </g>
-
-                                    <!-- Data polygon -->
-                                    <polygon 
-                                        points="250,100 375,175 350,300 250,350 150,300 175,175"
-                                        fill="rgba(30, 92, 255, 0.2)"
-                                        stroke="#1e5cff"
-                                        stroke-width="3"
-                                    />
-
-                                    <!-- Data points -->
-                                    <circle cx="250" cy="100" r="6" fill="#1e5cff"/>
-                                    <circle cx="375" cy="175" r="6" fill="#1e5cff"/>
-                                    <circle cx="350" cy="300" r="6" fill="#1e5cff"/>
-                                    <circle cx="250" cy="350" r="6" fill="#1e5cff"/>
-                                    <circle cx="150" cy="300" r="6" fill="#1e5cff"/>
-                                    <circle cx="175" cy="175" r="6" fill="#1e5cff"/>
-
-                                    <!-- Labels -->
-                                    <text x="250" y="35" text-anchor="middle" fill="#1a1a1a" font-size="16" font-weight="600" font-family="Poppins, sans-serif">Python</text>
-                                    <text x="455" y="160" text-anchor="start" fill="#1a1a1a" font-size="16" font-weight="600" font-family="Poppins, sans-serif">JavaScript</text>
-                                    <text x="455" y="306" text-anchor="start" fill="#1a1a1a" font-size="16" font-weight="600" font-family="Poppins, sans-serif">Java</text>
-                                    <text x="250" y="480" text-anchor="middle" fill="#1a1a1a" font-size="16" font-weight="600" font-family="Poppins, sans-serif">C++</text>
-                                    <text x="45" y="306" text-anchor="end" fill="#1a1a1a" font-size="16" font-weight="600" font-family="Poppins, sans-serif">SQL</text>
-                                    <text x="45" y="160" text-anchor="end" fill="#1a1a1a" font-size="16" font-weight="600" font-family="Poppins, sans-serif">React</text>
-                                </svg>
-                            </div>
-                        </div>
-
-                        <!-- Skills Legend -->
-                        <div class="skills-legend">
-                            <div class="legend-grid">
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background: #1e5cff;"></div>
-                                    <div class="legend-info">
-                                        <div class="legend-name">Python</div>
-                                        <div class="legend-level">Advanced</div>
-                                    </div>
-                                    <div class="legend-bar">
-                                        <div class="legend-bar-fill" style="width: 85%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background: #f7df1e;"></div>
-                                    <div class="legend-info">
-                                        <div class="legend-name">JavaScript</div>
-                                        <div class="legend-level">Intermediate</div>
-                                    </div>
-                                    <div class="legend-bar">
-                                        <div class="legend-bar-fill" style="width: 70%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background: #61dafb;"></div>
-                                    <div class="legend-info">
-                                        <div class="legend-name">React</div>
-                                        <div class="legend-level">Beginner</div>
-                                    </div>
-                                    <div class="legend-bar">
-                                        <div class="legend-bar-fill" style="width: 50%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background: #007396;"></div>
-                                    <div class="legend-info">
-                                        <div class="legend-name">Java</div>
-                                        <div class="legend-level">Intermediate</div>
-                                    </div>
-                                    <div class="legend-bar">
-                                        <div class="legend-bar-fill" style="width: 65%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background: #00599c;"></div>
-                                    <div class="legend-info">
-                                        <div class="legend-name">C++</div>
-                                        <div class="legend-level">Advanced</div>
-                                    </div>
-                                    <div class="legend-bar">
-                                        <div class="legend-bar-fill" style="width: 80%;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background: #ff6b6b;"></div>
-                                    <div class="legend-info">
-                                        <div class="legend-name">SQL</div>
-                                        <div class="legend-level">Intermediate</div>
-                                    </div>
-                                    <div class="legend-bar">
-                                        <div class="legend-bar-fill" style="width: 60%;"></div>
-                                    </div>
-                                </div>
+               
+                    <!-- Skills Progress Section -->
+            <div class="info-card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Technical Skills Progress</h3>
+                </div>
+                <div class="card-content">
+                    <div class="skills-progress">
+                        <div id="skillsProgressList">
+                            <div class="empty-state">
+                                Add projects to track your skill growth!
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+                            
 
-                <!-- Projects Showcase -->
-                <div class="info-card">
+              <div class="info-card">
                     <div class="card-header">
                         <i class="fas fa-code-branch"></i>
                         <h3>Student Projects</h3>
+                        <button href="{% url 'submit_project' %}" class="btn btn-primary add-project-btn">
+                            Add Project
+                        </button>
                     </div>
                     <div class="card-content">
-                        <div class="empty-state" data-field="projects">
-                            No projects added yet
+                        <div id="displayProjects" class="projects-list">
+                            <div class="empty-state">
+                                No projects added yet. Click "Add Project" to get started!
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -281,21 +164,8 @@
                         <h3>Study Interests</h3>
                     </div>
                     <div class="card-content">
-                        <div class="empty-state" data-field="interests">
+                        <div id="displayInterests" class="empty-state">
                             No interests specified
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Contact Links -->
-                <div class="info-card">
-                    <div class="card-header">
-                        <i class="fas fa-link"></i>
-                        <h3>Contact & Links</h3>
-                    </div>
-                    <div class="card-content">
-                        <div class="empty-state" data-field="links">
-                            No contact links added
                         </div>
                     </div>
                 </div>
@@ -308,37 +178,154 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Edit Profile</h3>
-                <button class="modal-close">&times;</button>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <!-- Edit form would go here -->
-                <p>Edit form implementation would be here...</p>
+                <form id="editProfileForm" onsubmit="saveProfile(event)">
+                    <!-- Basic Information -->
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" placeholder="Enter your name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">Title/Major</label>
+                        <input type="text" id="title" name="title" placeholder="e.g., Computer Science Major">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="school">University</label>
+                        <input type="text" id="school" name="school" placeholder="Enter your university">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="year">Year Level</label>
+                            <select id="year" name="year">
+                                <option value="">Select Year</option>
+                                <option value="1st">1st Year</option>
+                                <option value="2nd">2nd Year</option>
+                                <option value="3rd">3rd Year</option>
+                                <option value="4th">4th Year</option>
+                                <option value="5th">5th Year</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input type="text" id="location" name="location" placeholder="City, Country">
+                        </div>
+                    </div>
+
+                    <!-- About Section -->
+                    <div class="form-group">
+                        <label for="about">About Me</label>
+                        <textarea id="about" name="about" placeholder="Tell us about yourself..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="graduation">Graduation Year</label>
+                            <input type="text" id="graduation" name="graduation" placeholder="e.g., 2026">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="specialization">Specialization</label>
+                            <input type="text" id="specialization" name="specialization" placeholder="e.g., AI & Machine Learning">
+                        </div>
+                    </div>
+
+                    <!-- Academic Information -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="major">Major</label>
+                            <input type="text" id="major" name="major" placeholder="Enter your major">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="minor">Minor</label>
+                            <input type="text" id="minor" name="minor" placeholder="Enter your minor (optional)">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="courses">Current Courses (comma-separated)</label>
+                        <input type="text" id="courses" name="courses" placeholder="e.g., Data Structures, Web Development, AI">
+                    </div>
+
+                    <!-- Campus Involvement -->
+                    <div class="form-group">
+                        <label for="clubs">Campus Clubs & Organizations</label>
+                        <textarea id="clubs" name="clubs" placeholder="List your clubs and involvement..."></textarea>
+                    </div>
+
+                    <!-- Projects & Interests -->
+                    <div class="form-group">
+                        <label for="projects">Student Projects</label>
+                        <textarea id="projects" name="projects" placeholder="Describe your projects..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="interests">Study Interests</label>
+                        <textarea id="interests" name="interests" placeholder="What are you interested in learning?"></textarea>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <script>
-        // Simple edit profile functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const editBtn = document.querySelector('.edit-profile-btn');
-            const modal = document.getElementById('editModal');
-            const closeBtn = document.querySelector('.modal-close');
+    <!-- Add Project Modal -->
+    <div class="modal-overlay" id="projectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Project</h3>
+                <button class="modal-close" onclick="closeProjectModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addProjectForm" onsubmit="saveProject(event)">
+                    <div class="form-group">
+                        <label for="projectName">Project Name *</label>
+                        <input type="text" id="projectName" name="projectName" placeholder="Enter project name" required>
+                    </div>
 
-            editBtn.addEventListener('click', function() {
-                modal.style.display = 'flex';
-            });
+                    <div class="form-group">
+                        <label for="projectDescription">Description *</label>
+                        <textarea id="projectDescription" name="projectDescription" placeholder="Describe your project..." required></textarea>
+                    </div>
 
-            closeBtn.addEventListener('click', function() {
-                modal.style.display = 'none';
-            });
+                    <div class="form-group">
+                        <label for="projectLanguages">Programming Languages/Technologies Used *</label>
+                        <input type="text" id="projectLanguages" name="projectLanguages" placeholder="e.g., Python, JavaScript, React (comma-separated)" required>
+                        <small style="color: var(--text-light); font-size: 0.85rem;">These will be added to your skills radar</small>
+                    </div>
 
-            // Close modal when clicking outside
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-        });
-    </script>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="projectDate">Date Completed</label>
+                            <input type="month" id="projectDate" name="projectDate">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="projectLink">Project Link (Optional)</label>
+                            <input type="url" id="projectLink" name="projectLink" placeholder="https://">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeProjectModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'css/wildcatsIHUB/userProfile.js' %}"></script>
 </body>
 </html>
