@@ -1,0 +1,19 @@
+{% extends 'wildcatsIHUB_app/base_admin.html' %}
+{% block title %}Gallery{% endblock %}
+
+{% block header %}Gallery{% endblock %}
+
+{% block subtitle %}View submitted project images{% endblock %}
+{% block content %}
+
+
+<div class="cards-row">
+  {% for image in gallery %}
+  <div class="project-card fade-in-up">
+    <img src="{{ image.url }}" alt="{{ image.title }}" style="border-radius:10px;width:100%;height:auto;">
+    <h4>{{ image.title }}</h4>
+    <p>{{ image.description|truncatewords:12 }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

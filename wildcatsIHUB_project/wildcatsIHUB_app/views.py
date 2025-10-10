@@ -3,7 +3,8 @@ from .models import Project
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from datetime import date
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404 
+import json
 
 
 def login_view(request):
@@ -110,4 +111,69 @@ def dashboard(request):
 
     return render(request, "wildcatsIHUB_app/dashboard.html", {"projects": projects, "stats": stats})
 
-   
+def admin_dashboard(request):
+    context = {
+        "total_users": 1234,
+        "pending_approvals": 23,
+        "approved_projects": 456,
+        "active_projects": 89,
+        "project_data": json.dumps([45, 52, 47, 61, 54, 67]),
+        "months": json.dumps(["Jan", "Feb", "Mar", "Apr", "May", "Jun"]),
+    }
+    return render(request, "wildcatsIHUB_app/admin_dashboard.html", context)
+
+
+def user_management(request):
+    users = [
+        {"name": "John Doe", "email": "john@example.com", "role": "User", "status": "Active", "projects": 5, "joined": "2024-01-15"},
+        {"name": "Jane Smith", "email": "jane@example.com", "role": "User", "status": "Pending", "projects": 0, "joined": "2024-03-20"},
+        {"name": "Mike Johnson", "email": "mike@example.com", "role": "Admin", "status": "Active", "projects": 12, "joined": "2023-11-05"},
+    ]
+    return render(request, "wildcatsIHUB_app/user_management.html", {"users": users})
+
+
+def approval_system(request):
+    projects = [
+        {"title": "E-commerce Platform Redesign", "category": "Web Development", "author": "John Doe", "date": "2024-03-15", "desc": "A complete redesign with modern UI/UX principles"},
+        {"title": "Mobile Banking App", "category": "Mobile App", "author": "Jane Smith", "date": "2024-03-14", "desc": "Secure banking app with biometric authentication"},
+        {"title": "AI-Powered Analytics Dashboard", "category": "Data Science", "author": "Mike Johnson", "date": "2024-03-13", "desc": "AI-driven analytics dashboard"},
+    ]
+    return render(request, "wildcatsIHUB_app/approvals.html", {"projects": projects})
+
+
+def project_tracking(request):
+    projects = [
+        {"title": "E-commerce Platform", "owner": "John Doe", "category": "Web Development", "status": "Approved", "progress": 75, "updated": "2024-03-10"},
+        {"title": "Mobile Banking App", "owner": "Jane Smith", "category": "Mobile App", "status": "Pending", "progress": 30, "updated": "2024-03-12"},
+        {"title": "Analytics Dashboard", "owner": "Mike Johnson", "category": "Data Science", "status": "Approved", "progress": 90, "updated": "2024-03-14"},
+    ]
+    return render(request, "wildcatsIHUB_app/project_tracking.html", {"projects": projects})
+
+
+def submissions(request):
+    submissions = [
+        {"title": "E-commerce Platform Redesign", "status": "Approved", "author": "John Doe", "date": "2024-03-15", "category": "Web Development", "files": 12, "desc": "Modern UI/UX redesign"},
+        {"title": "Mobile Banking Application", "status": "Pending", "author": "Jane Smith", "date": "2024-03-14", "category": "Mobile App", "files": 8, "desc": "Secure transactions with biometrics"},
+        {"title": "AI Analytics Dashboard", "status": "Approved", "author": "Mike Johnson", "date": "2024-03-13", "category": "Data Science", "files": 15, "desc": "ML-driven analytics"},
+    ]
+    stats = {"total": 234, "approved": 189, "rejected": 22, "pending": 23}
+    return render(request, "wildcatsIHUB_app/submissions.html", {"submissions": submissions, "stats": stats})
+
+
+def project_gallery(request):
+    gallery = [
+        {"title": "E-commerce Platform", "author": "John Doe", "category": "Web Development", "likes": 124, "comments": 23, "views": 1543},
+        {"title": "Mobile Banking App", "author": "Jane Smith", "category": "Mobile App", "likes": 98, "comments": 15, "views": 987},
+        {"title": "Analytics Dashboard", "author": "Mike Johnson", "category": "Data Science", "likes": 156, "comments": 31, "views": 2134},
+    ]
+    return render(request, "wildcatsIHUB_app/gallery.html", {"gallery": gallery})
+
+
+def profile_settings(request):
+    profile = {
+        "first_name": "Admin",
+        "last_name": "User",
+        "email": "admin@example.com",
+        "bio": "",
+    }
+    return render(request, "wildcatsIHUB_app/admin_profile.html", {"profile": profile})

@@ -1,0 +1,25 @@
+{% extends 'wildcatsIHUB_app/base_admin.html' %}
+
+{% block title %}Approvals{% endblock %}
+
+{% block header %}Approvals{% endblock %}
+
+{% block subtitle %}Pending project submissions{% endblock %}
+{% block content %}
+
+<div class="cards-row">
+  {% for project in projects %}
+  <div class="project-card fade-in-up">
+    <div class="project-header">
+      <h3>{{ project.title }}</h3>
+      <span class="tag">{{ project.status }}</span>
+    </div>
+    <p>{{ project.description|truncatewords:20 }}</p>
+    <div>
+      <a class="btn-primary">Approve</a>
+      <a class="btn-outline">Reject</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

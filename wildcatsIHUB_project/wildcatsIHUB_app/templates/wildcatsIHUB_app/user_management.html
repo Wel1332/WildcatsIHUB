@@ -1,0 +1,39 @@
+{% extends 'wildcatsIHUB_app/base_admin.html' %}
+{% block title %}User Management{% endblock %}
+
+{% block header %}User Management{% endblock %}
+
+{% block subtitle %}Manage all system users{% endblock %}
+
+{% block content %}
+<div class="card fade-in-up">
+    <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+        <input type="text" class="search-input" placeholder="Search users...">
+        <a  class="btn-primary">Add User</a>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td><span class="user-avatar-small"></span>{{ user.full_name }}</td>
+                <td>{{ user.email }}</td>
+                <td><span class="badge {{ user.status }}">{{ user.status }}</span></td>
+                <td>
+                    <a  class="btn-outline">Edit</a>
+                    <a  class="btn-outline">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

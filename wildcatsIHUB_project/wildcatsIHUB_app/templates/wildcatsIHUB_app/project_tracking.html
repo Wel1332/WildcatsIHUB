@@ -1,0 +1,37 @@
+{% extends 'wildcatsIHUB_app/base_admin.html' %}
+{% block title %}Project Tracking{% endblock %}
+
+{% block header %}Project Tracking{% endblock %}
+
+{% block subtitle %}Monitor ongoing projects{% endblock %}
+{% block content %}
+
+
+<div class="card fade-in-up">
+  <div class="card-header" style="margin-bottom:1rem;">
+    <input type="text" placeholder="Search projects..." class="search-input">
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Project Name</th>
+        <th>Owner</th>
+        <th>Status</th>
+        <th>Deadline</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for project in projects %}
+      <tr>
+        <td>{{ project.title }}</td>
+        <td>{{ project.owner.username }}</td>
+        <td>
+          <span class="badge {{ project.status }}">{{ project.status }}</span>
+        </td>
+        <td>{{ project.deadline }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
