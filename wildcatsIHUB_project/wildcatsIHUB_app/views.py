@@ -68,6 +68,29 @@ def submit_project(request):
 
     return render(request, 'wildcatsIHUB_app/project_form.html')
 
+def home(request):
+    projects = Project.objects.all()
+    
+    gallery_projects = []
+    for project in projects:
+        gallery_projects.append({
+            "title": project.title,
+            "author": project.user.username if project.user else "Anonymous",
+            "category": project.category,
+            "description": project.description,
+            "tech_used": project.tech_used,
+            "created_at": project.created_at,
+            "views": project.views or 0,
+            "likes": project.likes or 0,
+            "id": project.id,
+            "screenshot": project.screenshot.url if project.screenshot else None
+        })
+    
+    return render(request, 'wildcatsIHUB_app/home_page.html', {
+        'projects': projects,
+        'gallery_projects': gallery_projects
+    })
+
 
 def user_profile(request):
     projects = Project.objects.all() 
