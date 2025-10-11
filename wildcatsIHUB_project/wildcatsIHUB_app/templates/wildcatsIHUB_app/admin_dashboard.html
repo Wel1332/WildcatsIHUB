@@ -1,0 +1,43 @@
+{% extends 'wildcatsIHUB_app/base_admin.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block header %}Dashboard{% endblock %}
+
+{% block subtitle %}Overview of the system{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card fade-in-up delay-1">
+        <div class="icon">👥</div>
+        <h3>Total Users</h3>
+        <p>{{ total_users }}</p>
+    </div>
+    <div class="stat-card fade-in-up delay-1">
+        <div class="icon">📂</div>
+        <h3>Total Projects</h3>
+        <p>{{ total_projects }}</p>
+    </div>
+    <div class="stat-card fade-in-up delay-1">
+        <div class="icon">✅</div>
+        <h3>Approved Submissions</h3>
+        <p>{{ approved_submissions }}</p>
+    </div>
+    <div class="stat-card fade-in-up delay-1">
+        <div class="icon">⏳</div>
+        <h3>Pending Approvals</h3>
+        <p>{{ pending_approvals }}</p>
+    </div>
+</div>
+
+<div class="cards-row">
+    {% for card in recent_activities %}
+    <div class="project-card fade-in-up">
+        <div class="project-header">
+            <h3>{{ card.title }}</h3>
+        </div>
+        <div class="tag">{{ card.status }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Admin Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">&lt;&gt;</div>
+      Wildcats' iHub
+    </div>
+    <nav class="sidebar-nav">
+      <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Dashboard</a>
+      <a href="{% url 'user_management' %}" class="{% if request.resolver_match.url_name == 'user_management' %}active{% endif %}">Users</a>
+      <a href="{% url 'approvals' %}" class="{% if request.resolver_match.url_name == 'approvals' %}active{% endif %}">Approvals</a>
+      <a href="{% url 'project_tracking' %}" class="{% if request.resolver_match.url_name == 'project_tracking' %}active{% endif %}">Projects</a>
+      <a href="{% url 'submissions' %}" class="{% if request.resolver_match.url_name == 'submissions' %}active{% endif %}">Submissions</a>
+      <a href="{% url 'gallery' %}" class="{% if request.resolver_match.url_name == 'gallery' %}active{% endif %}">Gallery</a>
+      <a href="{% url 'profile' %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="admin-profile">
+        <img src="{% static 'images/admin_avatar.png' %}" alt="Admin Avatar">
+        <div class="admin-info">
+          <div class="name">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+          <div class="role">Administrator</div>
+        </div>
+      </div>
+      <a href="{% url 'login' %}" class="logout-btn">Logout</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="dashboard-header">
+      <h1>{% block header %}Dashboard{% endblock %}</h1>
+      <div class="page-subtitle">{% block subtitle %}Welcome, {{ request.user.first_name }}{% endblock %}</div>
+    </div>
+
+    {% block content %}
+    <!-- Page-specific content goes here -->
+    {% endblock %}
+  </main>
+
+</body>
+</html>
