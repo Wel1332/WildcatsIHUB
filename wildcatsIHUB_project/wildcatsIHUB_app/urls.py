@@ -19,5 +19,5 @@ urlpatterns = [
     path('submissions/', views.submissions, name='submissions'),
     path('gallery/', views.project_gallery, name='gallery'),
     path('profile/', views.profile_settings, name='profile'),
-
+     path('home/', views.project_gallery, name='home'),
 ]
