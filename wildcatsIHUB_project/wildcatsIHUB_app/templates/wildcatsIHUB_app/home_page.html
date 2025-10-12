@@ -7,6 +7,7 @@
     <title>ProjectGallery - Home</title>
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/home-header.css' %}">
 </head>
 <body>
     <!-- Floating Discord-style Elements -->
@@ -24,6 +25,9 @@
             <div class="floating-icon">🔥</div>
         </div>
     </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay"></div>
 
     <!-- Top Header Bar -->
     <header class="top-header">
@@ -117,11 +121,20 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="content-header">
-                <h1>Home</h1>
+            <main class="main-content">
+            <div class="content-header hero-section">
+                <div class="header-title-container">
+                    <div class="header-text-content">
+                        <h1>Showcase Student Projects</h1>
+                        <p class="header-subtitle">
+                            Discover innovative student systems, explore their features,
+                            and access each project directly through GitHub.
+                        </p>
+                    </div>
+                    <img src="{% static 'imgs/img-slider-1.png' %}" alt="Home Image" class="home-header-image">
+                </div>
             </div>
+    
 
             <!-- Search Bar -->
             <div class="search-projects">
@@ -284,77 +297,6 @@
             </div>
         </main>
     </div>
-
-    <script>
-        // Add interactivity
-        const menuToggle = document.querySelector('.menu-toggle');
-        const sidebar = document.querySelector('.sidebar');
-        
-        menuToggle?.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
-
-        // Smooth animations on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.feed-item, .action-card').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(el);
-        });
-
-        // Enhanced hover effects for buttons
-        document.querySelectorAll('.action-card, .new-btn, .filter-btn, .star-btn').forEach(button => {
-            button.addEventListener('mouseenter', function(e) {
-                const rect = this.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const ripple = document.createElement('span');
-                ripple.style.cssText = `
-                    position: absolute;
-                    top: ${y}px;
-                    left: ${x}px;
-                    width: 0;
-                    height: 0;
-                    border-radius: 50%;
-                    background: rgba(30, 92, 255, 0.1);
-                    transform: translate(-50%, -50%);
-                    animation: ripple 0.6s ease-out;
-                `;
-                
-                this.style.position = 'relative';
-                this.style.overflow = 'hidden';
-                this.appendChild(ripple);
-                
-                setTimeout(() => ripple.remove(), 600);
-            });
-        });
-
-        // Search functionality
-        const searchUsersInput = document.querySelector('.search-users-input');
-        searchUsersInput?.addEventListener('focus', function() {
-            this.parentElement.style.boxShadow = '0 0 0 3px rgba(30, 92, 255, 0.2), 0 8px 24px rgba(0, 0, 0, 0.15)';
-            this.parentElement.style.transform = 'translateY(-2px)';
-        });
-        
-        searchUsersInput?.addEventListener('blur', function() {
-            this.parentElement.style.boxShadow = '';
-            this.parentElement.style.transform = '';
-        });
-    </script>
+    <script src="{% static 'css/wildcatsIHUB/home.js' %}"></script>
 </body>
 </html>
