@@ -5,13 +5,15 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from datetime import date
 from django.shortcuts import get_object_or_404 
 import json
-
+from .forms import StudentLoginForm  # Import your custom form
 
 def login_view(request):
-    form = AuthenticationForm(request, data=request.POST or None)
-    if request.method == "POST" and form.is_valid():
-        login(request, form.get_user())
-        return redirect('/')
+    # Use your custom StudentLoginForm instead of AuthenticationForm
+    form = StudentLoginForm(request, data=request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            login(request, form.get_user())
+            return redirect('/')  # or your dashboard URL
     return render(request, 'wildcatsIHUB_app/login.html', {'form': form})
 
 def view_project(request, project_id):

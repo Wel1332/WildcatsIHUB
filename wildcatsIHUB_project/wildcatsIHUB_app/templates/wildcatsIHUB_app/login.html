@@ -21,41 +21,382 @@
     <h4 class="mb-2">Welcome Back</h4>
     <p class="text-muted mb-4">Sign in to your student account</p>
 
-    <form method="post" novalidate>
+    <!-- Display non-field errors - Improved styling -->
+    {% if form.non_field_errors %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert" id="authErrorAlert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <div>
+                    <strong class="me-2">Authentication Failed</strong>
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+
+    <form method="post" novalidate id="loginForm">
         {% csrf_token %}
 
         <div class="mb-3 text-start">
             <label for="id_username" class="form-label">Email</label>
-            <input type="text"
-                   name="username"
-                   id="id_username"
-                   class="form-control"
-                   placeholder="your.email@university.edu"
-                   value="{{ form.username.value|default:'' }}">
-            {% for error in form.username.errors %}
-                <small class="text-danger">{{ error }}</small>
-            {% endfor %}
+            <div class="input-group">
+                <input type="email"
+                       name="username"
+                       id="id_username"
+                       class="form-control {% if form.username.errors or form.non_field_errors %}is-invalid{% endif %}"
+                       placeholder="your.email@cit.edu"
+                       value="{{ form.username.value|default:'' }}"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top">
+                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+            </div>
+            <div class="email-validation text-muted mt-1" id="emailValidation">
+                Must be a valid university email address (.edu domain)
+            </div>
+            {% if form.username.errors %}
+                <div class="invalid-feedback d-block django-field-error" id="emailError">
+                    {% for error in form.username.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
-        <div class="mb-3 text-start">
+        <div class="mb-3 text-start password-container">
             <label for="id_password" class="form-label">Password</label>
-            <input type="password"
-                   name="password"
-                   id="id_password"
-                   class="form-control"
-                   placeholder="••••••••">
-            {% for error in form.password.errors %}
-                <small class="text-danger">{{ error }}</small>
-            {% endfor %}
+            <div class="input-group">
+                <input type="password"
+                       name="password"
+                       id="id_password"
+                       class="form-control {% if form.password.errors or form.non_field_errors %}is-invalid{% endif %}"
+                       placeholder="••••••••"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top">
+                <span class="input-group-text toggle-password" id="togglePassword">
+                    <i class="far fa-eye"></i>
+                </span>
+            </div>
+            
+            <!-- Password Strength Indicator -->
+            <div class="password-strength" id="passwordStrength">
+                <div class="password-strength-meter">
+                    <div class="password-strength-meter-fill"></div>
+                </div>
+                <div class="password-strength-text text-muted" id="passwordStrengthText">
+                    Password strength: None
+                </div>
+            </div>
+            
+            <!-- Password Requirements -->
+            <div class="password-requirements mt-2" id="passwordRequirements">
+                <small>Password must contain:</small>
+                <ul class="mb-1">
+                    <li class="requirement-unmet" id="reqLength">At least 8 characters</li>
+                    <li class="requirement-unmet" id="reqUppercase">One uppercase letter</li>
+                    <li class="requirement-unmet" id="reqLowercase">One lowercase letter</li>
+                    <li class="requirement-unmet" id="reqNumber">One number</li>
+                    <li class="requirement-unmet" id="reqSpecial">One special character</li>
+                </ul>
+            </div>
+            
+            {% if form.password.errors %}
+                <div class="invalid-feedback d-block django-field-error" id="passwordError">
+                    {% for error in form.password.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
-        <button type="submit" class="btn btn-primary w-100"><a href="{% url 'dashboard' %}">Sign In</a></button>
+        <div class="forgot-password mb-3">
+            <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+                <i class="fas fa-key me-1"></i>Forgot Password?
+            </a>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+            <i class="fas fa-sign-in-alt me-2"></i>Sign In
+        </button>
     </form>
 
     <p class="footer-link">
-        Don’t have an account? <a href="{% url 'signup' %}">Create Account</a>
+        Don't have an account? <a href="{% url 'signup' %}">Create Account</a>
     </p>
 </div>
 
+<!-- Forgot Password Modal -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="forgotPasswordModalLabel">Reset Your Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Enter your student email address and we'll send you a link to reset your password.</p>
+                <form id="forgotPasswordForm">
+                    <div class="mb-3">
+                        <label for="resetEmail" class="form-label">Student Email</label>
+                        <input type="email" class="form-control" id="resetEmail" 
+                               placeholder="your.email@cit.edu"
+                               data-bs-toggle="tooltip" data-bs-placement="top">
+                        <div class="form-text">Must be your university email address (.edu domain)</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="sendResetLink">
+                    <i class="fas fa-paper-plane me-2"></i>Send Reset Link
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Initialize Bootstrap tooltips and alerts
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+            trigger: 'manual'
+        });
+    });
+
+    // Auto-dismiss alert after 5 seconds
+    const alertElement = document.querySelector('.alert');
+    if (alertElement) {
+        setTimeout(() => {
+            const alert = new bootstrap.Alert(alertElement);
+            alert.close();
+        }, 5000);
+    }
+
+    // Password visibility toggle
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordInput = document.getElementById('id_password');
+        const icon = this.querySelector('i');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+
+    // Function to clear ALL error states
+    function clearAllErrors() {
+        // Remove red borders from both fields
+        document.getElementById('id_username').classList.remove('is-invalid');
+        document.getElementById('id_password').classList.remove('is-invalid');
+        
+        // Hide all Django field error messages
+        const djangoErrors = document.querySelectorAll('.django-field-error');
+        djangoErrors.forEach(error => {
+            error.style.display = 'none';
+        });
+        
+        // Hide all invalid-feedback messages
+        const allErrors = document.querySelectorAll('.invalid-feedback');
+        allErrors.forEach(error => {
+            error.style.display = 'none';
+        });
+        
+        // Hide authentication error alert
+        const authAlert = document.getElementById('authErrorAlert');
+        if (authAlert) {
+            authAlert.style.display = 'none';
+        }
+    }
+
+    // Email validation for .edu domains
+    document.getElementById('id_username').addEventListener('input', function() {
+        const email = this.value;
+        const validationText = document.getElementById('emailValidation');
+        const emailInput = this;
+        
+        // Clear all error states immediately
+        clearAllErrors();
+        
+        // Check if it's a valid student email (ends with .edu)
+        const studentEmailPattern = /\.edu$/i;
+        const isStudentEmail = studentEmailPattern.test(email);
+        
+        if (email && !isStudentEmail) {
+            validationText.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please use a valid .edu email address';
+            validationText.className = 'email-validation text-warning';
+            
+            // Update tooltip
+            const tooltip = bootstrap.Tooltip.getInstance(emailInput);
+            tooltip.setContent({'.tooltip-inner': 'Email must end with .edu domain'});
+            emailInput.classList.add('is-invalid');
+            emailInput.classList.remove('is-valid');
+        } else if (email && isStudentEmail) {
+            validationText.innerHTML = '<i class="fas fa-check-circle"></i> Valid university email';
+            validationText.className = 'email-validation text-success';
+            
+            // Clear tooltip and invalid state
+            const tooltip = bootstrap.Tooltip.getInstance(emailInput);
+            tooltip.hide();
+            emailInput.classList.remove('is-invalid');
+            emailInput.classList.add('is-valid');
+        } else {
+            validationText.innerHTML = 'Must be a valid university email address (.edu domain)';
+            validationText.className = 'email-validation text-muted';
+            emailInput.classList.remove('is-invalid', 'is-valid');
+        }
+    });
+
+    // Password field input handler
+    document.getElementById('id_password').addEventListener('input', function() {
+        const password = this.value;
+        const strengthElement = document.getElementById('passwordStrength');
+        const requirementsElement = document.getElementById('passwordRequirements');
+        
+        // Clear all error states immediately
+        clearAllErrors();
+        
+        if (password.length > 0) {
+            // Show the strength indicator and requirements
+            strengthElement.classList.add('visible');
+            requirementsElement.classList.add('visible');
+            updatePasswordStrength(password);
+        } else {
+            // Hide the strength indicator and requirements
+            strengthElement.classList.remove('visible');
+            requirementsElement.classList.remove('visible');
+            resetRequirements();
+        }
+    });
+
+    function updatePasswordStrength(password) {
+        const strengthElement = document.getElementById('passwordStrength');
+        const strengthText = document.getElementById('passwordStrengthText');
+        
+        // Check requirements
+        const hasMinLength = password.length >= 8;
+        const hasUppercase = /[A-Z]/.test(password);
+        const hasLowercase = /[a-z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+        
+        // Update requirement indicators
+        updateRequirement('reqLength', hasMinLength);
+        updateRequirement('reqUppercase', hasUppercase);
+        updateRequirement('reqLowercase', hasLowercase);
+        updateRequirement('reqNumber', hasNumber);
+        updateRequirement('reqSpecial', hasSpecial);
+        
+        // Calculate strength score
+        let strength = 0;
+        if (hasMinLength) strength++;
+        if (hasUppercase) strength++;
+        if (hasLowercase) strength++;
+        if (hasNumber) strength++;
+        if (hasSpecial) strength++;
+        
+        // Update strength indicator
+        strengthElement.className = 'password-strength visible';
+        if (password.length === 0) {
+            strengthText.textContent = 'Password strength: None';
+            strengthText.className = 'password-strength-text text-muted';
+        } else if (strength <= 2) {
+            strengthElement.classList.add('weak');
+            strengthText.textContent = 'Password strength: Weak';
+            strengthText.className = 'password-strength-text text-danger';
+        } else if (strength <= 3) {
+            strengthElement.classList.add('fair');
+            strengthText.textContent = 'Password strength: Fair';
+            strengthText.className = 'password-strength-text text-warning';
+        } else if (strength <= 4) {
+            strengthElement.classList.add('strong');
+            strengthText.textContent = 'Password strength: Strong';
+            strengthText.className = 'password-strength-text text-success';
+        } else {
+            strengthElement.classList.add('very-strong');
+            strengthText.textContent = 'Password strength: Very Strong';
+            strengthText.className = 'password-strength-text text-success';
+        }
+    }
+
+    function updateRequirement(elementId, isMet) {
+        const element = document.getElementById(elementId);
+        if (isMet) {
+            element.className = 'requirement-met';
+        } else {
+            element.className = 'requirement-unmet';
+        }
+    }
+
+    function resetRequirements() {
+        // Reset all requirements to unmet state
+        document.querySelectorAll('.password-requirements li').forEach(li => {
+            li.className = 'requirement-unmet';
+        });
+    }
+
+    // Forgot password form submission
+    document.getElementById('sendResetLink').addEventListener('click', function() {
+        const email = document.getElementById('resetEmail').value;
+        const emailInput = document.getElementById('resetEmail');
+        const studentEmailPattern = /\.edu$/i;
+        
+        if (!email) {
+            const tooltip = bootstrap.Tooltip.getInstance(emailInput);
+            tooltip.setContent({'.tooltip-inner': 'Please enter your email address'});
+            tooltip.show();
+            return;
+        }
+        
+        if (!studentEmailPattern.test(email)) {
+            const tooltip = bootstrap.Tooltip.getInstance(emailInput);
+            tooltip.setContent({'.tooltip-inner': 'Please enter a valid .edu email address'});
+            tooltip.show();
+            return;
+        }
+        
+        // Show success message
+        alert(`Password reset link has been sent to ${email}`);
+        const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+        modal.hide();
+        
+        // Clear form
+        document.getElementById('resetEmail').value = '';
+    });
+
+    // Form submission loading state
+    document.getElementById('loginForm').addEventListener('submit', function() {
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Signing In...';
+        submitBtn.disabled = true;
+    });
+
+    // Clear tooltip on focus
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('focus', function() {
+            const tooltip = bootstrap.Tooltip.getInstance(this);
+            if (tooltip) {
+                tooltip.hide();
+            }
+        });
+    });
+
+    // Validate email on page load if there's already a value
+    document.addEventListener('DOMContentLoaded', function() {
+        const emailInput = document.getElementById('id_username');
+        if (emailInput.value) {
+            emailInput.dispatchEvent(new Event('input'));
+        }
+    });
+</script>
 </body>
 </html>
