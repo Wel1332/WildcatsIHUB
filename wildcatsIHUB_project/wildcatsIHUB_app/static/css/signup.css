@@ -3,10 +3,15 @@ body, html {
     font-family: 'Montserrat', sans-serif;
     background: #e6ecfa;
     display: flex;
-    justify-content: center; /* horizontal center */
-    align-items: center;     /* vertical center */
-    min-height: 100vh; 
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
 
+.container {
+    width: 100%;
+    max-width: 550px;
+    padding: 20px;
 }
 
 .brand {
@@ -24,16 +29,16 @@ body, html {
 
 .card {
     background: #fff;
-    padding: 45px 35px;
-    width: 500px;
+    padding: 45px 40px;
     border-radius: 14px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     text-align: center;
+    width: 100%;
 }
 
 .card h2 {
     margin: 0;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
 }
 
@@ -43,58 +48,61 @@ body, html {
     margin: 8px 0 25px;
 }
 
-/* Form fields */
 .field {
     display: flex;
     flex-direction: column;
     text-align: left;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
 .field label {
     font-size: 14px;
     font-weight: 600;
     color: #333;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .field input,
 .field select {
-    padding: 12px 14px;
+    padding: 14px 16px;
     border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
+    border-radius: 8px;
+    font-size: 15px;
     outline: none;
     transition: border .2s;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .field input:focus,
 .field select:focus {
     border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* Row for first/last name */
 .row {
     display: flex;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 15px;
+    margin-bottom: 20px;
 }
+
 .row .field {
     flex: 1;
     margin-bottom: 0;
 }
 
-/* Button */
 .btn {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     background: #2563eb;
     color: #fff;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
     transition: background .2s;
+    font-size: 16px;
+    margin-top: 10px;
 }
 
 .btn:hover {
@@ -102,7 +110,7 @@ body, html {
 }
 
 .footer {
-    margin-top: 20px;
+    margin-top: 25px;
     font-size: 14px;
     color: #555;
 }
@@ -110,8 +118,123 @@ body, html {
 .footer a {
     color: #2563eb;
     text-decoration: none;
+    font-weight: 600;
 }
 
 .footer a:hover {
     text-decoration: underline;
+}
+
+.password-hint {
+    position: relative;
+    display: inline-block;
+}
+
+.password-hint-trigger {
+    color: #6c757d;
+    cursor: help;
+    margin-left: 5px;
+}
+
+.tooltip-inner {
+    max-width: 300px;
+    text-align: left;
+}
+
+.validation-message {
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+.validation-message.show {
+    display: block;
+}
+
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 27px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    z-index: 3;
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+
+.form-control {
+    padding-right: 35px;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    padding-right: 50px;
+}
+
+.form-control.is-valid {
+    border-color: #198754;
+    padding-right: 50px;
+}
+
+
+/* Password strength indicator */
+.password-strength {
+    margin-top: 8px;
+    display: none;
+}
+
+.password-strength.visible {
+    display: block;
+}
+
+.password-strength-meter {
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.password-strength-meter-fill {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.password-strength.weak .password-strength-meter-fill {
+    width: 25%;
+    background: #dc3545;
+}
+
+.password-strength.fair .password-strength-meter-fill {
+    width: 50%;
+    background: #fd7e14;
+}
+
+.password-strength.strong .password-strength-meter-fill {
+    width: 75%;
+    background: #198754;
+}
+
+.password-strength.very-strong .password-strength-meter-fill {
+    width: 100%;
+    background: #198754;
+}
+
+.password-strength-text {
+    font-size: 0.75rem;
+    text-align: left;
 }
