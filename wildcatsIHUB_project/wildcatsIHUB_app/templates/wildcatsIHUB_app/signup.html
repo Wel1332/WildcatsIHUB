@@ -14,6 +14,30 @@
         <h1 class="brand">Wildcats' iHub</h1>
         <p class="subtitle">Join the Student Community</p>
 
+        <!-- SUCCESS MESSAGE WITH RESEND BUTTON -->
+        {% if success_message %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle me-2"></i>
+                <div>
+                    <strong>Success!</strong> {{ success_message }}
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            
+            <!-- RESEND BUTTON - INSIDE THE SUCCESS ALERT -->
+            <div class="mt-2">
+                <form method="post" action="{% url 'resend_verification' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="email" value="{{ request.POST.email }}">
+                    <button type="submit" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-redo me-1"></i>Resend Verification Email
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
         {% if form.errors %}
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             <div class="d-flex align-items-center">
@@ -36,9 +60,33 @@
         </div>
         {% endif %}
 
+        <!-- ERROR DISPLAY SECTION -->
+        {% if error %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <div>
+                    <strong>Registration Error:</strong> {{ error }}
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+
         <div class="card">
             <h2>Create Account</h2>
             <p class="description">Join the platform to showcase your projects</p>
+
+            <!-- EMAIL VERIFICATION NOTICE -->
+            <div class="alert alert-light border mb-3">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-envelope text-primary me-2"></i>
+                    <small>
+                        <strong>Email Verification Required:</strong> 
+                        You will receive a verification email to activate your account.
+                    </small>
+                </div>
+            </div>
 
             <form method="post" id="signupForm">
                 {% csrf_token %}
@@ -46,25 +94,27 @@
                 <div class="row">
                     <div class="field">
                         <label for="first_name">First Name</label>
-                        <input id="first_name" type="text" name="first_name" class="form-control" required>
+                        <input id="first_name" type="text" name="first_name" class="form-control" required value="{{ request.POST.first_name|default:'' }}">
                         <div class="validation-message text-danger" id="firstNameError">
                             <i class="fas fa-exclamation-circle"></i> Only letters and spaces allowed
                         </div>
                     </div>
                     <div class="field">
                         <label for="last_name">Last Name</label>
-                        <input id="last_name" type="text" name="last_name" class="form-control" required>
+                        <input id="last_name" type="text" name="last_name" class="form-control" required value="{{ request.POST.last_name|default:'' }}">
                         <div class="validation-message text-danger" id="lastNameError">
                             <i class="fas fa-exclamation-circle"></i> Only letters and spaces allowed
                         </div>
                     </div>
                 </div>
 
-                <div class="field">
+               <div class="field">
                     <label for="student_id">Student ID</label>
-                    <input id="student_id" type="text" name="student_id" class="form-control" required>
+                    <input id="student_id" type="text" name="student_id" class="form-control" required 
+                        placeholder="00-0000-000" 
+                        value="{{ request.POST.student_id|default:'' }}">
                     <div class="validation-message text-danger" id="studentIdError">
-                        <i class="fas fa-exclamation-circle"></i> Only letters and numbers allowed
+                        <i class="fas fa-exclamation-circle"></i> Format must be: 00-0000-000 (e.g., 23-1234-567)
                     </div>
                 </div>
 
@@ -72,8 +122,8 @@
                     <label for="department">Department</label>
                     <select id="department" name="department" class="form-control" required>
                         <option value="">Select your department</option>
-                        <option value="Computer Science">Computer Science</option>
-                        <option value="Information Technology">Information Technology</option>
+                        <option value="Computer Science" {% if request.POST.department == "Computer Science" %}selected{% endif %}>Computer Science</option>
+                        <option value="Information Technology" {% if request.POST.department == "Information Technology" %}selected{% endif %}>Information Technology</option>
                     </select>
                 </div>
 
@@ -81,16 +131,16 @@
                     <label for="year_level">Year Level</label>
                     <select id="year_level" name="year_level" class="form-control" required>
                         <option value="">Select year level</option>
-                        <option value="1st Year">1st Year</option>
-                        <option value="2nd Year">2nd Year</option>
-                        <option value="3rd Year">3rd Year</option>
-                        <option value="4th Year">4th Year</option>
+                        <option value="1st Year" {% if request.POST.year_level == "1st Year" %}selected{% endif %}>1st Year</option>
+                        <option value="2nd Year" {% if request.POST.year_level == "2nd Year" %}selected{% endif %}>2nd Year</option>
+                        <option value="3rd Year" {% if request.POST.year_level == "3rd Year" %}selected{% endif %}>3rd Year</option>
+                        <option value="4th Year" {% if request.POST.year_level == "4th Year" %}selected{% endif %}>4th Year</option>
                     </select>
                 </div>
 
                 <div class="field">
                     <label for="email">University Email</label>
-                    <input id="email" type="email" name="email" class="form-control" required>
+                    <input id="email" type="email" name="email" class="form-control" required value="{{ request.POST.email|default:'' }}">
                     <div class="validation-message text-danger" id="emailError">
                         <i class="fas fa-exclamation-circle"></i> Must be a valid .edu email address
                     </div>
@@ -130,7 +180,9 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn" id="submitBtn">Create Account</button>
+                <button type="submit" class="btn" id="submitBtn">
+                    <i class="fas fa-user-plus me-2"></i>Create Account
+                </button>
             </form>
 
             <p class="footer">

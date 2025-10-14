@@ -66,13 +66,14 @@ document.getElementById('last_name').addEventListener('blur', function() {
     validateName('last_name', 'lastNameError');
 });
 
-// Student ID validation
+// Student ID validation - Format: 00-0000-000
 document.getElementById('student_id').addEventListener('blur', function() {
     const input = this;
     const error = document.getElementById('studentIdError');
-    const idPattern = /^[A-Za-z0-9]*$/;
+    const idPattern = /^\d{2}-\d{4}-\d{3}$/; // Format: 00-0000-000
     
     if (input.value && !idPattern.test(input.value)) {
+        error.textContent = '❌ Format must be: 00-0000-000 (e.g., 23-1234-567)';
         error.classList.add('show');
         input.classList.add('is-invalid');
         input.classList.remove('is-valid');
@@ -84,6 +85,27 @@ document.getElementById('student_id').addEventListener('blur', function() {
         error.classList.remove('show');
         input.classList.remove('is-invalid', 'is-valid');
     }
+});
+
+// Real-time formatting for Student ID
+document.getElementById('student_id').addEventListener('input', function(e) {
+    const input = e.target;
+    let value = input.value.replace(/\D/g, ''); // Remove non-digits
+    
+    // Format as 00-0000-000
+    if (value.length > 2) {
+        value = value.substring(0, 2) + '-' + value.substring(2);
+    }
+    if (value.length > 7) {
+        value = value.substring(0, 7) + '-' + value.substring(7);
+    }
+    
+    // Limit to 11 characters (00-0000-000)
+    if (value.length > 11) {
+        value = value.substring(0, 11);
+    }
+    
+    input.value = value;
 });
 
 // Email validation for .edu domains
@@ -176,15 +198,16 @@ document.getElementById('signupForm').addEventListener('submit', function(e) {
     const firstNameValid = validateName('first_name', 'firstNameError');
     const lastNameValid = validateName('last_name', 'lastNameError');
     
-    const studentId = document.getElementById('student_id');
-    const studentIdPattern = /^[A-Za-z0-9]+$/;
-    const studentIdValid = studentId.value && studentIdPattern.test(studentId.value);
-    if (!studentIdValid && studentId.value) {
-        document.getElementById('studentIdError').classList.add('show');
-        studentId.classList.add('is-invalid');
-        isValid = false;
-    }
-    
+  
+        const studentId = document.getElementById('student_id');
+        const studentIdPattern = /^\d{2}-\d{4}-\d{3}$/; // New pattern
+        const studentIdValid = studentId.value && studentIdPattern.test(studentId.value);
+        if (!studentIdValid && studentId.value) {
+            document.getElementById('studentIdError').classList.add('show');
+            studentId.classList.add('is-invalid');
+            isValid = false;
+        }
+            
     const email = document.getElementById('email');
     const studentEmailPattern = /\.edu$/i;
     const emailValid = email.value && studentEmailPattern.test(email.value);
