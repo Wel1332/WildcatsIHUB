@@ -34,8 +34,8 @@
                 <h1>Showcase Your Student<br>Projects to the World</h1>
                 <p>The ultimate platform for IT and CS students to display their innovations, connect with peers, and inspire the next generation of developers.</p>
                 <div class="hero-buttons">
-                    <a href="{% url 'signup' %}" class="btn-primary">Join the Community</a>
-                    <a href="#" class="btn-secondary">Explore Projects</a>
+                    <a href="{% url 'login' %}" class="btn-primary">Join the Community</a>
+                    <a href="{% url 'signup' %}" class="btn-secondary">Explore Projects</a>
                 </div>
             </div>
         </section>
@@ -161,7 +161,7 @@
                     </div>
                 </div>
                 <div class="explore-all">
-                    <a href="#" class="btn-explore">
+                    <a href="{% url 'signup' %}" class="btn-explore">
                         Explore All Projects <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -172,7 +172,7 @@
             <div class="container">
                 <h2>Ready to Share Your Innovation?</h2>
                 <p>Join hundreds of students already showcasing their projects and building their digital portfolios.</p>
-                <a href="{% url 'login' %}" class="btn-primary">Create Your Account</a>
+                <a href="{% url 'signup' %}" class="btn-primary">Create Your Account</a>
             </div>
         </section>
 
@@ -187,7 +187,7 @@
                         </div>
                         <p>Empowering student innovation through technology showcase. Built by students, for students.</p>
                         <div class="footer-socials">
-                            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                            <a href="https://github.com/sophie546/WildcatsIHUB.git" class="social-icon"><i class="fab fa-github"></i></a>
                             <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
                             <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
                         </div>

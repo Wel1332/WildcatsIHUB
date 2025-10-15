@@ -1,19 +1,28 @@
 {% extends 'wildcatsIHUB_app/base_admin.html' %}
 {% block title %}Gallery{% endblock %}
-
-{% block header %}Gallery{% endblock %}
-
-{% block subtitle %}View submitted project images{% endblock %}
 {% block content %}
 
+<div class="projects-section">
+    <div class="section-header">
+        <h2>Gallery</h2>
+        <p>View uploaded images.</p>
+    </div>
 
-<div class="cards-row">
-  {% for image in gallery %}
-  <div class="project-card fade-in-up">
-    <img src="{{ image.url }}" alt="{{ image.title }}" style="border-radius:10px;width:100%;height:auto;">
-    <h4>{{ image.title }}</h4>
-    <p>{{ image.description|truncatewords:12 }}</p>
-  </div>
-  {% endfor %}
+    <div class="dashboard-content">
+        {% for image in gallery_images %}
+        <div class="project-item">
+            <div class="project-header">
+                <h3>{{ image.title }}</h3>
+            </div>
+            <img src="{{ image.url }}" alt="{{ image.title }}" style="width:100%; border-radius:12px;">
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <h3>No images found</h3>
+            <p>The gallery will populate once users upload content.</p>
+        </div>
+        {% endfor %}
+    </div>
 </div>
+
 {% endblock %}

@@ -366,43 +366,23 @@ def dashboard(request):
     return render(request, "wildcatsIHUB_app/dashboard.html", {"projects": projects, "stats": stats})
 
 def admin_dashboard(request):
+    projects = Project.objects.all()
+    for project in projects:
+        project.badge_class = 'active' if project.status == 'Active' else 'completed'
     context = {
-        "total_users": 1234,
-        "pending_approvals": 23,
-        "approved_projects": 456,
-        "active_projects": 89,
-        "project_data": json.dumps([45, 52, 47, 61, 54, 67]),
-        "months": json.dumps(["Jan", "Feb", "Mar", "Apr", "May", "Jun"]),
+        'projects': projects,
     }
-    return render(request, "wildcatsIHUB_app/admin_dashboard.html", context)
 
+    return render(request, "wildcatsIHUB_app/admin_dashboard.html", {
+    })
 
-def user_management(request):
-    users = [
-        {"name": "John Doe", "email": "john@example.com", "role": "User", "status": "Active", "projects": 5, "joined": "2024-01-15"},
-        {"name": "Jane Smith", "email": "jane@example.com", "role": "User", "status": "Pending", "projects": 0, "joined": "2024-03-20"},
-        {"name": "Mike Johnson", "email": "mike@example.com", "role": "Admin", "status": "Active", "projects": 12, "joined": "2023-11-05"},
+# --- Approvals ---
+def approvals(request):
+    pending_projects = [
+        {"title": "New Game", "category": "Game Development", "submitted_by": "Alice", "submitted_at": date(2025, 10, 10)},
+        {"title": "Weather App", "category": "Web", "submitted_by": "Bob", "submitted_at": date(2025, 10, 12)},
     ]
-    return render(request, "wildcatsIHUB_app/user_management.html", {"users": users})
-
-
-def approval_system(request):
-    projects = [
-        {"title": "E-commerce Platform Redesign", "category": "Web Development", "author": "John Doe", "date": "2024-03-15", "desc": "A complete redesign with modern UI/UX principles"},
-        {"title": "Mobile Banking App", "category": "Mobile App", "author": "Jane Smith", "date": "2024-03-14", "desc": "Secure banking app with biometric authentication"},
-        {"title": "AI-Powered Analytics Dashboard", "category": "Data Science", "author": "Mike Johnson", "date": "2024-03-13", "desc": "AI-driven analytics dashboard"},
-    ]
-    return render(request, "wildcatsIHUB_app/approvals.html", {"projects": projects})
-
-
-def project_tracking(request):
-    projects = [
-        {"title": "E-commerce Platform", "owner": "John Doe", "category": "Web Development", "status": "Approved", "progress": 75, "updated": "2024-03-10"},
-        {"title": "Mobile Banking App", "owner": "Jane Smith", "category": "Mobile App", "status": "Pending", "progress": 30, "updated": "2024-03-12"},
-        {"title": "Analytics Dashboard", "owner": "Mike Johnson", "category": "Data Science", "status": "Approved", "progress": 90, "updated": "2024-03-14"},
-    ]
-    return render(request, "wildcatsIHUB_app/project_tracking.html", {"projects": projects})
-
+    return render(request, "wildcatsIHUB_app/approvals.html", {"pending_projects": pending_projects})
 
 def submissions(request):
     submissions = [
@@ -413,21 +393,33 @@ def submissions(request):
     stats = {"total": 234, "approved": 189, "rejected": 22, "pending": 23}
     return render(request, "wildcatsIHUB_app/submissions.html", {"submissions": submissions, "stats": stats})
 
-
-def project_gallery(request):
-    gallery = [
-        {"title": "E-commerce Platform", "author": "John Doe", "category": "Web Development", "likes": 124, "comments": 23, "views": 1543},
-        {"title": "Mobile Banking App", "author": "Jane Smith", "category": "Mobile App", "likes": 98, "comments": 15, "views": 987},
-        {"title": "Analytics Dashboard", "author": "Mike Johnson", "category": "Data Science", "likes": 156, "comments": 31, "views": 2134},
+# --- Users ---
+def user_management(request):
+    users = [
+        {"username": "Alice", "email": "alice@example.com", "role": "Admin", "status": "Active"},
+        {"username": "Bob", "email": "bob@example.com", "role": "Staff", "status": "Inactive"},
+        {"username": "Charlie", "email": "charlie@example.com", "role": "Staff", "status": "Active"},
     ]
-    return render(request, "wildcatsIHUB_app/gallery.html", {"gallery": gallery})
+    return render(request, "wildcatsIHUB_app/user_management.html", {"users": users})
 
+# --- Project Tracking ---
+def project_tracking(request):
+    projects = [
+        {"title": "AI Chatbot", "category": "AI / NLP", "status": "Completed", "submitted_by": "Alice", "submitted_at": date(2025,9,28)},
+        {"title": "Game Project", "category": "Game Development", "status": "Active", "submitted_by": "Bob", "submitted_at": date(2025,9,19)},
+    ]
+    return render(request, "wildcatsIHUB_app/project_tracking.html", {"projects": projects})
 
-def profile_settings(request):
-    profile = {
-        "first_name": "Admin",
-        "last_name": "User",
-        "email": "admin@example.com",
-        "bio": "",
-    }
-    return render(request, "wildcatsIHUB_app/admin_profile.html", {"profile": profile})
+# --- Gallery ---
+def gallery(request):
+    projects = [
+        {"title": "Portfolio Website", "image": "project_screenshots/portfolio.png"},
+        {"title": "Weather App", "image": "project_screenshots/weather.png"},
+    ]
+    return render(request, "wildcatsIHUB_app/gallery.html", {"projects": projects})
+
+# --- Profile ---
+def admin_profile(request):
+    user = {"username": "AdminUser", "email": "admin@example.com", "role": "Admin"}
+    return render(request, "wildcatsIHUB_app/admin_profile.html", {"user": user})
+
