@@ -1,37 +1,34 @@
 {% extends 'wildcatsIHUB_app/base_admin.html' %}
 {% block title %}Project Tracking{% endblock %}
-
-{% block header %}Project Tracking{% endblock %}
-
-{% block subtitle %}Monitor ongoing projects{% endblock %}
 {% block content %}
 
+<div class="projects-section">
+    <div class="section-header">
+        <h2>All Projects</h2>
+        <p>Track progress of all projects.</p>
+    </div>
 
-<div class="card fade-in-up">
-  <div class="card-header" style="margin-bottom:1rem;">
-    <input type="text" placeholder="Search projects..." class="search-input">
-  </div>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Project Name</th>
-        <th>Owner</th>
-        <th>Status</th>
-        <th>Deadline</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for project in projects %}
-      <tr>
-        <td>{{ project.title }}</td>
-        <td>{{ project.owner.username }}</td>
-        <td>
-          <span class="badge {{ project.status }}">{{ project.status }}</span>
-        </td>
-        <td>{{ project.deadline }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    {% for project in projects %}
+    <div class="project-item">
+        <div class="project-header">
+            <h3>{{ project.name }}</h3>
+            <div class="project-status">
+                <span class="status-badge">
+                    {{ project.status }}
+                </span>
+            </div>
+        </div>
+        <div class="project-description">{{ project.description }}</div>
+        <div class="project-actions">
+            <button class="btn btn-primary">View</button>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <h3>No projects found</h3>
+        <p>Projects will appear here once added.</p>
+    </div>
+    {% endfor %}
 </div>
+
 {% endblock %}

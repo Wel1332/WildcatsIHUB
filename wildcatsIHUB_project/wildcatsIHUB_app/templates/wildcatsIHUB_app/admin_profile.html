@@ -1,43 +1,36 @@
 {% extends 'wildcatsIHUB_app/base_admin.html' %}
 {% block title %}Profile{% endblock %}
-
-{% block header %}Profile{% endblock %}
-
-{% block subtitle %}Manage your account{% endblock %}
-
 {% block content %}
-<div class="profile-container">
-    <!-- Profile Card -->
-    <div class="profile-card slide-left">
-        <div class="profile-avatar">
-            <img  alt="Avatar">
-        </div>
-        <h3 class="profile-name">{{ request.user.first_name }} {{ request.user.last_name }}</h3>
-        <p class="profile-email">{{ request.user.email }}</p>
-        
-        <div class="profile-actions">
-            <a  class="btn-primary">Edit Profile</a>
-            <a  class="btn-outline">Change Password</a>
-        </div>
-    </div>
 
-    <!-- Stats Section -->
-    <div class="profile-stats-grid slide-right">
-        <div class="stat-card">
-            <div class="icon">📁</div>
-            <h4>{{ total_projects }}</h4>
-            <p>Total Projects</p>
+<div class="welcome-header">
+    <div class="welcome-text">
+        <h1>Profile</h1>
+        <p class="subtitle">Manage your account details.</p>
+    </div>
+    <div class="user-info">
+        <div class="user-avatar">
+            <img  alt="Admin Avatar">
         </div>
-        <div class="stat-card">
-            <div class="icon">✅</div>
-            <h4>{{ approved_projects }}</h4>
-            <p>Approved</p>
-        </div>
-        <div class="stat-card">
-            <div class="icon">⏳</div>
-            <h4>{{ pending_projects }}</h4>
-            <p>Pending</p>
+        <div class="user-details">
+            <span class="user-name">{{ user.username }}</span>
+            <span class="user-role">{{ user.role }}</span>
         </div>
     </div>
 </div>
+
+<div class="projects-section">
+    <div class="section-header">
+        <h2>Account Information</h2>
+    </div>
+
+    <div class="project-item">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Role:</strong> {{ user.role }}</p>
+        <div class="project-actions">
+            <button class="btn btn-primary">Edit Profile</button>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
