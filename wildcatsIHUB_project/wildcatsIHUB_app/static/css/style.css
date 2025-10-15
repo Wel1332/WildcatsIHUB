@@ -246,6 +246,20 @@ input, textarea, select {
     transition: transform 0.1s ease;
 }
 
+.cancel-btn {
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.cancel-btn:hover {
+    transform: translateY(-3px);
+}
+
+
 /* Theme switcher structure */
 .theme-switcher {
     position: fixed;
