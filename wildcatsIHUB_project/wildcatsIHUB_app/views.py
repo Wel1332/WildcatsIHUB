@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Project
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.decorators import user_passes_test
 from datetime import date
 from django.shortcuts import get_object_or_404 
 import json
@@ -140,7 +141,13 @@ def login_view(request):
                 # 3. Login the user to Django (bypass Django auth)
                 django_user.backend = 'django.contrib.auth.backends.ModelBackend'
                 login(request, django_user)
-                return redirect('home')
+
+                if django_user.is_staff or django_user.is_superuser:
+                    # Redirect to your custom admin dashboard view
+                    return redirect('admin_dashboard') 
+                else:
+                    # Regular user redirects to the home view
+                    return redirect('home')
                 
         except Exception as e:
             error_msg = str(e)
@@ -365,6 +372,14 @@ def dashboard(request):
 
     return render(request, "wildcatsIHUB_app/dashboard.html", {"projects": projects, "stats": stats})
 
+def is_admin_or_staff(user):
+    """
+    Checks if the user is authenticated and has staff or superuser privileges.
+    This defines who is allowed in the custom admin dashboard area.
+    """
+    return user.is_active and (user.is_staff or user.is_superuser)
+
+@user_passes_test(is_admin_or_staff, login_url='/login/')
 def admin_dashboard(request):
     projects = Project.objects.all()
     for project in projects:
@@ -376,7 +391,7 @@ def admin_dashboard(request):
     return render(request, "wildcatsIHUB_app/admin_dashboard.html", {
     })
 
-# --- Approvals ---
+@user_passes_test(is_admin_or_staff, login_url='/login/')
 def approvals(request):
     pending_projects = [
         {"title": "New Game", "category": "Game Development", "submitted_by": "Alice", "submitted_at": date(2025, 10, 10)},
@@ -384,6 +399,7 @@ def approvals(request):
     ]
     return render(request, "wildcatsIHUB_app/approvals.html", {"pending_projects": pending_projects})
 
+@user_passes_test(is_admin_or_staff, login_url='/login/')
 def submissions(request):
     submissions = [
         {"title": "E-commerce Platform Redesign", "status": "Approved", "author": "John Doe", "date": "2024-03-15", "category": "Web Development", "files": 12, "desc": "Modern UI/UX redesign"},
@@ -393,7 +409,7 @@ def submissions(request):
     stats = {"total": 234, "approved": 189, "rejected": 22, "pending": 23}
     return render(request, "wildcatsIHUB_app/submissions.html", {"submissions": submissions, "stats": stats})
 
-# --- Users ---
+@user_passes_test(is_admin_or_staff, login_url='/login/')
 def user_management(request):
     users = [
         {"username": "Alice", "email": "alice@example.com", "role": "Admin", "status": "Active"},
@@ -402,7 +418,7 @@ def user_management(request):
     ]
     return render(request, "wildcatsIHUB_app/user_management.html", {"users": users})
 
-# --- Project Tracking ---
+@user_passes_test(is_admin_or_staff, login_url='/login/')
 def project_tracking(request):
     projects = [
         {"title": "AI Chatbot", "category": "AI / NLP", "status": "Completed", "submitted_by": "Alice", "submitted_at": date(2025,9,28)},
@@ -410,7 +426,7 @@ def project_tracking(request):
     ]
     return render(request, "wildcatsIHUB_app/project_tracking.html", {"projects": projects})
 
-# --- Gallery ---
+@user_passes_test(is_admin_or_staff, login_url='/login/')
 def gallery(request):
     projects = [
         {"title": "Portfolio Website", "image": "project_screenshots/portfolio.png"},
@@ -418,7 +434,7 @@ def gallery(request):
     ]
     return render(request, "wildcatsIHUB_app/gallery.html", {"projects": projects})
 
-# --- Profile ---
+@user_passes_test(is_admin_or_staff, login_url='/login/')
 def admin_profile(request):
     user = {"username": "AdminUser", "email": "admin@example.com", "role": "Admin"}
     return render(request, "wildcatsIHUB_app/admin_profile.html", {"user": user})
