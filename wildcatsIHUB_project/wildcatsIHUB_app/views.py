@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from .models import Project
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from datetime import date
@@ -10,11 +9,12 @@ from django.db import IntegrityError
 from django.contrib import messages
 from supabase import create_client
 import os
-from .models import UserProfile
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from .models import Project, UserProfile
 
 
 def resend_verification(request):
@@ -268,22 +268,27 @@ def home(request):
     projects = Project.objects.all()
     return render(request, 'wildcatsIHUB_app/home.html', {'projects': projects})
 
+@login_required
 def submit_project(request):
     if request.method == "POST":
         title = request.POST.get("title")
         description = request.POST.get("description")
         category = request.POST.get("category")
-        other_category = request.POST.get("other_category")  # <-- add this
+        other_category = request.POST.get("other_category")
         github_url = request.POST.get("github_url")
         live_demo = request.POST.get("live_demo")
         video_demo = request.POST.get("video_demo")
         tech_used = request.POST.get("tech_used")
         screenshot = request.FILES.get("screenshot")
 
-        # Use 'other_category' if 'category' is 'other'
+    
         if category == "other" and other_category:
             category = other_category
 
+
+        user_profile = UserProfile.objects.get(user=request.user)
+
+    
         Project.objects.create(
             title=title,
             description=description,
@@ -292,7 +297,8 @@ def submit_project(request):
             live_demo=live_demo,
             video_demo=video_demo,
             tech_used=tech_used,
-            screenshot=screenshot
+            screenshot=screenshot,
+            author=user_profile 
         )
 
         return redirect('user_profile')
