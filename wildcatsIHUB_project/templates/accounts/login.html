@@ -22,8 +22,21 @@
     <p class="text-muted mb-4">Sign in to your student account</p>
 
     <!-- Display Django Messages -->
-    {% if messages %}
-        {% for message in messages %}
+
+{% if messages %}
+    {% for message in messages %}
+        {% if 'success' in message.tags %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <div>
+                        <strong class="me-2">Success!</strong>
+                        {{ message }}
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% else %}
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <div class="d-flex align-items-center">
                     <i class="fas fa-exclamation-circle me-2"></i>
@@ -34,8 +47,9 @@
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        {% endfor %}
-    {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
 
     <form method="post" novalidate id="loginForm">
         {% csrf_token %}
@@ -244,7 +258,7 @@
         }
     });
 
-// Forgot password form submission
+// Forgot password form submission - Fixed version
 document.getElementById('sendResetLink').addEventListener('click', function() {
     const email = document.getElementById('resetEmail').value.trim();
     const emailInput = document.getElementById('resetEmail');
@@ -284,22 +298,27 @@ document.getElementById('sendResetLink').addEventListener('click', function() {
     sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
     sendBtn.disabled = true;
     
-    // Send reset password email via Supabase
-    console.log("Sending reset request for:", email);
-    fetch('/forgot-password/', {
+    // Get CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    // Enhanced fetch with better error handling
+    fetch('{% url "forgot_password" %}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            'X-CSRFToken': csrfToken
         },
         body: JSON.stringify({ email: email })
     })
     .then(response => {
         console.log("Response status:", response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         return response.json();
     })
     .then(data => {
-        console.log("Response data:", data);
+        console.log("Password reset response:", data);
         
         // Ensure tooltip exists
         let tooltip = bootstrap.Tooltip.getInstance(emailInput);
@@ -314,34 +333,51 @@ document.getElementById('sendResetLink').addEventListener('click', function() {
             // Show success
             emailInput.classList.remove('is-invalid');
             emailInput.classList.add('is-valid');
-            tooltip.setContent({'.tooltip-inner': '✅ Password reset link sent!'});
+            tooltip.setContent({'.tooltip-inner': '✅ ' + data.message});
             tooltip.show();
             
+            // Close modal after success
             setTimeout(() => {
                 const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
-                modal.hide();
+                if (modal) {
+                    modal.hide();
+                }
+                
+                // Reset form
                 document.getElementById('resetEmail').value = '';
                 emailInput.classList.remove('is-valid');
                 tooltip.hide();
-            }, 2000);
+                
+                // Show success message
+                alert('📧 ' + data.message + '\n\nPlease check your Outlook student email (including spam folder).');
+            }, 3000);
         } else {
-            // Show specific error based on backend response
+            // Enhanced error handling
             emailInput.classList.add('is-invalid');
             
-            let errorMessage = data.error;
-            if (data.error.includes('not found') || data.error.includes('No account')) {
-                errorMessage = 'No account found with this email. Please sign up first.';
-            } else if (data.error.includes('valid .edu')) {
-                errorMessage = 'Please use a valid .edu email address';
-            } else if (data.error.includes('required')) {
-                errorMessage = 'Email address is required';
-            } else if (data.error.includes('verify')) {
-                errorMessage = 'Please verify your email address first';
-            } else if (data.error.includes('not allowed')) {
-                errorMessage = 'Cannot reset password. Please verify your email first.';
+            let errorMessage = data.error || 'Unknown error occurred';
+            
+            // Map specific backend errors to user-friendly messages
+            const errorMap = {
+                'not found': 'No student account found with this email. Please sign up first.',
+                'no account': 'No student account found with this email. Please sign up first.',
+                'valid .edu': 'Please use a valid .edu email address',
+                'required': 'Email address is required',
+                'verify': 'Please verify your email address first. Check your inbox/spam for verification link.',
+                'not allowed': 'Cannot reset password. Please verify your email first.',
+                'rate limit': 'Too many attempts. Please wait 5 minutes and try again.',
+                'email delivery': 'Email service temporarily unavailable. Please try again in 2 minutes.',
+                'system error': 'System error. Please try again.'
+            };
+            
+            for (const [key, message] of Object.entries(errorMap)) {
+                if (data.error.toLowerCase().includes(key.toLowerCase())) {
+                    errorMessage = message;
+                    break;
+                }
             }
             
-            tooltip.setContent({'.tooltip-inner': `❌ ${errorMessage}`});
+            tooltip.setContent({'.tooltip-inner': '❌ ' + errorMessage});
             tooltip.show();
             
             // Auto-hide tooltip after 5 seconds
@@ -351,8 +387,9 @@ document.getElementById('sendResetLink').addEventListener('click', function() {
         }
     })
     .catch(error => {
-        console.error('Fetch error:', error);
+        console.error('Password reset error:', error);
         emailInput.classList.add('is-invalid');
+        
         let tooltip = bootstrap.Tooltip.getInstance(emailInput);
         if (!tooltip) {
             tooltip = new bootstrap.Tooltip(emailInput, {
@@ -360,7 +397,13 @@ document.getElementById('sendResetLink').addEventListener('click', function() {
                 placement: 'top'
             });
         }
-        tooltip.setContent({'.tooltip-inner': '❌ Failed to send reset link. Please try again.'});
+        
+        let errorMessage = 'Network error. Please check your connection and try again.';
+        if (error.message.includes('Failed to fetch')) {
+            errorMessage = 'Network connection failed. Please check your internet connection.';
+        }
+        
+        tooltip.setContent({'.tooltip-inner': '❌ ' + errorMessage});
         tooltip.show();
     })
     .finally(() => {
@@ -368,6 +411,7 @@ document.getElementById('sendResetLink').addEventListener('click', function() {
         sendBtn.disabled = false;
     });
 });
+
 
 // Real-time email validation for forgot password
 document.getElementById('resetEmail').addEventListener('input', function() {
