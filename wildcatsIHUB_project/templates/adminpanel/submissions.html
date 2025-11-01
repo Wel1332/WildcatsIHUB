@@ -1,0 +1,22 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% block title %}Submissions{% endblock %}
+
+{% block header %}Submissions{% endblock %}
+
+{% block subtitle %}All student submissions{% endblock %}
+{% block content %}
+
+
+<div class="cards-row">
+  {% for submission in submissions %}
+  <div class="project-card fade-in-up">
+    <div class="project-header">
+      <h3>{{ submission.project.title }}</h3>
+      <span class="tag">{{ submission.status }}</span>
+    </div>
+    <p>{{ submission.notes|truncatewords:15 }}</p>
+    <a href="{{ submission.file.url }}" class="btn-outline">Download</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

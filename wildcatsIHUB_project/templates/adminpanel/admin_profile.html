@@ -1,0 +1,36 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+
+<div class="welcome-header">
+    <div class="welcome-text">
+        <h1>Profile</h1>
+        <p class="subtitle">Manage your account details.</p>
+    </div>
+    <div class="user-info">
+        <div class="user-avatar">
+            <img  alt="Admin Avatar">
+        </div>
+        <div class="user-details">
+            <span class="user-name">{{ user.username }}</span>
+            <span class="user-role">{{ user.role }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="projects-section">
+    <div class="section-header">
+        <h2>Account Information</h2>
+    </div>
+
+    <div class="project-item">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Role:</strong> {{ user.role }}</p>
+        <div class="project-actions">
+            <button class="btn btn-primary">Edit Profile</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
