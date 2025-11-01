@@ -996,7 +996,13 @@ def login_view(request):
                 # 3. Login the user to Django (bypass Django auth)
                 django_user.backend = 'django.contrib.auth.backends.ModelBackend'
                 login(request, django_user)
-                return redirect('home')
+
+                if django_user.is_staff or django_user.is_superuser:
+                    # Redirect to your custom admin dashboard view
+                    return redirect('admin_dashboard') 
+                else:
+                    # Regular user redirects to the home view
+                    return redirect('home')
                 
         except Exception as e:
             error_msg = str(e)
