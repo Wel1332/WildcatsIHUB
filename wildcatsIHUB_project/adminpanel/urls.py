@@ -7,5 +7,5 @@ urlpatterns = [
     path('approvals/', views.approvals, name='approvals'),
     path('project-tracking/', views.project_tracking, name='project_tracking'),
     path('submissions/', views.submissions, name='submissions'),
-    path('profile/', views.admin_profile, name='profile'),
+    path('profile/', views.admin_profile, name='admin_profile'),  # NOT 'profile'
 ]

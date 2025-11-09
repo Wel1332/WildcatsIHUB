@@ -133,15 +133,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-
-
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
  
 # Static files (CSS, JavaScript, Images)
@@ -151,3 +142,13 @@ STATICFILES_DIRS = [
     BASE_DIR / "wildcatsIHUB_app/static",  # ADDED - looks in app static
     BASE_DIR / "static",                   # KEEP - looks in project static
 ]
+
+# Media files (Uploaded images, files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
