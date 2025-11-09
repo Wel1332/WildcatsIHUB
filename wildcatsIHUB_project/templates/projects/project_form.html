@@ -8,106 +8,118 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/light-mode.css' %}">
     <link rel="stylesheet" href="{% static 'css/dark-mode.css' %}">
-     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
        
-        <div class="theme-switcher">
-            <input type="checkbox" id="theme-toggle" class="theme-toggle">
-            <label for="theme-toggle" class="theme-label">
-                <span class="theme-icon sun">☀️</span>
-                <span class="theme-icon moon">🌙</span>
-                <span class="theme-ball"></span>
-            </label>
-        </div>
-    
+    <div class="theme-switcher">
+        <input type="checkbox" id="theme-toggle" class="theme-toggle">
+        <label for="theme-toggle" class="theme-label">
+            <span class="theme-icon sun">☀️</span>
+            <span class="theme-icon moon">🌙</span>
+            <span class="theme-ball"></span>
+        </label>
+    </div>
+
     <div class="container">
         <div class="form-card">
             <h2 class="form-title">Submit Your Project</h2>
             <p class="form-subtitle">Share your innovation with the Wildcats community</p>
 
+            <!-- Display Messages -->
+            {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 
+                <!-- Hidden field to track where form was submitted from -->
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
            
                 <div class="form-section">
                     <label for="project-title" class="required">Project Title</label>
-                    <input type="text" id="project-title" name="title" placeholder="Enter your project title" required>
+                    <input type="text" id="project-title" name="title" placeholder="Enter your project title" required value="{{ request.POST.title }}">
                 </div>
 
-               
                 <div class="form-section">
                     <label for="project-description" class="required">Project Description</label>
-                    <textarea id="project-description" name="description" placeholder="Describe your project, its purpose, features, and impact..." rows="4" required></textarea>
+                    <textarea id="project-description" name="description" placeholder="Describe your project, its purpose, features, and impact..." rows="4" required>{{ request.POST.description }}</textarea>
                 </div>
 
                 <div class="form-section">
                     <label for="category" class="required">Category</label>
                     <select id="category" name="category" required>
                         <option value="">Select project category</option>
-                        <option value="web">Web Development</option>
-                        <option value="mobile">Mobile App</option>
-                        <option value="ai">AI/ML</option>
-                        <option value="other">Other</option>
+                        <option value="web" {% if request.POST.category == 'web' %}selected{% endif %}>Web Development</option>
+                        <option value="mobile" {% if request.POST.category == 'mobile' %}selected{% endif %}>Mobile App</option>
+                        <option value="ai" {% if request.POST.category == 'ai' %}selected{% endif %}>AI/ML</option>
+                        <option value="data" {% if request.POST.category == 'data' %}selected{% endif %}>Data Science</option>
+                        <option value="game" {% if request.POST.category == 'game' %}selected{% endif %}>Game Development</option>
+                        <option value="iot" {% if request.POST.category == 'iot' %}selected{% endif %}>IoT</option>
+                        <option value="other" {% if request.POST.category == 'other' %}selected{% endif %}>Other</option>
                     </select>
-                    <div id="other-category-container" class="category-other-input">
+                    <div id="other-category-container" class="category-other-input" 
+                         {% if request.POST.category == 'other' %}style="display: block;"{% else %}style="display: none;"{% endif %}>
                         <label for="other-category">Please specify:</label>
-                        <input type="text" id="other-category" name="other_category" placeholder="Enter your category">
+                        <input type="text" id="other-category" name="other_category" placeholder="Enter your category" value="{{ request.POST.other_category }}">
                     </div>
                 </div>
 
-              
                 <h3 class="section-title">Project Links</h3>
                 <div class="form-section">
                     <label for="github_url" class="required">GitHub Repository URL</label>
-                    <input type="url" id="github_url" name="github_url" placeholder="GitHub Repository URL" required>
+                    <input type="url" id="github_url" name="github_url" placeholder="https://github.com/username/repository" required value="{{ request.POST.github_url }}">
                     
                     <label for="live_demo">Live Demo URL (optional)</label>
-                    <input type="url" id="live_demo" name="live_demo" placeholder="Live Demo URL">
+                    <input type="url" id="live_demo" name="live_demo" placeholder="https://your-project-demo.com" value="{{ request.POST.live_demo }}">
                     
                     <label for="video_demo">Video Demo URL (optional)</label>
-                    <input type="url" id="video_demo" name="video_demo" placeholder="Video Demo URL (optional)">
+                    <input type="url" id="video_demo" name="video_demo" placeholder="https://youtube.com/your-video" value="{{ request.POST.video_demo }}">
                 </div>
 
-               
                 <h3 class="section-title">Technologies Used</h3>
                 <div class="form-section">
                     <label for="tech_used" class="required">Technologies Used</label>
-                    <input type="text" id="tech_used" name="tech_used" placeholder="Add technologies (e.g., HTML, React, Python)" required>
+                    <input type="text" id="tech_used" name="tech_used" placeholder="Python, Django, React, PostgreSQL, etc." required value="{{ request.POST.tech_used }}">
+                    <small class="form-help">Separate technologies with commas</small>
                 </div>
 
-               
                 <h3 class="section-title">Screenshots</h3>
                 <div class="form-section">
-                    <label for="screenshot" class="required">Screenshots</label>
+                    <label for="screenshot" class="required">Project Screenshot</label>
                     <div class="file-input-container">
                         <label for="screenshot" class="file-input-label">
                             <span>Choose File</span>
                         </label>
-                        <input type="file" id="screenshot" name="screenshot" class="file-input" required>
+                        <input type="file" id="screenshot" name="screenshot" class="file-input" accept="image/*" required>
                         <div class="file-name" id="file-name">No file chosen</div>
                     </div>
+                    <small class="form-help">Upload a screenshot of your project (PNG, JPG, JPEG)</small>
                 </div>
 
-                
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">Submit Project</button>
-                    <a href="{% url 'dashboard' %}" class="btn btn-secondary cancel-btn">Cancel</a>
+                    <a href="{% url 'profile' %}" class="btn btn-secondary cancel-btn">Cancel</a>
                 </div>
             </form>
         </div>
     </div>
-<script>
 
+<script>
 function toggleDarkMode() {
     document.body.classList.toggle("dark-mode");
     
-
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         themeToggle.checked = document.body.classList.contains("dark-mode");
     }
-
 
     if (document.body.classList.contains("dark-mode")) {
         localStorage.setItem("theme", "dark");
@@ -117,7 +129,7 @@ function toggleDarkMode() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-
+    // Theme initialization
     if (localStorage.getItem("theme") === "dark") {
         document.body.classList.add("dark-mode");
         const themeToggle = document.getElementById('theme-toggle');
@@ -126,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-
+    // Theme toggle
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         themeToggle.addEventListener('change', function() {
@@ -134,6 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // File input display
     const screenshotInput = document.getElementById('screenshot');
     if (screenshotInput) {
         screenshotInput.addEventListener('change', function(e) {
@@ -145,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-
+    // Category other field toggle
     const categorySelect = document.getElementById('category');
     if (categorySelect) {
         categorySelect.addEventListener('change', function(e) {
@@ -162,14 +175,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     const otherInput = otherContainer.querySelector('input');
                     if (otherInput) {
                         otherInput.required = false;
+                        otherInput.value = '';
                     }
                 }
             }
         });
     }
-    
 
+    // Fixed button hover effects - exclude cancel button
     document.querySelectorAll('.btn').forEach(button => {
+        // Skip cancel buttons from the hover effect
+        if (button.classList.contains('cancel-btn')) {
+            return;
+        }
+        
         button.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-3px)';
         });
@@ -180,8 +199,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Auto-hide messages after 5 seconds
+    const messages = document.querySelectorAll('.alert');
+    messages.forEach(message => {
+        setTimeout(() => {
+            message.style.opacity = '0';
+            setTimeout(() => {
+                message.remove();
+            }, 500);
+        }, 5000);
+    });
 });
 </script>
 </body>
-
 </html>
