@@ -41,8 +41,9 @@ html, body { height:100%; font-family:var(--font-primary); color:var(--text-colo
 .logo-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2rem;
+    justify-content: flex-start;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
 }
 .logo-icon { 
     width: 32px;
@@ -166,6 +167,7 @@ html, body { height:100%; font-family:var(--font-primary); color:var(--text-colo
     box-shadow: var(--shadow);
     margin-bottom:3rem;
     position: relative;
+
 }
 .welcome-header::before {
     content:''; position:absolute; top:0; left:0; width:6px; height:100%;
@@ -227,6 +229,76 @@ html, body { height:100%; font-family:var(--font-primary); color:var(--text-colo
 .project-item:hover { transform:translateX(8px); border-color: var(--primary-color); background:white; box-shadow:var(--shadow);}
 .project-item::before { content:''; position:absolute; left:0; top:0; height:100%; width:4px; background: var(--primary-color); transform:scaleY(0); transition: transform 0.3s ease; transform-origin: bottom; }
 .project-item:hover::before { transform:scaleY(1); }
+
+/* ------------------------------
+   Profile Form Styling (ADMIN_PROFILE.HTML)
+--------------------------------*/
+
+.projects-section form {
+    /* Ensures the form takes up the container width */
+    width: 100%;
+}
+
+.projects-section p {
+    /* Style the default <p> wrappers for form rows */
+    margin-bottom: 1.5rem;
+    padding: 0;
+    line-height: 1.5;
+}
+
+.projects-section p label {
+    /* Style the label */
+    display: block;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.projects-section input[type="text"],
+.projects-section input[type="email"],
+.projects-section input[type="password"],
+.projects-section select,
+.projects-section textarea {
+    /* Style the input fields */
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid #ced4da; /* Light border */
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--text-color);
+    background-color: var(--bg-card);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); /* Subtle inner shadow */
+}
+
+.projects-section input:focus,
+.projects-section select:focus,
+.projects-section textarea:focus {
+    /* Focus state */
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(30, 92, 255, 0.2); /* Light primary color glow */
+    outline: none;
+}
+
+.errorlist {
+    list-style: none;
+    padding: 0.5rem 0;
+    margin-top: 0.25rem;
+    color: #dc3545; /* Red error text */
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.projects-section hr {
+    margin: 2rem 0;
+    border: 0;
+    border-top: 1px solid #e8e8e8;
+}
+
+.project-actions {
+    margin-top: 2rem;
+}
 
 /* ------------------------------
    Responsive
@@ -293,4 +365,50 @@ html, body { height:100%; font-family:var(--font-primary); color:var(--text-colo
 .btn-disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+
+/* ------------------------------
+   Final Button Styles (NEW ADDITIONS)
+--------------------------------*/
+
+/* 1. Universal Button Target: Ensure Django <input type="submit"> inherits base style */
+/* This ensures all submit buttons in your forms look like buttons */
+.btn, input[type="submit"], button[type="submit"], .btn-primary, .btn-secondary, .btn-danger, .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    text-decoration: none;
+    box-sizing: border-box; /* Ensure padding doesn't affect width/height calculations */
+}
+
+/* 2. Define the secondary button style for 'Edit'/'Cancel' actions */
+.btn-secondary {
+    /* Uses a clean, neutral background from the light gray spectrum */
+    background: #e9ecef; 
+    color: var(--text-color); 
+    border: 1px solid #ced4da;
+    box-shadow: none; /* Remove primary shadow */
+}
+
+.btn-secondary:hover {
+    background: #dee2e6;
+    color: var(--text-color); 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 3. Re-apply base structure to inputs since we modified the universal selector */
+input[type="submit"], button[type="submit"] {
+    /* Needed to override browser default styling */
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
 }

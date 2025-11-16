@@ -1,0 +1,42 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% block title %}Edit User: {{ user_to_edit.username }}{% endblock %}
+{% block content %}
+
+<div class="welcome-header">
+    <h1>Edit User: {{ user_to_edit.username }}</h1>
+    <p class="subtitle">Modifying basic account and profile details.</p>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="projects-section">
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="project-item">
+            <div class="section-header">
+                <h2>Account Status & Details</h2>
+                <p>Standard Django user fields.</p>
+            </div>
+            {{ user_form.as_p }}
+
+            <hr>
+
+            <div class="section-header">
+                <h2>Student Profile Details</h2>
+            </div>
+            {{ profile_form.as_p }}
+
+            <div class="project-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{% url 'user_management' %}" class="btn btn-outline">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

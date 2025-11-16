@@ -15,7 +15,15 @@ class UserProfile(models.Model):
     ]
     
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    student_id = models.CharField(max_length=50, unique=True)
+    student_id = models.CharField(max_length=50, unique=True, blank=True, null=True)
+
+    avatar = models.ImageField(
+        upload_to='avatars/', 
+        default='avatars/default_profile.png',
+        blank=True,
+        null=True
+    )
+
     department = models.CharField(max_length=50, choices=DEPARTMENTS)
     year_level = models.CharField(max_length=20, choices=YEAR_LEVELS)
     

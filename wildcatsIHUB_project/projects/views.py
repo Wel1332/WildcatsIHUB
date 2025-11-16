@@ -104,8 +104,6 @@ def submit_project(request):
 
     return render(request, 'projects/project_form.html')
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 def gallery(request):
     """Project gallery view"""
     projects = Project.objects.all().select_related('author__user').order_by('-created_at')
@@ -195,7 +193,3 @@ def edit_project(request, project_id):
         'editing': True
     }
     return render(request, 'projects/project_form.html', context)
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes

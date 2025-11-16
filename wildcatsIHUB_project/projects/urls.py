@@ -7,12 +7,6 @@ urlpatterns = [
     path('project/<int:project_id>/', views.view_project, name='view_project'),
     path('edit_project/<int:project_id>/', views.edit_project, name='edit_project'),
     path('delete_project/<int:project_id>/', views.delete_project, name='delete_project'),
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     path('gallery/', views.gallery, name='gallery'),
     path('user-profile/', views.user_profile, name='userProfile'),
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 ]
