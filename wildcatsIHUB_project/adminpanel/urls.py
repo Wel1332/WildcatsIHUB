@@ -12,5 +12,8 @@ urlpatterns = [
 =======
     path('profile/', views.admin_profile, name='profile'),
     path('gallery/', views.gallery, name='gallery'),
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 ]
