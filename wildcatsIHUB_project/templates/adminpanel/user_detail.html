@@ -1,0 +1,36 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% block title %}User Detail: {{ user_to_view.username }}{% endblock %}
+{% block content %}
+
+<div class="welcome-header">
+    <h1>User Profile: {{ user_to_view.username }}</h1>
+    <p class="subtitle">Viewing read-only details.</p>
+</div>
+
+<div class="projects-section">
+    <div class="section-header">
+        <h2>Account Status</h2>
+        <a href="{% url 'user_edit' pk=user_to_view.pk %}" class="btn btn-secondary">Edit Account</a>
+    </div>
+
+    <div class="project-item">
+        <p><strong>Status:</strong> <span class="status-badge {% if user_to_view.is_active %}active{% else %}completed{% endif %}">
+            {% if user_to_view.is_active %}Active{% else %}Inactive{% endif %}
+        </span></p>
+        <p><strong>Role:</strong> {% if user_to_view.is_staff %}Staff{% else %}Regular User{% endif %}</p>
+    </div>
+
+    <div class="section-header">
+        <h2>Profile Details</h2>
+    </div>
+
+    <div class="project-item">
+        <p><strong>Full Name:</strong> {{ user_to_view.first_name }} {{ user_to_view.last_name }}</p>
+        <p><strong>Email:</strong> {{ user_to_view.email }}</p>
+        <p><strong>Student ID:</strong> {{ profile.student_id|default:"N/A" }}</p>
+        <p><strong>Department:</strong> {{ profile.department|default:"N/A" }}</p>
+        <p><strong>Year Level:</strong> {{ profile.year_level|default:"N/A" }}</p>
+    </div>
+</div>
+
+{% endblock %}
