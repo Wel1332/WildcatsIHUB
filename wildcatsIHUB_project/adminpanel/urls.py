@@ -7,5 +7,10 @@ urlpatterns = [
     path('approvals/', views.approvals, name='approvals'),
     path('project-tracking/', views.project_tracking, name='project_tracking'),
     path('submissions/', views.submissions, name='submissions'),
+<<<<<<< Updated upstream
     path('profile/', views.admin_profile, name='admin_profile'),  # NOT 'profile'
+=======
+    path('profile/', views.admin_profile, name='profile'),
+    path('gallery/', views.gallery, name='gallery'),
+>>>>>>> Stashed changes
 ]

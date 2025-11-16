@@ -15,6 +15,13 @@ def approvals(request):
     ]
     return render(request, "adminpanel/approvals.html", {"pending_projects": pending_projects})
 
+def gallery(request):
+    projects = [
+        {"title": "Portfolio Website", "image": "project_screenshots/portfolio.png"},
+        {"title": "Weather App", "image": "project_screenshots/weather.png"},
+    ]
+    return render(request, "adminpanel/gallery.html", {"projects": projects})
+
 def submissions(request):
     submissions = [
         {"title": "E-commerce Platform Redesign", "status": "Approved", "author": "John Doe", "date": "2024-03-15", "category": "Web Development", "files": 12, "desc": "Modern UI/UX redesign"},
