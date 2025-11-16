@@ -50,10 +50,10 @@
               <i class="fas fa-project-diagram"></i>
               <span class="link-text">Projects</span>
             </a>
-            <a href="{% url 'profile' %}" class="{% if request.path == '/profile/' %}active{% endif %}">
+           <a href="{% url 'admin_profile' %}" class="{% if request.path == '/admin-panel/profile/' %}active{% endif %}">
               <i class="fas fa-user"></i>
               <span class="link-text">Profile</span>
-            </a>
+          </a>
           </nav>
     
           <!-- Logout -->
