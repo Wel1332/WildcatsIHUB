@@ -15,6 +15,16 @@ class Project(models.Model):
     created_at = models.DateTimeField(auto_now_add=True) 
     views = models.PositiveIntegerField(default=0)
     likes = models.PositiveIntegerField(default=0)
+
+    STATUS_CHOICES = [
+        ('Active', 'Active'),
+        ('Completed', 'Completed'),
+        ('Pending', 'Pending'),
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending') 
+    # ---------------------------
+
+    author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     
     class Meta:
         ordering = ['-created_at']  

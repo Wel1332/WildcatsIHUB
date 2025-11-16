@@ -1,36 +1,61 @@
 {% extends 'adminpanel/base_admin.html' %}
+{% load static %}
 {% block title %}Profile{% endblock %}
+
 {% block content %}
 
 <div class="welcome-header">
     <div class="welcome-text">
         <h1>Profile</h1>
         <p class="subtitle">Manage your account details.</p>
-    </div>
-    <div class="user-info">
-        <div class="user-avatar">
-            <img  alt="Admin Avatar">
         </div>
-        <div class="user-details">
-            <span class="user-name">{{ user.username }}</span>
-            <span class="user-role">{{ user.role }}</span>
+            <div class="user-info">
+            <div class="user-avatar">
+                {# FIX: Add the src attribute to display the avatar #}
+                <img src="{% if user.userprofile.avatar %}{{ user.userprofile.avatar.url }}{% else %}{% static 'avatars/default_profile.png' %}{% endif %}" alt="{{ user.username }} Avatar">
+            </div>
+            <div class="user-details">
+                <span class="user-name">{{ user.first_name }} {{ user.last_name }}</span>
+                <span class="user-role">{% if user.is_staff %}Administrator{% else %}Staff{% endif %}</span>
+            </div>
         </div>
-    </div>
-</div>
-
-<div class="projects-section">
-    <div class="section-header">
-        <h2>Account Information</h2>
     </div>
 
-    <div class="project-item">
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        <p><strong>Role:</strong> {{ user.role }}</p>
-        <div class="project-actions">
-            <button class="btn btn-primary">Edit Profile</button>
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+            {% endfor %}
         </div>
-    </div>
-</div>
+    {% endif %}
+
+    <div class="projects-section">
+        <div class="section-header">
+            <h2>Account Information</h2>
+        </div>
+
+        <form method="post" action="{% url 'admin_profile' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="project-item">
+                
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Role:</strong> {% if user.is_staff %}Administrator{% else %}Staff{% endif %}</p>
+                
+                <hr>
+
+                {{ user_form.as_p }} 
+
+                <hr>
+
+                <h3>Personal Details</h3>
+                {{ profile_form.as_p }}
+
+                <div class="project-actions">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </form>
+        </div>
 
 {% endblock %}

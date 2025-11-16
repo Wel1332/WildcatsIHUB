@@ -11,16 +11,17 @@
     {% for project in projects %}
     <div class="project-item">
         <div class="project-header">
-            <h3>{{ project.name }}</h3>
+            <h3>{{ project.title }}</h3> 
             <div class="project-status">
-                <span class="status-badge">
+                <span class="status-badge"> 
                     {{ project.status }}
                 </span>
             </div>
         </div>
         <div class="project-description">{{ project.description }}</div>
+        <p><strong>Submitted by:</strong> {{ project.author.user.username }}</p> 
         <div class="project-actions">
-            <button class="btn btn-primary">View</button>
+            <a href="{% url 'project_detail' pk=project.pk %}" class="btn btn-primary">View</a>
         </div>
     </div>
     {% empty %}

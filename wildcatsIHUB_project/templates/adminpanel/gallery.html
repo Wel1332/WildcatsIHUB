@@ -9,12 +9,12 @@
     </div>
 
     <div class="dashboard-content">
-        {% for image in gallery_images %}
+        {% for project in projects %} 
         <div class="project-item">
             <div class="project-header">
-                <h3>{{ image.title }}</h3>
+                <h3>Project: {{ project.title }}</h3> 
             </div>
-            <img src="{{ image.url }}" alt="{{ image.title }}" style="width:100%; border-radius:12px;">
+            <img src="{{ project.screenshot.url }}" alt="{{ project.title }}" style="width:100%; border-radius:12px;"> 
         </div>
         {% empty %}
         <div class="empty-state">

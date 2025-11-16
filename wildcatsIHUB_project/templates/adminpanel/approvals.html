@@ -8,19 +8,31 @@
         <p>Manage user submissions here.</p>
     </div>
 
-    {% for approval in approvals %}
+    {% for project in pending_projects %} 
     <div class="project-item">
         <div class="project-header">
-            <h3>{{ approval.title }}</h3>
+            <h3>{{ project.title }}</h3>
             <div class="project-status">
-                <span class="status-badge active">Pending</span>
+                <span class="status-badge active">{{ project.status }}</span> 
             </div>
         </div>
-        <div class="project-description">{{ approval.description }}</div>
-        <div class="project-actions">
-            <button class="btn-primary">Approve</button>
-            <button class="btn-secondary">Reject</button>
-        </div>
+        <div class="project-description">{{ project.description }}</div>
+        <div class="project-actions" style="display: flex; gap: 10px;">
+            <div class="project-actions" style="display: flex; gap: 10px;">
+    
+                <form method="post" action="{% url 'approve_reject_project' pk=project.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="Approve">
+                    <button type="submit" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Approve</button>
+                </form>
+                
+                <form method="post" action="{% url 'approve_reject_project' pk=project.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="Reject">
+                    <button type="submit" class="btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Reject</button>
+                </form>
+            
+            </div>
     </div>
     {% empty %}
     <div class="empty-state">
