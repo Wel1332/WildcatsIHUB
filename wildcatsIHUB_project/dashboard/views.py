@@ -2,6 +2,7 @@ from django.shortcuts import render
 from datetime import date
 from projects.models import Project
 
+
 def user_profile(request):
     projects = Project.objects.all() 
     return render(request, 'dashboard/userProfile.html', {'projects': projects})

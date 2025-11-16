@@ -4,110 +4,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Your Project</title>
+    <title>{% if editing %}Edit Project{% else %}Submit Your Project{% endif %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/light-mode.css' %}">
     <link rel="stylesheet" href="{% static 'css/dark-mode.css' %}">
-     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
        
-        <div class="theme-switcher">
-            <input type="checkbox" id="theme-toggle" class="theme-toggle">
-            <label for="theme-toggle" class="theme-label">
-                <span class="theme-icon sun">☀️</span>
-                <span class="theme-icon moon">🌙</span>
-                <span class="theme-ball"></span>
-            </label>
-        </div>
-    
+    <div class="theme-switcher">
+        <input type="checkbox" id="theme-toggle" class="theme-toggle">
+        <label for="theme-toggle" class="theme-label">
+            <span class="theme-icon sun">☀️</span>
+            <span class="theme-icon moon">🌙</span>
+            <span class="theme-ball"></span>
+        </label>
+    </div>
+
     <div class="container">
         <div class="form-card">
-            <h2 class="form-title">Submit Your Project</h2>
-            <p class="form-subtitle">Share your innovation with the Wildcats community</p>
+            <h2 class="form-title">{% if editing %}Edit Project: {{ project.title }}{% else %}Submit Your Project{% endif %}</h2>
+            <p class="form-subtitle">
+                {% if editing %}Update your project details{% else %}Share your innovation with the Wildcats community{% endif %}
+            </p>
 
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 
+                <!-- Hidden field to track where form was submitted from -->
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
            
                 <div class="form-section">
                     <label for="project-title" class="required">Project Title</label>
-                    <input type="text" id="project-title" name="title" placeholder="Enter your project title" required>
+                    <input type="text" id="project-title" name="title" placeholder="Enter your project title" required 
+                           value="{% if editing %}{{ project.title }}{% else %}{{ request.POST.title }}{% endif %}">
                 </div>
 
-               
                 <div class="form-section">
                     <label for="project-description" class="required">Project Description</label>
-                    <textarea id="project-description" name="description" placeholder="Describe your project, its purpose, features, and impact..." rows="4" required></textarea>
+                    <textarea id="project-description" name="description" placeholder="Describe your project, its purpose, features, and impact..." rows="4" required>{% if editing %}{{ project.description }}{% else %}{{ request.POST.description }}{% endif %}</textarea>
                 </div>
 
                 <div class="form-section">
                     <label for="category" class="required">Category</label>
                     <select id="category" name="category" required>
                         <option value="">Select project category</option>
-                        <option value="web">Web Development</option>
-                        <option value="mobile">Mobile App</option>
-                        <option value="ai">AI/ML</option>
-                        <option value="other">Other</option>
+                        <option value="web" {% if editing and project.category == 'web' %}selected{% endif %}{% if not editing and request.POST.category == 'web' %}selected{% endif %}>Web Development</option>
+                        <option value="mobile" {% if editing and project.category == 'mobile' %}selected{% endif %}{% if not editing and request.POST.category == 'mobile' %}selected{% endif %}>Mobile App</option>
+                        <option value="ai" {% if editing and project.category == 'ai' %}selected{% endif %}{% if not editing and request.POST.category == 'ai' %}selected{% endif %}>AI/ML</option>
+                        <option value="data" {% if editing and project.category == 'data' %}selected{% endif %}{% if not editing and request.POST.category == 'data' %}selected{% endif %}>Data Science</option>
+                        <option value="game" {% if editing and project.category == 'game' %}selected{% endif %}{% if not editing and request.POST.category == 'game' %}selected{% endif %}>Game Development</option>
+                        <option value="iot" {% if editing and project.category == 'iot' %}selected{% endif %}{% if not editing and request.POST.category == 'iot' %}selected{% endif %}>IoT</option>
+                        <option value="other" {% if editing and project.category not in 'web,mobile,ai,data,game,iot' %}selected{% endif %}{% if not editing and request.POST.category == 'other' %}selected{% endif %}>Other</option>
                     </select>
-                    <div id="other-category-container" class="category-other-input">
+                    <div id="other-category-container" class="category-other-input" 
+                         {% if editing and project.category not in 'web,mobile,ai,data,game,iot' %}style="display: block;"{% elif not editing and request.POST.category == 'other' %}style="display: block;"{% else %}style="display: none;"{% endif %}>
                         <label for="other-category">Please specify:</label>
-                        <input type="text" id="other-category" name="other_category" placeholder="Enter your category">
+                        <input type="text" id="other-category" name="other_category" placeholder="Enter your category" 
+                               value="{% if editing and project.category not in 'web,mobile,ai,data,game,iot' %}{{ project.category }}{% else %}{{ request.POST.other_category }}{% endif %}">
                     </div>
                 </div>
 
-              
                 <h3 class="section-title">Project Links</h3>
                 <div class="form-section">
                     <label for="github_url" class="required">GitHub Repository URL</label>
-                    <input type="url" id="github_url" name="github_url" placeholder="GitHub Repository URL" required>
+                    <input type="url" id="github_url" name="github_url" placeholder="https://github.com/username/repository" required 
+                           value="{% if editing %}{{ project.github_url }}{% else %}{{ request.POST.github_url }}{% endif %}">
                     
-                    <label for="live_demo">Live Demo URL (optional)</label>
-                    <input type="url" id="live_demo" name="live_demo" placeholder="Live Demo URL">
-                    
-                    <label for="video_demo">Video Demo URL (optional)</label>
-                    <input type="url" id="video_demo" name="video_demo" placeholder="Video Demo URL (optional)">
+                   <label for="live_demo">Live Demo URL (optional)</label>
+                <input type="url" id="live_demo" name="live_demo" placeholder="https://your-project-demo.com" 
+                    value="{% if editing %}{% if project.live_demo %}{{ project.live_demo }}{% endif %}{% else %}{{ request.POST.live_demo }}{% endif %}">
+
+                <label for="video_demo">Video Demo URL (optional)</label>
+                <input type="url" id="video_demo" name="video_demo" placeholder="https://youtube.com/your-video" 
+                    value="{% if editing %}{% if project.video_demo %}{{ project.video_demo }}{% endif %}{% else %}{{ request.POST.video_demo }}{% endif %}">
                 </div>
 
-               
                 <h3 class="section-title">Technologies Used</h3>
                 <div class="form-section">
                     <label for="tech_used" class="required">Technologies Used</label>
-                    <input type="text" id="tech_used" name="tech_used" placeholder="Add technologies (e.g., HTML, React, Python)" required>
+                    <input type="text" id="tech_used" name="tech_used" placeholder="Python, Django, React, PostgreSQL, etc." required 
+                           value="{% if editing %}{{ project.tech_used }}{% else %}{{ request.POST.tech_used }}{% endif %}">
+                    <small class="form-help">Separate technologies with commas</small>
                 </div>
 
-               
                 <h3 class="section-title">Screenshots</h3>
                 <div class="form-section">
-                    <label for="screenshot" class="required">Screenshots</label>
+                    <label for="screenshot" class="{% if not editing %}required{% endif %}">Project Screenshot</label>
                     <div class="file-input-container">
                         <label for="screenshot" class="file-input-label">
                             <span>Choose File</span>
                         </label>
-                        <input type="file" id="screenshot" name="screenshot" class="file-input" required>
-                        <div class="file-name" id="file-name">No file chosen</div>
+                        <input type="file" id="screenshot" name="screenshot" class="file-input" accept="image/*" {% if not editing %}required{% endif %}>
+                        <div class="file-name" id="file-name">
+                            {% if editing and project.screenshot %}
+                                Current: {{ project.screenshot.name|slice:"21:" }}
+                            {% else %}
+                                No file chosen
+                            {% endif %}
+                        </div>
                     </div>
+                    <small class="form-help">
+                        {% if editing %}
+                            Upload a new screenshot to replace the current one (optional)
+                        {% else %}
+                            Upload a screenshot of your project (PNG, JPG, JPEG)
+                        {% endif %}
+                    </small>
                 </div>
 
-                
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Submit Project</button>
-                    <a href="{% url 'dashboard' %}" class="btn btn-secondary cancel-btn">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        {% if editing %}Update Project{% else %}Submit Project{% endif %}
+                    </button>
+                    <a href="{% if request.GET.next %}{{ request.GET.next }}{% elif editing %}{% url 'view_project' project.id %}{% else %}{% url 'userProfile' %}{% endif %}" class="btn btn-secondary cancel-btn">
+                        Cancel
+                    </a>
                 </div>
             </form>
         </div>
     </div>
-<script>
 
+<script>
 function toggleDarkMode() {
     document.body.classList.toggle("dark-mode");
     
-
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         themeToggle.checked = document.body.classList.contains("dark-mode");
     }
-
 
     if (document.body.classList.contains("dark-mode")) {
         localStorage.setItem("theme", "dark");
@@ -117,7 +142,7 @@ function toggleDarkMode() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-
+    // Theme initialization
     if (localStorage.getItem("theme") === "dark") {
         document.body.classList.add("dark-mode");
         const themeToggle = document.getElementById('theme-toggle');
@@ -126,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-
+    // Theme toggle
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         themeToggle.addEventListener('change', function() {
@@ -134,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // File input display
     const screenshotInput = document.getElementById('screenshot');
     if (screenshotInput) {
         screenshotInput.addEventListener('change', function(e) {
@@ -145,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-
+    // Category other field toggle
     const categorySelect = document.getElementById('category');
     if (categorySelect) {
         categorySelect.addEventListener('change', function(e) {
@@ -162,26 +188,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     const otherInput = otherContainer.querySelector('input');
                     if (otherInput) {
                         otherInput.required = false;
+                        otherInput.value = '';
                     }
                 }
             }
         });
-    }
-    
 
-    document.querySelectorAll('.btn').forEach(button => {
-        button.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-3px)';
-        });
-        
-        button.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('active')) {
-                this.style.transform = 'translateY(0)';
+        // Initialize other category field on page load
+        const otherContainer = document.getElementById('other-category-container');
+        if (otherContainer && categorySelect.value === 'other') {
+            otherContainer.style.display = 'block';
+            const otherInput = otherContainer.querySelector('input');
+            if (otherInput) {
+                otherInput.required = true;
             }
-        });
-    });
+        }
+    }
 });
 </script>
 </body>
-
 </html>
