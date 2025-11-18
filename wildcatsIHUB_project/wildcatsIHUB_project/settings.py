@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'adminpanel',
 ]
 
+
 MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.middleware.security.SecurityMiddleware',
