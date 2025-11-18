@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-cas^c1k)$=u+xqb^cjmb1!(aq1fo$yry$z0@%8*j$b+9a29yo*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['wildcatsihub.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['wildcatsihub-z029.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
