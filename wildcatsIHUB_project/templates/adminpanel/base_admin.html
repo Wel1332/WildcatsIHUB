@@ -6,57 +6,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wildcats' Hub Admin</title>
 
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <!-- CSS -->
     <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
 
-    <!-- Lucide Icons -->
-    <script type="module" src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body>
     <div class="admin-container">
 
-        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="logo-header">
                 <div class="logo-icon">&lt;&gt;</div>
                 <span class="logo-text">Wildcats' iHub</span>
-                <button id="collapse-btn" class="collapse-btn">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
             </div>
     
-          <!-- Navigation Links -->
           <nav class="nav-links">
-            <a href="{% url 'admin_dashboard' %}" class="{% if request.path == '/admin_dashboard/' %}active{% endif %}">
+            
+            <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
               <i class="fas fa-tachometer-alt"></i>
               <span class="link-text">Dashboard</span>
             </a>
-            <a href="{% url 'approvals' %}" class="{% if request.path == '/approvals/' %}active{% endif %}">
+            
+            <a href="{% url 'approvals' %}" class="{% if request.resolver_match.url_name == 'approvals' %}active{% endif %}">
               <i class="fas fa-check-circle"></i>
               <span class="link-text">Approvals</span>
             </a>
-            <a href="{% url 'gallery' %}" class="{% if request.path == '/gallery/' %}active{% endif %}">
+            
+            <a href="{% url 'gallery' %}" class="{% if request.resolver_match.url_name == 'gallery' %}active{% endif %}">
               <i class="fas fa-image"></i>
               <span class="link-text">Gallery</span>
             </a>
-            <a href="{% url 'user_management' %}" class="{% if request.path == '/user_management/' %}active{% endif %}">
+            
+            <a href="{% url 'user_management' %}" class="{% if request.resolver_match.url_name == 'user_management' %}active{% endif %}">
               <i class="fas fa-users"></i>
               <span class="link-text">Users</span>
             </a>
-            <a href="{% url 'project_tracking' %}" class="{% if request.path == '/project_tracking/' %}active{% endif %}">
+            
+            <a href="{% url 'project_tracking' %}" class="{% if request.resolver_match.url_name == 'project_tracking' %}active{% endif %}">
               <i class="fas fa-project-diagram"></i>
               <span class="link-text">Projects</span>
             </a>
-           <a href="{% url 'admin_profile' %}" class="{% if request.path == '/admin-panel/profile/' %}active{% endif %}">
+            
+            <a href="{% url 'admin_profile' %}" class="{% if request.resolver_match.url_name == 'admin_profile' %}active{% endif %}">
               <i class="fas fa-user"></i>
               <span class="link-text">Profile</span>
           </a>
           </nav>
     
-          <!-- Logout -->
           <a href="{% url 'login' %}" class="logout-btn">
             <i class="fa-solid fa-right-from-bracket"></i>
             <span class="link-text">Logout</span>
@@ -64,7 +63,6 @@
         </aside>
     
 
-        <!-- Main content -->
         <main class="main-content">
             {% block content %}
             {% endblock %}
@@ -72,7 +70,12 @@
 
     </div>
 
-    <!-- JS -->
+    <script>
+      if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+      }
+    </script>
+    
     <script src="{% static 'css/wildcatsIHUB/admin_dashboard.js' %}"></script>
 </body>
 </html>

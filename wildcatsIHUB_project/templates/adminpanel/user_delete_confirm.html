@@ -1,0 +1,31 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% block title %}Confirm Delete{% endblock %}
+{% block content %}
+
+<div class="welcome-header" style="background-color: #fce8e6; border-left: 6px solid #ff5252;">
+    <h1>Confirm Deletion</h1>
+    <p class="subtitle">You are about to permanently delete an account.</p>
+</div>
+
+<div class="projects-section">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="project-item" style="border-left: 4px solid #ff5252;">
+        <h2>User: {{ user_to_delete.username }}</h2>
+        <p><strong>This action is irreversible.</strong> All associated data (projects, profile) will be permanently lost. Are you absolutely sure you want to proceed?</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="project-actions" style="margin-top: 20px;">
+                <button type="submit" class="btn btn-danger">Yes, Delete This Account</button>
+                <a href="{% url 'user_management' %}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
