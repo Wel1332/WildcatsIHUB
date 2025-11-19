@@ -8,11 +8,58 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/userProfile.css' %}">
+    <style>
+        /* Back button icon only */
+        .back-to-home-wrapper {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+        }
+        
+        .back-btn {
+            background: transparent !important;
+            color: #000000 !important;
+            padding: 0 !important;
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 8px !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 18px !important;
+            border: none !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .back-btn:hover {
+            background: rgba(0, 0, 0, 0.05) !important;
+            transform: scale(1.1);
+        }
+        
+        .profile-header {
+            position: relative;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
     <div class="profile-container">
         <!-- Professional Header Section -->
         <div class="profile-header">
+            <!-- Back to Home Button - Top Left -->
+            <div class="back-to-home-wrapper">
+                <a href="{% url 'home' %}" class="back-btn" title="Back to Home">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </div>
+            
             <div class="header-background"></div>
             <div class="header-content">
                 <div class="user-avatar-section">
@@ -27,9 +74,11 @@
                 <div class="user-info-section">
                     <div class="user-main-info">
                         <h1 class="user-name" id="displayName">Sarah Chen</h1>
-                        <button class="edit-profile-btn" onclick="openEditModal()">
-                            <i class="fas fa-edit"></i> Edit Profile
-                        </button>
+                        <div class="header-buttons">
+                            <button class="edit-profile-btn" onclick="openEditModal()">
+                                <i class="fas fa-edit"></i> Edit Profile
+                            </button>
+                        </div>
                     </div>
                     <p class="user-title" id="displayTitle">Computer Science Major</p>
                     <div class="user-details">
@@ -155,6 +204,15 @@
                         <p id="displayInterests" class="content-text">No interests specified</p>
                     </div>
                 </div>
+
+                <!-- LOGOUT BUTTON - BOTTOM LEFT SIDE -->
+                <div class="info-card">
+                    <div class="card-content" style="text-align: center; padding: 20px;">
+                        <a href="{% url 'login' %}" class="logout-btn" style="background: #ef4444; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; border: 1px solid #ef4444; transition: all 0.3s ease; width: 100%; justify-content: center;">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <!-- Right Column -->
@@ -246,6 +304,8 @@
         </div>
     </div>
 </div>
+            </div>
+        </div>
 
     <!-- Edit Profile Modal -->
     <div class="modal-overlay" id="editModal">
