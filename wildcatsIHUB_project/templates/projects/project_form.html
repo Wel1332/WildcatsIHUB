@@ -48,14 +48,17 @@
                 <div class="form-section">
                     <label for="category" class="required">Category</label>
                     <select id="category" name="category" required>
-                        <option value="">Select project category</option>
-                        <option value="web" {% if editing and project.category == 'web' %}selected{% endif %}{% if not editing and request.POST.category == 'web' %}selected{% endif %}>Web Development</option>
-                        <option value="mobile" {% if editing and project.category == 'mobile' %}selected{% endif %}{% if not editing and request.POST.category == 'mobile' %}selected{% endif %}>Mobile App</option>
-                        <option value="ai" {% if editing and project.category == 'ai' %}selected{% endif %}{% if not editing and request.POST.category == 'ai' %}selected{% endif %}>AI/ML</option>
-                        <option value="data" {% if editing and project.category == 'data' %}selected{% endif %}{% if not editing and request.POST.category == 'data' %}selected{% endif %}>Data Science</option>
-                        <option value="game" {% if editing and project.category == 'game' %}selected{% endif %}{% if not editing and request.POST.category == 'game' %}selected{% endif %}>Game Development</option>
-                        <option value="iot" {% if editing and project.category == 'iot' %}selected{% endif %}{% if not editing and request.POST.category == 'iot' %}selected{% endif %}>IoT</option>
-                        <option value="other" {% if editing and project.category not in 'web,mobile,ai,data,game,iot' %}selected{% endif %}{% if not editing and request.POST.category == 'other' %}selected{% endif %}>Other</option>
+                      <option value="">Select project category</option>
+                                        <option value="web" {% if editing and project.category == 'web' %}selected{% endif %}{% if not editing and request.POST.category == 'web' %}selected{% endif %}>Web Development</option>
+                                        <option value="mobile" {% if editing and project.category == 'mobile' %}selected{% endif %}{% if not editing and request.POST.category == 'mobile' %}selected{% endif %}>Mobile Development</option>
+                                        <option value="desktop" {% if editing and project.category == 'desktop' %}selected{% endif %}{% if not editing and request.POST.category == 'desktop' %}selected{% endif %}>Desktop Application</option>
+                                        <option value="ai" {% if editing and project.category == 'ai' %}selected{% endif %}{% if not editing and request.POST.category == 'ai' %}selected{% endif %}>Artificial Intelligence</option>
+                                        <option value="data" {% if editing and project.category == 'data' %}selected{% endif %}{% if not editing and request.POST.category == 'data' %}selected{% endif %}>Data Science</option>
+                                        <option value="game" {% if editing and project.category == 'game' %}selected{% endif %}{% if not editing and request.POST.category == 'game' %}selected{% endif %}>Game Development</option>
+                                        <option value="ml" {% if editing and project.category == 'ml' %}selected{% endif %}{% if not editing and request.POST.category == 'ml' %}selected{% endif %}>Machine Learning</option>
+                                        <option value="iot" {% if editing and project.category == 'iot' %}selected{% endif %}{% if not editing and request.POST.category == 'iot' %}selected{% endif %}>Internet of Things</option>
+                                        <option value="cloud" {% if editing and project.category == 'cloud' %}selected{% endif %}{% if not editing and request.POST.category == 'cloud' %}selected{% endif %}>Cloud Computing</option>
+                                        <option value="other" {% if editing and project.category not in 'web,mobile,desktop,ai,data,game,ml,iot,cloud' %}selected{% endif %}{% if not editing and request.POST.category == 'other' %}selected{% endif %}>Other</option>
                     </select>
                     <div id="other-category-container" class="category-other-input" 
                          {% if editing and project.category not in 'web,mobile,ai,data,game,iot' %}style="display: block;"{% elif not editing and request.POST.category == 'other' %}style="display: block;"{% else %}style="display: none;"{% endif %}>

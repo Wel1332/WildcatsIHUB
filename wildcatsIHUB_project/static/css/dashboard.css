@@ -109,14 +109,29 @@ body {
     width: 100%;
 }
 
-.btn-primary {
-    background: var(--primary-color);
-    color: white !important;
+/* Base Button Styles */
+.btn-primary, .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 0.7rem 1.8rem;
     border-radius: 6px;
     text-decoration: none;
     font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
     transition: var(--transition);
+    font-family: var(--font-primary);
+    line-height: 1.4;
+    min-height: 44px;
+    box-sizing: border-box;
+}
+
+/* Primary Button Styles */
+.btn-primary {
+    background: var(--primary-color);
+    color: white !important;
     box-shadow: 0 4px 12px rgba(30, 92, 255, 0.2);
 }
 
@@ -124,6 +139,21 @@ body {
     background: var(--accent-color);
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(30, 92, 255, 0.35);
+}
+
+/* Secondary Button Styles */
+.btn-secondary {
+    background: white;
+    color: var(--primary-color) !important;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 2px 8px rgba(30, 92, 255, 0.1);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 92, 255, 0.2);
 }
 
 /* Container */
@@ -619,35 +649,38 @@ body {
     height: 16px;
 }
 
-/* Project Action Button Animations */
+/* Project Action Button Fixes */
 .project-actions {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
 }
 
-.project-actions .btn-primary,
-.project-actions .btn-secondary {
+/* Ensure buttons work properly */
+.project-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 0.6rem 1.5rem;
     font-size: 0.9rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-/* Primary Button Animation */
-.project-actions .btn-primary {
-    background: var(--primary-color);
-    color: white;
-    padding: 0.6rem 1.5rem;
-    border-radius: 6px;
-    text-decoration: none;
     font-weight: 500;
-    font-size: 0.9rem;
+    border-radius: 6px;
     border: none;
     cursor: pointer;
-    transform: translateZ(0);
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: var(--font-primary);
+    line-height: 1.4;
+    min-height: 44px;
+    box-sizing: border-box;
+}
+
+/* Primary button in project actions */
+.project-actions .btn-primary {
+    background: var(--primary-color);
+    color: white !important;
     box-shadow: 0 4px 12px rgba(30, 92, 255, 0.2);
+    transform: translateZ(0);
 }
 
 .project-actions .btn-primary:hover {
@@ -660,24 +693,18 @@ body {
     transform: translateY(0) scale(0.98);
 }
 
-/* Secondary Button Animation */
+/* Secondary button in project actions */
 .project-actions .btn-secondary {
     background: white;
-    color: var(--primary-color);
-    padding: 0.6rem 1.5rem;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.9rem;
+    color: var(--primary-color) !important;
     border: 2px solid var(--primary-color);
-    cursor: pointer;
     transform: translateZ(0);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .project-actions .btn-secondary:hover {
     background: var(--primary-color);
-    color: white;
+    color: white !important;
     transform: translateY(-2px) scale(1.05);
     box-shadow: 0 6px 20px rgba(30, 92, 255, 0.2);
 }
@@ -1023,7 +1050,7 @@ html {
     color: white;
 }
 
-/* Cancel Button Fix - Add this to your existing CSS */
+/* Cancel Button Fix */
 .btn-secondary.cancel-btn {
     background: white;
     color: var(--text-light) !important;
