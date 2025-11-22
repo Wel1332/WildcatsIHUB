@@ -4,23 +4,183 @@
 
 // Profile data storage
 let profileData = {
-    name: 'Sarah Chen',
-    title: 'Computer Science Major',
-    school: 'Stanford University',
-    year: '2nd',
+    name: '',
+    title: '',
+    school: '',
+    year: '',
     location: '',
     about: '',
     graduation: '',
     specialization: '',
-    major: 'Computer Science',
+    major: '',
     minor: '',
     courses: '',
     interests: ''
 };
 
-
 // Skills tracking
 let skillsData = {};
+
+// ============================================
+// CSRF TOKEN FUNCTION
+// ============================================
+
+function getCSRFToken() {
+    const name = 'csrftoken';
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// ============================================
+// LOAD DATA FROM SUPABASE VIA DJANGO
+// ============================================
+
+async function loadUserProfile() {
+    try {
+        const response = await fetch('/user-profile/data/');
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+            // Update profileData with real data from Supabase
+            profileData = {
+                name: result.data.full_name || '',
+                title: result.data.title || '',
+                school: result.data.school || '',
+                year: result.data.year_level || '',
+                location: result.data.location || '',
+                about: result.data.about || '',
+                graduation: result.data.graduation_year || '',
+                specialization: result.data.specialization || '',
+                major: result.data.major || '',
+                minor: result.data.minor || '',
+                courses: result.data.courses || '',
+                interests: result.data.interests || ''
+            };
+            
+            // Update display with real data
+            updateDisplay();
+        } else {
+            // Use default empty data if no profile found
+            updateDisplay();
+        }
+    } catch (error) {
+        console.error('Error loading user profile:', error);
+        // Fallback to empty data
+        updateDisplay();
+    }
+}
+
+// ============================================
+// SAVE DATA TO SUPABASE VIA DJANGO
+// ============================================
+
+async function saveProfile(event) {
+    event.preventDefault();
+    
+    try {
+        // Get form values
+        const formData = new FormData();
+        formData.append('name', document.getElementById('name').value);
+        formData.append('title', document.getElementById('title').value);
+        formData.append('school', document.getElementById('school').value);
+        formData.append('year', document.getElementById('year').value);
+        formData.append('location', document.getElementById('location').value);
+        formData.append('about', document.getElementById('about').value);
+        formData.append('graduation', document.getElementById('graduation').value);
+        formData.append('specialization', document.getElementById('specialization').value);
+        formData.append('major', document.getElementById('major').value);
+        formData.append('minor', document.getElementById('minor').value);
+        formData.append('courses', document.getElementById('courses').value);
+        formData.append('interests', document.getElementById('interests').value);
+        
+        const response = await fetch('/user-profile/save/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: formData
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+            // Update profileData with new values
+            profileData = {
+                name: document.getElementById('name').value,
+                title: document.getElementById('title').value,
+                school: document.getElementById('school').value,
+                year: document.getElementById('year').value,
+                location: document.getElementById('location').value,
+                about: document.getElementById('about').value,
+                graduation: document.getElementById('graduation').value,
+                specialization: document.getElementById('specialization').value,
+                major: document.getElementById('major').value,
+                minor: document.getElementById('minor').value,
+                courses: document.getElementById('courses').value,
+                interests: document.getElementById('interests').value
+            };
+            
+            // Update display
+            updateDisplay();
+            
+            // Close modal
+            closeEditModal();
+            
+            // Show success message
+            showNotification('Profile updated successfully in Supabase!', 'success');
+        } else {
+            throw new Error(result.message);
+        }
+        
+    } catch (error) {
+        console.error('Error saving profile:', error);
+        showNotification('Error saving profile. Please try again.', 'error');
+    }
+}
+
+async function saveProject(event) {
+    event.preventDefault();
+    
+    try {
+        const formData = new FormData();
+        formData.append('projectName', document.getElementById('projectName').value);
+        formData.append('projectDescription', document.getElementById('projectDescription').value);
+        formData.append('projectLanguages', document.getElementById('projectLanguages').value);
+        formData.append('projectDate', document.getElementById('projectDate').value);
+        formData.append('projectLink', document.getElementById('projectLink').value);
+        
+        const response = await fetch('/user-profile/save-project/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: formData
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+            // Reload the page to show the new project from database
+            location.reload();
+        } else {
+            throw new Error(result.message);
+        }
+        
+    } catch (error) {
+        console.error('Error saving project:', error);
+        showNotification('Error saving project. Please try again.', 'error');
+    }
+}
 
 // ============================================
 // MODAL FUNCTIONS
@@ -31,7 +191,7 @@ function openEditModal() {
     modal.classList.add('active');
     modal.style.display = 'flex';
     
-    // Populate form with current data
+    // Populate form with current real data
     document.getElementById('name').value = profileData.name;
     document.getElementById('title').value = profileData.title;
     document.getElementById('school').value = profileData.school;
@@ -84,104 +244,6 @@ function closeProjectModal() {
 }
 
 // ============================================
-// SAVE FUNCTIONS
-// ============================================
-
-function saveProfile(event) {
-    event.preventDefault();
-    
-    // Get form values
-    profileData.name = document.getElementById('name').value || 'Sarah Chen';
-    profileData.title = document.getElementById('title').value || 'Computer Science Major';
-    profileData.school = document.getElementById('school').value || 'Stanford University';
-    profileData.year = document.getElementById('year').value || '2nd';
-    profileData.location = document.getElementById('location').value;
-    profileData.about = document.getElementById('about').value;
-    profileData.graduation = document.getElementById('graduation').value;
-    profileData.specialization = document.getElementById('specialization').value;
-    profileData.major = document.getElementById('major').value || 'Computer Science';
-    profileData.minor = document.getElementById('minor').value;
-    profileData.courses = document.getElementById('courses').value;
-    profileData.interests = document.getElementById('interests').value;
-    
-    // Update display
-    updateDisplay();
-    
-    // Close modal with animation
-    closeEditModal();
-    
-    // Show success message
-    showNotification('Profile updated successfully!', 'success');
-}
-
-function saveProject(event) {
-    event.preventDefault();
-    
-    // Get form values
-    const projectName = document.getElementById('projectName').value;
-    const projectDescription = document.getElementById('projectDescription').value;
-    const projectLanguages = document.getElementById('projectLanguages').value;
-    const projectDate = document.getElementById('projectDate').value;
-    const projectLink = document.getElementById('projectLink').value;
-    
-    // Create project object
-    const project = {
-        id: Date.now(),
-        name: projectName,
-        description: projectDescription,
-        technologies: projectLanguages.split(',').map(tech => tech.trim()),
-        date: projectDate,
-        link: projectLink
-    };
-    
-    // Add to projects array
-    projects.push(project);
-    
-    // Update skills tracking
-    updateSkillsFromProject(project.technologies);
-    
-    // Update display
-    updateSkillsDisplay();
-    
-    // Close modal
-    closeProjectModal();
-    
-    // Show success message
-    showNotification('Project added successfully!', 'success');
-}
-
-function deleteProject(projectId) {
-    if (confirm('Are you sure you want to delete this project?')) {
-        // Find project index
-        const index = projects.findIndex(p => p.id === projectId);
-        
-        if (index !== -1) {
-            // Remove technologies from skills tracking
-            const technologies = projects[index].technologies;
-            technologies.forEach(tech => {
-                if (skillsData[tech]) {
-                    skillsData[tech].count--;
-                    if (skillsData[tech].count <= 0) {
-                        delete skillsData[tech];
-                    }
-                }
-            });
-            
-            // Remove project
-            projects.splice(index, 1);
-            
-            // Update displays
-        
-
-            updateSkillsDisplay();
-            
-            // Show success message
-            showNotification('Project deleted successfully!', 'success');
-        }
-    }
-}
-
-// ============================================
 // UPDATE DISPLAY FUNCTIONS
 // ============================================
 
@@ -209,12 +271,12 @@ function updateDisplay() {
     specializationEl.textContent = profileData.specialization || 'Add specialization';
     
     // Academic information
-    document.getElementById('displayMajor').textContent = profileData.major;
+    document.getElementById('displayMajor').textContent = profileData.major || 'Add major';
     document.getElementById('displayMinor').textContent = profileData.minor || 'Not specified';
     
     // Courses
     const coursesEl = document.getElementById('displayCourses');
-    if (profileData.courses) {
+    if (profileData.courses && profileData.courses.trim()) {
         const coursesArray = profileData.courses.split(',').map(c => c.trim());
         coursesEl.innerHTML = coursesArray.map(course => 
             `<span class="tag">${course}</span>`
@@ -228,45 +290,10 @@ function updateDisplay() {
     interestsEl.textContent = profileData.interests || 'No interests specified';
 }
 
-function updateProjectsDisplay() {
-    const projectsEl = document.getElementById('displayProjects');
-    
-    if (projects.length === 0) {
-        projectsEl.innerHTML = `
-            <div class="empty-state-card">
-                <i class="fas fa-folder-plus"></i>
-                <p>No projects added yet</p>
-                <small>Click "Add Project" to get started!</small>
-            </div>
-        `;
-        return;
-    }
-    
-    projectsEl.innerHTML = projects.map(project => `
-        <div class="project-card">
-            <div class="project-header">
-                <div>
-                    <h4 class="project-title">${project.name}</h4>
-                    ${project.date ? `<p class="project-date">${formatDate(project.date)}</p>` : ''}
-                </div>
-            </div>
-            <p class="project-description">${project.description}</p>
-            <div class="project-technologies">
-                ${project.technologies.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
-            </div>
-            <div class="project-footer">
-                ${project.link ? `<a href="${project.link}" target="_blank" class="project-link"><i class="fas fa-external-link-alt"></i> View Project</a>` : '<span></span>'}
-                <button class="delete-project-btn" onclick="deleteProject(${project.id})">
-                    <i class="fas fa-trash"></i> Delete
-                </button>
-            </div>
-        </div>
-    `).join('');
-}
-
 function updateSkillsDisplay() {
     const skillsEl = document.getElementById('skillsProgressList');
     
+    // This will be populated from projects data
     const skillsArray = Object.entries(skillsData).sort((a, b) => b[1].count - a[1].count);
     
     if (skillsArray.length === 0) {
@@ -301,26 +328,11 @@ function updateSkillsDisplay() {
 // HELPER FUNCTIONS
 // ============================================
 
-function updateSkillsFromProject(technologies) {
-    technologies.forEach(tech => {
-        if (!skillsData[tech]) {
-            skillsData[tech] = { count: 0 };
-        }
-        skillsData[tech].count++;
-    });
-}
-
 function getSkillLevel(count) {
     if (count >= 5) return 'Expert';
     if (count >= 3) return 'Advanced';
     if (count >= 2) return 'Intermediate';
     return 'Beginner';
-}
-
-function formatDate(dateString) {
-    if (!dateString) return '';
-    const date = new Date(dateString + '-01');
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 }
 
 function showNotification(message, type = 'success') {
@@ -363,14 +375,12 @@ function showNotification(message, type = 'success') {
 }
 
 // ============================================
-// EVENT LISTENERS - FIXED MODAL CLOSING ISSUE
+// EVENT LISTENERS
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize display
-    updateDisplay();
- 
-    updateSkillsDisplay();
+    // Load real data from Supabase when page loads
+    loadUserProfile();
     
     // Close modals when clicking outside (but not on the modal content)
     const editModal = document.getElementById('editModal');
@@ -378,6 +388,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const editModalContent = editModal.querySelector('.modal-content');
     const projectModalContent = projectModal.querySelector('.modal-content');
     
+    // Close modals when clicking on overlay
+    editModal.addEventListener('click', function(e) {
+        if (e.target === editModal) {
+            closeEditModal();
+        }
+    });
+    
+    projectModal.addEventListener('click', function(e) {
+        if (e.target === projectModal) {
+            closeProjectModal();
+        }
+    });
     
     // Prevent clicks inside modal content from closing the modal
     editModalContent.addEventListener('click', function(e) {

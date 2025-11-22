@@ -1,8 +1,34 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User  # Add this import
 from django.contrib import messages
 from .models import Project
 from accounts.models import UserProfile
+from django.utils import timezone
+from datetime import timedelta
+
+@login_required
+def view_user_profile(request, user_id):
+    """View another user's profile (read-only)"""
+    # Get the user being viewed
+    viewed_user = get_object_or_404(User, id=user_id)
+    user_profile, created = UserProfile.objects.get_or_create(user=viewed_user)
+    
+    # Get the viewed user's projects
+    user_projects = Project.objects.filter(author=user_profile).order_by('-created_at')
+    
+    # Check if this is the current user's own profile
+    is_own_profile = (request.user.id == user_id)
+    
+    context = {
+        'viewed_user': viewed_user,
+        'viewed_profile': user_profile,
+        'projects': user_projects,
+        'is_own_profile': is_own_profile,
+        'user': request.user  # Current logged in user
+    }
+    
+    return render(request, 'dashboard/view_user_profile.html', context)
 
 def view_project(request, project_id):
     """View individual project details"""
@@ -23,9 +49,30 @@ def delete_project(request, project_id):
     return redirect('userProfile')              
 
 def home(request):
-    """Home page with all projects"""
+    """Home page with all projects and feed"""
+    # Get all projects ordered by creation date (newest first)
     projects = Project.objects.all().select_related('author__user').order_by('-created_at')
     
+    # Get recent projects for the feed (last 7 days)
+    recent_cutoff = timezone.now() - timedelta(days=7)
+    feed_projects = projects.filter(created_at__gte=recent_cutoff)[:10]  # Last 10 projects
+    
+    # Get user's recent projects for sidebar
+    my_recent_projects = Project.objects.none()
+    if request.user.is_authenticated:
+        try:
+            user_profile = UserProfile.objects.get(user=request.user)
+            my_recent_projects = Project.objects.filter(author=user_profile).order_by('-created_at')[:6]
+        except UserProfile.DoesNotExist:
+            pass
+    
+    # Get trending projects (most viewed in last 30 days)
+    trending_cutoff = timezone.now() - timedelta(days=30)
+    trending_projects = Project.objects.filter(
+        created_at__gte=trending_cutoff
+    ).order_by('-views')[:5]
+    
+    # Format projects for the gallery
     gallery_projects = []
     for project in projects:
         gallery_projects.append({
@@ -43,7 +90,10 @@ def home(request):
     
     return render(request, 'projects/home_page.html', {
         'projects': projects,
-        'gallery_projects': gallery_projects
+        'gallery_projects': gallery_projects,
+        'feed_projects': feed_projects,
+        'trending_projects': trending_projects,
+        'my_recent_projects': my_recent_projects  # Add this line
     })
 
 @login_required
@@ -95,7 +145,8 @@ def submit_project(request):
                 screenshot=screenshot
             )
 
-            next_url = request.POST.get('next') or 'userProfile'
+            messages.success(request, f"Project '{title}' submitted successfully!")
+            next_url = request.POST.get('next') or 'home'
             return redirect(next_url)
 
         except Exception as e:

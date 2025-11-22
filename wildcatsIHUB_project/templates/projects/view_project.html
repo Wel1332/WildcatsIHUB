@@ -22,31 +22,57 @@
         function setBackLink() {
             const referrer = document.referrer;
             const backLink = document.getElementById('backLink');
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromUserId = urlParams.get('from_user');
+            
+            // If we have a from_user parameter, go back to that user's profile
+            if (fromUserId) {
+                backLink.href = `/user-profile/${fromUserId}/`;
+                backLink.innerHTML = '<i class="fas fa-arrow-left"></i>Back to Profile';
+                return;
+            }
+            
+            // Check if the referrer contains specific user profile paths
+            if (referrer.includes('/user-profile/')) {
+                // Extract user ID from referrer URL
+                const userProfileMatch = referrer.match(/\/user-profile\/(\d+)\//);
+                if (userProfileMatch && userProfileMatch[1]) {
+                    backLink.href = `/user-profile/${userProfileMatch[1]}/`;
+                    backLink.innerHTML = '<i class="fas fa-arrow-left"></i>Back to Profile';
+                    return;
+                }
+            }
             
             // Check if the referrer contains 'dashboard'
             if (referrer.includes('/dashboard')) {
                 backLink.href = "{% url 'dashboard' %}";
                 backLink.innerHTML = '<i class="fas fa-arrow-left"></i>Back to Dashboard';
+                return;
             }
-            // Check if the referrer contains 'userProfile' or user profile related paths
-            else if (referrer.includes('/profile') || referrer.includes('/user')) {
+            
+            // Check if the referrer contains 'userProfile' (current user's profile)
+            if (referrer.includes('/userProfile')) {
                 backLink.href = "{% url 'userProfile' %}";
                 backLink.innerHTML = '<i class="fas fa-arrow-left"></i>Back to Profile';
+                return;
             }
-            // Default fallback - check if user came from gallery or home
-            else if (referrer.includes('/gallery')) {
+            
+            // Check if user came from gallery or home
+            if (referrer.includes('/gallery')) {
                 backLink.href = "{% url 'gallery' %}";
                 backLink.innerHTML = '<i class="fas fa-arrow-left"></i>Back to Gallery';
+                return;
             }
-            else if (referrer.includes('/home') || referrer.endsWith('/')) {
+            
+            if (referrer.includes('/home') || referrer.endsWith('/')) {
                 backLink.href = "{% url 'home' %}";
                 backLink.innerHTML = '<i class="fas fa-arrow-left"></i>Back to Home';
+                return;
             }
+            
             // Ultimate fallback - use browser's back functionality
-            else {
-                backLink.href = "javascript:history.back()";
-                backLink.innerHTML = '<i class="fas fa-arrow-left"></i>Go Back';
-            }
+            backLink.href = "javascript:history.back()";
+            backLink.innerHTML = '<i class="fas fa-arrow-left"></i>Go Back';
         }
         
         // Set the back link when page loads
