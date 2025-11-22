@@ -4,66 +4,271 @@ from django.utils import timezone
 from datetime import timedelta
 from projects.models import Project
 from accounts.models import UserProfile
+from django.http import JsonResponse
+import supabase
+from django.conf import settings
+import os
 
+supabase_client = supabase.create_client(
+    'https://pizsazxthvvavhdbowzi.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpenNhenh0aHZ2YXZoZGJvd3ppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzMjU2OTQsImV4cCI6MjA3NTkwMTY5NH0.FHp8TwLPGp_aARF3uqVZVrG3dWbvd1H18O0Wiikweyg'
+)
+
+def get_user_profile_from_supabase(user_id):
+    try:
+        response = supabase_client.table('accounts_userprofile') \
+            .select('*') \
+            .eq('user_id', str(user_id)) \
+            .execute()
+        
+        if response.data and len(response.data) > 0:
+            return response.data[0]
+        return None
+    except Exception as e:
+        print(f"Error fetching user profile: {e}")
+        return None
+
+def get_user_projects_supabase(user_id):
+    try:
+        response = supabase_client.table('projects_project') \
+            .select('*') \
+            .eq('user_id', str(user_id)) \
+            .order('created_at', desc=True) \
+            .execute()
+        
+        return response.data
+    except Exception as e:
+        print(f"Error fetching projects: {e}")
+        return None
+
+@login_required
+def save_profile_to_supabase(request):
+    if request.method == 'POST':
+        try:
+            user_id = str(request.user.id)
+            user = request.user
+            user_full_name = user.get_full_name() or user.username
+
+            profile_data = {
+                'user_id': user_id,
+                'full_name': request.POST.get('name', user_full_name),
+                'title': request.POST.get('title', ''),
+                'school': request.POST.get('school', ''),
+                'year_level': request.POST.get('year', ''),
+                'location': request.POST.get('location', ''),
+                'graduation_year': request.POST.get('graduation', ''),
+                'about': request.POST.get('about', ''),
+                'specialization': request.POST.get('specialization', ''),
+                'major': request.POST.get('major', ''),
+                'minor': request.POST.get('minor', ''),
+                'courses': request.POST.get('courses', ''),
+                'interests': request.POST.get('interests', ''),
+                'updated_at': timezone.now().isoformat()
+            }
+
+            existing_profile = supabase_client.table('accounts_userprofile') \
+                .select('user_id') \
+                .eq('user_id', user_id) \
+                .execute()
+
+            if existing_profile.data and len(existing_profile.data) > 0:
+                response = supabase_client.table('accounts_userprofile') \
+                    .update(profile_data) \
+                    .eq('user_id', user_id) \
+                    .execute()
+            else:
+                profile_data['created_at'] = timezone.now().isoformat()
+                response = supabase_client.table('accounts_userprofile') \
+                    .insert([profile_data]) \
+                    .execute()
+
+            return JsonResponse({'success': True, 'message': 'Profile saved successfully!'})
+
+        except Exception as e:
+            print(f"Error saving profile: {e}")
+            return JsonResponse({'success': False, 'message': f'Error: {str(e)}'})
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
+@login_required
+def save_project_to_supabase(request):
+    if request.method == 'POST':
+        try:
+            user_id = str(request.user.id)
+            project_data = {
+                'user_id': user_id,
+                'title': request.POST.get('projectName', ''),
+                'description': request.POST.get('projectDescription', ''),
+                'tech_used': request.POST.get('projectLanguages', ''),
+                'github_url': request.POST.get('projectLink', ''),
+                'live_demo': request.POST.get('projectLink', ''),
+                'category': 'Software',
+                'status': 'completed',
+                'created_at': timezone.now().isoformat()
+            }
+            
+            response = supabase_client.table('projects_project') \
+                .insert([project_data]) \
+                .execute()
+            
+            return JsonResponse({'success': True, 'message': 'Project saved successfully!'})
+            
+        except Exception as e:
+            print(f"Error saving project: {e}")
+            return JsonResponse({'success': False, 'message': 'Error saving project.'})
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
+@login_required
+def get_supabase_profile_data(request):
+    try:
+        user_id = str(request.user.id)
+        user = request.user
+        profile_data = get_user_profile_from_supabase(user_id)
+        
+        user_full_name = user.get_full_name() or user.username
+        
+        if profile_data:
+            profile_data['full_name'] = profile_data.get('full_name') or user_full_name
+            return JsonResponse({'success': True, 'data': profile_data})
+        else:
+            default_data = {
+                'full_name': user_full_name,
+                'title': '',
+                'school': '',
+                'year_level': '',
+                'location': '',
+                'graduation_year': '',
+                'about': '',
+                'specialization': '',
+                'major': '',
+                'minor': '',
+                'courses': '',
+                'interests': ''
+            }
+            return JsonResponse({'success': True, 'data': default_data})
+            
+    except Exception as e:
+        print(f"Error fetching profile data: {e}")
+        user_full_name = request.user.get_full_name() or request.user.username
+        default_data = {
+            'full_name': user_full_name,
+            'title': '',
+            'school': '',
+            'year_level': '',
+            'location': '',
+            'graduation_year': '',
+            'about': '',
+            'specialization': '',
+            'major': '',
+            'minor': '',
+            'courses': '',
+            'interests': ''
+        }
+        return JsonResponse({'success': True, 'data': default_data})
 
 @login_required
 def user_profile(request):
-    projects = Project.objects.all() 
-    return render(request, 'dashboard/userProfile.html', {'projects': projects})
+    try:
+        user_profile_data = get_user_profile_from_supabase(request.user.id)
+        user = request.user
+        
+        if not user_profile_data:
+            user_full_name = user.get_full_name() or user.username
+            user_profile_data = {
+                'full_name': user_full_name,
+                'title': '',
+                'school': '',
+                'year_level': '',
+                'location': '',
+                'graduation_year': '',
+                'about': '',
+                'specialization': '',
+                'major': '',
+                'minor': '',
+                'courses': '',
+                'interests': ''
+            }
+        
+        django_projects = get_user_projects_django(request.user)
+        
+        context = {
+            'projects': django_projects,
+            'user_profile_data': user_profile_data
+        }
+        return render(request, 'dashboard/userProfile.html', context)
+        
+    except Exception as e:
+        print(f"Error in user_profile view: {e}")
+        projects = Project.objects.all()
+        user = request.user
+        user_full_name = user.get_full_name() or user.username
+        default_profile = {
+            'full_name': user_full_name,
+            'title': '',
+            'school': '',
+            'year_level': '',
+            'location': '',
+            'graduation_year': '',
+            'about': '',
+            'specialization': '',
+            'major': '',
+            'minor': '',
+            'courses': '',
+            'interests': ''
+        }
+        context = {
+            'projects': projects,
+            'user_profile_data': default_profile
+        }
+        return render(request, 'dashboard/userProfile.html', context)
 
-def landing_page(request):
-    """Simple landing page view"""
-    return render(request, 'dashboard/landing_page.html')
-
-@login_required
-def dashboard(request):
-    """User dashboard with project statistics"""
-    # Try multiple ways to get user's projects
+def get_user_projects_django(user):
     user_projects = Project.objects.none()
     
     try:
-        user_profile = UserProfile.objects.get(user=request.user)
+        user_profile = UserProfile.objects.get(user=user)
         
-        # Try different field names that might link projects to user
         if Project.objects.filter(author=user_profile).exists():
             user_projects = Project.objects.filter(author=user_profile).order_by('-created_at')
         elif Project.objects.filter(created_by=user_profile).exists():
             user_projects = Project.objects.filter(created_by=user_profile).order_by('-created_at')
-        elif Project.objects.filter(user=request.user).exists():
-            user_projects = Project.objects.filter(user=request.user).order_by('-created_at')
-        elif Project.objects.filter(owner=request.user).exists():
-            user_projects = Project.objects.filter(owner=request.user).order_by('-created_at')
+        elif Project.objects.filter(user=user).exists():
+            user_projects = Project.objects.filter(user=user).order_by('-created_at')
+        elif Project.objects.filter(owner=user).exists():
+            user_projects = Project.objects.filter(owner=user).order_by('-created_at')
         else:
-            # If no specific relationship found, get all projects (for testing)
             user_projects = Project.objects.all().order_by('-created_at')
             
     except UserProfile.DoesNotExist:
-        # If no UserProfile, try direct user relationships
-        if Project.objects.filter(user=request.user).exists():
-            user_projects = Project.objects.filter(user=request.user).order_by('-created_at')
-        elif Project.objects.filter(owner=request.user).exists():
-            user_projects = Project.objects.filter(owner=request.user).order_by('-created_at')
+        if Project.objects.filter(user=user).exists():
+            user_projects = Project.objects.filter(user=user).order_by('-created_at')
+        elif Project.objects.filter(owner=user).exists():
+            user_projects = Project.objects.filter(owner=user).order_by('-created_at')
         else:
             user_projects = Project.objects.all().order_by('-created_at')
     
-    # Calculate basic statistics
-    total_projects = user_projects.count()
+    return user_projects
+
+def landing_page(request):
+    return render(request, 'dashboard/landing_page.html')
+
+@login_required
+def dashboard(request):
+    user_projects = get_user_projects_django(request.user)
     
-    # Recent submissions (last 30 days)
+    total_projects = user_projects.count()
     recent_submissions = user_projects.filter(
         created_at__gte=timezone.now() - timedelta(days=30)
     ).count()
     
-    # Calculate total technologies used (handle empty tech_used)
     all_techs = []
     for project in user_projects:
         if project.tech_used:
-            # Handle both comma-separated and space-separated tech lists
             techs = [tech.strip() for tech in project.tech_used.replace(',', ' ').split() if tech.strip()]
             all_techs.extend(techs)
     total_technologies = len(set(all_techs)) if all_techs else 0
     
-    # Get project categories and count unique ones
     category_mapping = {
         'web': 'Web Development',
         'mobile': 'Mobile Development', 
@@ -86,13 +291,9 @@ def dashboard(request):
     unique_categories = list(set(project_categories))
     total_categories = len(unique_categories)
     
-    # Get most viewed project
     most_viewed_project = user_projects.order_by('-views').first()
-    
-    # Get latest project
     latest_project = user_projects.first()
     
-    # Calculate engagement score (based on project count and diversity)
     if total_projects > 0:
         engagement_score = min(100, total_projects * 20 + total_categories * 15)
     else:
