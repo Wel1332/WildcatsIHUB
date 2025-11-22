@@ -16,14 +16,50 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/view_project.css' %}?v=3.0">
+    
+    <script>
+        // Function to get the referrer URL and set the back link
+        function setBackLink() {
+            const referrer = document.referrer;
+            const backLink = document.getElementById('backLink');
+            
+            // Check if the referrer contains 'dashboard'
+            if (referrer.includes('/dashboard')) {
+                backLink.href = "{% url 'dashboard' %}";
+                backLink.innerHTML = '<i class="fas fa-arrow-left"></i>Back to Dashboard';
+            }
+            // Check if the referrer contains 'userProfile' or user profile related paths
+            else if (referrer.includes('/profile') || referrer.includes('/user')) {
+                backLink.href = "{% url 'userProfile' %}";
+                backLink.innerHTML = '<i class="fas fa-arrow-left"></i>Back to Profile';
+            }
+            // Default fallback - check if user came from gallery or home
+            else if (referrer.includes('/gallery')) {
+                backLink.href = "{% url 'gallery' %}";
+                backLink.innerHTML = '<i class="fas fa-arrow-left"></i>Back to Gallery';
+            }
+            else if (referrer.includes('/home') || referrer.endsWith('/')) {
+                backLink.href = "{% url 'home' %}";
+                backLink.innerHTML = '<i class="fas fa-arrow-left"></i>Back to Home';
+            }
+            // Ultimate fallback - use browser's back functionality
+            else {
+                backLink.href = "javascript:history.back()";
+                backLink.innerHTML = '<i class="fas fa-arrow-left"></i>Go Back';
+            }
+        }
+        
+        // Set the back link when page loads
+        document.addEventListener('DOMContentLoaded', setBackLink);
+    </script>
 </head>
 <body>
     <!-- Navigation Header -->
     <div class="nav-header">
         <div class="nav-content">
-            <a href="{% url 'userProfile' %}" class="back-link">
+            <a href="{% url 'dashboard' %}" class="back-link" id="backLink">
                 <i class="fas fa-arrow-left"></i>
-                Back to Profile
+                Back to Dashboard
             </a>
             
             <div class="nav-links">
