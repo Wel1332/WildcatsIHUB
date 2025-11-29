@@ -28,12 +28,12 @@
     </div>
 
     <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Top Header Bar -->
     <header class="top-header">
         <div class="header-left">
-            <button class="menu-toggle">
+            <button class="menu-toggle" id="menuToggle">
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
                 </svg>
@@ -78,7 +78,7 @@
     <!-- Main Container -->
     <div class="main-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-section">
                 <div class="sidebar-header">
                     <h3>My Recent Projects</h3>
@@ -298,307 +298,185 @@
         </main>
     </div>
 
-    <script>
+        <script>
         // Store user data for search
-        let userData = [];
+        // Store user data for search
+let userData = [];
+
+// Filter functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const filterToggle = document.getElementById('filterToggle');
+    const filterDropdown = document.getElementById('filterDropdown');
+    const userSearchInput = document.getElementById('userSearchInput');
+    const userSearchDropdown = document.getElementById('userSearchDropdown');
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    // Collect user data from feed items
+    const feedItems = document.querySelectorAll('.feed-item.clickable-feed-item');
+    feedItems.forEach(item => {
+        const userId = item.getAttribute('data-user-id');
+        const username = item.getAttribute('data-username');
+        const email = item.getAttribute('data-email');
+        const avatar = item.querySelector('.feed-avatar').src;
         
-        // Filter functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterToggle = document.getElementById('filterToggle');
-            const filterDropdown = document.getElementById('filterDropdown');
-            const userSearchInput = document.getElementById('userSearchInput');
-            const userSearchDropdown = document.getElementById('userSearchDropdown');
-            
-            // Collect user data from feed items
-            const feedItems = document.querySelectorAll('.feed-item.clickable-feed-item');
-            feedItems.forEach(item => {
-                const userId = item.getAttribute('data-user-id');
-                const username = item.getAttribute('data-username');
-                const email = item.getAttribute('data-email');
-                const avatar = item.querySelector('.feed-avatar').src;
-                
-                if (userId && !userData.find(user => user.id === userId)) {
-                    userData.push({
-                        id: userId,
-                        username: username,
-                        email: email,
-                        avatar: avatar
-                    });
-                }
+        if (userId && !userData.find(user => user.id === userId)) {
+            userData.push({
+                id: userId,
+                username: username,
+                email: email,
+                avatar: avatar
             });
-            
-            // Toggle filter dropdown
-            filterToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                filterDropdown.style.display = filterDropdown.style.display === 'block' ? 'none' : 'block';
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!filterToggle.contains(e.target) && !filterDropdown.contains(e.target)) {
-                    filterDropdown.style.display = 'none';
-                }
-                if (!userSearchInput.contains(e.target) && !userSearchDropdown.contains(e.target)) {
-                    userSearchDropdown.style.display = 'none';
-                }
-            });
+        }
+    });
+    
+    // Toggle filter dropdown - FIXED VERSION
+    filterToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        filterDropdown.classList.toggle('active');
+        filterToggle.classList.toggle('active');
+    });
+    
+    // Toggle sidebar on mobile when clicking menu icon
+    menuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+        sidebarOverlay.classList.toggle('active');
+    });
+    
+    // Close sidebar when clicking on overlay
+    sidebarOverlay.addEventListener('click', function() {
+        sidebar.classList.remove('active');
+        sidebarOverlay.classList.remove('active');
+    });
+    
+    // Close dropdowns when clicking outside - FIXED VERSION
+    document.addEventListener('click', function(e) {
+        if (!filterToggle.contains(e.target) && !filterDropdown.contains(e.target)) {
+            filterDropdown.classList.remove('active');
+            filterToggle.classList.remove('active');
+        }
+        if (!userSearchInput.contains(e.target) && !userSearchDropdown.contains(e.target)) {
+            userSearchDropdown.style.display = 'none';
+        }
+    });
 
-            // User search functionality
-            userSearchInput.addEventListener('input', function() {
-                const searchValue = this.value.toLowerCase().trim();
-                showUserSearchResults(searchValue);
-            });
+    // User search functionality
+    userSearchInput.addEventListener('input', function() {
+        const searchValue = this.value.toLowerCase().trim();
+        showUserSearchResults(searchValue);
+    });
 
-            userSearchInput.addEventListener('focus', function() {
-                const searchValue = this.value.toLowerCase().trim();
-                if (searchValue) {
-                    showUserSearchResults(searchValue);
-                }
-            });
+    userSearchInput.addEventListener('focus', function() {
+        const searchValue = this.value.toLowerCase().trim();
+        if (searchValue) {
+            showUserSearchResults(searchValue);
+        }
+    });
 
-            // Technology search in main search bar
-            const techSearchInput = document.getElementById('techSearchInput');
-            techSearchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    searchByTechnologies();
-                }
-            });
+    // Technology search in main search bar
+    const techSearchInput = document.getElementById('techSearchInput');
+    techSearchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchByTechnologies();
+        }
+    });
+});
+
+function showUserSearchResults(searchTerm) {
+    const dropdown = document.getElementById('userSearchDropdown');
+    const dropdownContent = dropdown.querySelector('.dropdown-content');
+    
+    if (!searchTerm) {
+        dropdown.style.display = 'none';
+        return;
+    }
+    
+    // Filter users based on search term
+    const filteredUsers = userData.filter(user => 
+        user.username.includes(searchTerm) || user.email.includes(searchTerm)
+    );
+    
+    if (filteredUsers.length === 0) {
+        dropdownContent.innerHTML = `
+            <div class="user-search-item no-results">
+                <i class="fas fa-search"></i>
+                <span>No users found</span>
+            </div>
+        `;
+    } else {
+        dropdownContent.innerHTML = filteredUsers.map(user => `
+            <div class="user-search-item" onclick="redirectToUserProfile('${user.id}')">
+                <img src="${user.avatar}" alt="${user.username}" class="user-search-avatar">
+                <div class="user-search-info">
+                    <span class="user-search-name">${user.username}</span>
+                    <span class="user-search-email">${user.email}</span>
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            </div>
+        `).join('');
+    }
+    
+    dropdown.style.display = 'block';
+}
+
+function filterProjects() {
+    const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked'))
+        .map(checkbox => checkbox.value);
+    const feedItems = document.querySelectorAll('.feed-item.clickable-feed-item');
+    
+    feedItems.forEach(item => {
+        const itemCategory = item.getAttribute('data-category');
+        
+        if (selectedCategories.length === 0 || selectedCategories.includes(itemCategory)) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+function clearFilters() {
+    document.querySelectorAll('input[name="category"]').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    filterProjects();
+}
+
+function searchByTechnologies() {
+    const searchTerm = document.getElementById('techSearchInput').value.toLowerCase().trim();
+    const feedItems = document.querySelectorAll('.feed-item.clickable-feed-item');
+    
+    if (!searchTerm) {
+        // If search is empty, show all items
+        feedItems.forEach(item => {
+            item.style.display = 'flex';
         });
+        return;
+    }
+    
+    feedItems.forEach(item => {
+        const tech = item.getAttribute('data-tech');
+        const title = item.querySelector('h3').textContent.toLowerCase();
+        const description = item.querySelector('.feed-description').textContent.toLowerCase();
+        
+        // Search in technologies, title, and description
+        const matches = (tech && tech.includes(searchTerm)) || 
+                       title.includes(searchTerm) || 
+                       description.includes(searchTerm);
+        
+        if (matches) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
 
-        function showUserSearchResults(searchTerm) {
-            const dropdown = document.getElementById('userSearchDropdown');
-            const dropdownContent = dropdown.querySelector('.dropdown-content');
-            
-            if (!searchTerm) {
-                dropdown.style.display = 'none';
-                return;
-            }
-            
-            // Filter users based on search term
-            const filteredUsers = userData.filter(user => 
-                user.username.includes(searchTerm) || user.email.includes(searchTerm)
-            );
-            
-            if (filteredUsers.length === 0) {
-                dropdownContent.innerHTML = `
-                    <div class="user-search-item no-results">
-                        <i class="fas fa-search"></i>
-                        <span>No users found</span>
-                    </div>
-                `;
-            } else {
-                dropdownContent.innerHTML = filteredUsers.map(user => `
-                    <div class="user-search-item" onclick="redirectToUserProfile('${user.id}')">
-                        <img src="${user.avatar}" alt="${user.username}" class="user-search-avatar">
-                        <div class="user-search-info">
-                            <span class="user-search-name">${user.username}</span>
-                            <span class="user-search-email">${user.email}</span>
-                        </div>
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                `).join('');
-            }
-            
-            dropdown.style.display = 'block';
-        }
-        
-        function filterProjects() {
-            const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked'))
-                .map(checkbox => checkbox.value);
-            const feedItems = document.querySelectorAll('.feed-item.clickable-feed-item');
-            
-            feedItems.forEach(item => {
-                const itemCategory = item.getAttribute('data-category');
-                
-                if (selectedCategories.length === 0 || selectedCategories.includes(itemCategory)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-        
-        function clearFilters() {
-            document.querySelectorAll('input[name="category"]').forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            filterProjects();
-        }
-        
-        function searchByTechnologies() {
-            const searchTerm = document.getElementById('techSearchInput').value.toLowerCase().trim();
-            const feedItems = document.querySelectorAll('.feed-item.clickable-feed-item');
-            
-            if (!searchTerm) {
-                // If search is empty, show all items
-                feedItems.forEach(item => {
-                    item.style.display = 'flex';
-                });
-                return;
-            }
-            
-            feedItems.forEach(item => {
-                const tech = item.getAttribute('data-tech');
-                const title = item.querySelector('h3').textContent.toLowerCase();
-                const description = item.querySelector('.feed-description').textContent.toLowerCase();
-                
-                // Search in technologies, title, and description
-                const matches = (tech && tech.includes(searchTerm)) || 
-                               title.includes(searchTerm) || 
-                               description.includes(searchTerm);
-                
-                if (matches) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        function redirectToUserProfile(userId) {
-            // Redirect to user profile view (read-only)
-            window.location.href = `/user-profile/${userId}/`;
-        }
+function redirectToUserProfile(userId) {
+    // Redirect to user profile view (read-only)
+    window.location.href = `/user-profile/${userId}/`;
+}
     </script>
-    
-    <style>
-        .filter-controls {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .filter-dropdown {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            box-shadow: var(--shadow-hover);
-            z-index: 1000;
-            min-width: 200px;
-            margin-top: 0.5rem;
-        }
-        
-        .filter-option {
-            margin-bottom: 0.5rem;
-        }
-        
-        .filter-option label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        
-        .filter-option input[type="checkbox"] {
-            margin: 0;
-        }
-        
-        .filter-actions {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-        }
-        
-        .clear-filters {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-light);
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: var(--transition);
-        }
-        
-        .clear-filters:hover {
-            background: var(--bg-light);
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        /* User Search Dropdown Styles */
-        .search-box-header {
-            position: relative;
-        }
-
-        .user-search-dropdown {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: var(--shadow-hover);
-            z-index: 1000;
-            margin-top: 0.5rem;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .user-search-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .user-search-item:last-child {
-            border-bottom: none;
-        }
-
-        .user-search-item:hover {
-            background: var(--bg-light);
-        }
-
-        .user-search-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            margin-right: 0.75rem;
-            object-fit: cover;
-        }
-
-        .user-search-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-search-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--text-color);
-        }
-
-        .user-search-email {
-            font-size: 0.8rem;
-            color: var(--text-light);
-        }
-
-        .user-search-item i {
-            color: var(--text-light);
-            font-size: 0.8rem;
-        }
-
-        .no-results {
-            justify-content: center;
-            color: var(--text-light);
-        }
-
-        .no-results i {
-            margin-right: 0.5rem;
-        }
-    </style>
-    
-    <script src="{% static 'css/wildcatsIHUB/home.js' %}"></script>
 </body>
 </html>
