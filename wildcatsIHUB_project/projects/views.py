@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User  # Add this import
+from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import Project
 from accounts.models import UserProfile
@@ -50,50 +50,26 @@ def delete_project(request, project_id):
 
 def home(request):
     """Home page with all projects and feed"""
-    # Get all projects ordered by creation date (newest first)
-    projects = Project.objects.all().select_related('author__user').order_by('-created_at')
+    # Get ALL projects ordered by creation date (newest first)
+    all_projects = Project.objects.all().select_related('author__user').order_by('-created_at')
     
-    # Get recent projects for the feed (last 7 days)
-    recent_cutoff = timezone.now() - timedelta(days=7)
-    feed_projects = projects.filter(created_at__gte=recent_cutoff)[:10]  # Last 10 projects
+    # Show ALL projects - remove the 7-day filter
+    feed_projects = all_projects  # Remove the date filter to show all projects
     
     # Get user's recent projects for sidebar
     my_recent_projects = Project.objects.none()
     if request.user.is_authenticated:
         try:
-            user_profile = UserProfile.objects.get(user=request.user)
+            user_profile, created = UserProfile.objects.get_or_create(user=request.user)
             my_recent_projects = Project.objects.filter(author=user_profile).order_by('-created_at')[:6]
-        except UserProfile.DoesNotExist:
+        except Exception as e:
+            print(f"Error getting user projects: {e}")
             pass
     
-    # Get trending projects (most viewed in last 30 days)
-    trending_cutoff = timezone.now() - timedelta(days=30)
-    trending_projects = Project.objects.filter(
-        created_at__gte=trending_cutoff
-    ).order_by('-views')[:5]
-    
-    # Format projects for the gallery
-    gallery_projects = []
-    for project in projects:
-        gallery_projects.append({
-            "title": project.title,
-            "author": project.author.user.username if project.author and project.author.user else "Anonymous",
-            "category": project.category,
-            "description": project.description,
-            "tech_used": project.tech_used,
-            "created_at": project.created_at,
-            "views": project.views,
-            "likes": project.likes,
-            "id": project.id,
-            "screenshot": project.screenshot.url if project.screenshot else None
-        })
-    
+    # Simplified context - only pass what the template actually uses
     return render(request, 'projects/home_page.html', {
-        'projects': projects,
-        'gallery_projects': gallery_projects,
         'feed_projects': feed_projects,
-        'trending_projects': trending_projects,
-        'my_recent_projects': my_recent_projects  # Add this line
+        'my_recent_projects': my_recent_projects
     })
 
 @login_required
