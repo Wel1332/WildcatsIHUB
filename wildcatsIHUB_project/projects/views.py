@@ -41,12 +41,23 @@ def view_project(request, project_id):
 @login_required
 def delete_project(request, project_id):
     """Delete a project (only by owner)"""
-    user_profile = UserProfile.objects.get(user=request.user)
-    project = get_object_or_404(Project, id=project_id, author=user_profile)
-    project_title = project.title
-    project.delete()
-    messages.success(request, f"Project '{project_title}' deleted successfully!")
-    return redirect('userProfile')              
+    if request.method == "POST":
+        try:
+            user_profile = UserProfile.objects.get(user=request.user)
+            project = get_object_or_404(Project, id=project_id, author=user_profile)
+            project_title = project.title
+            project.delete()
+            messages.success(request, f"Project '{project_title}' deleted successfully!")
+            
+            # Redirect back to where they came from or user profile
+            return redirect('user_profile')
+            
+        except Exception as e:
+            messages.error(request, f"Error deleting project: {str(e)}")
+            return redirect('user_profile')
+    
+    # If not POST, redirect back
+    return redirect('view_project', project_id=project_id)
 
 def home(request):
     """Home page with all projects and feed"""
@@ -91,19 +102,29 @@ def submit_project(request):
             # Validate required fields
             if not title or not description or not category or not github_url or not tech_used:
                 messages.error(request, "Please fill in all required fields.")
-                return render(request, 'projects/project_form.html', {'request': request})
+                # FIX: Pass the POST data back to preserve user input
+                return render(request, 'projects/project_form.html', {
+                    'request': request,
+                    'preserve_data': True  # This tells template to use POST data
+                })
 
             # Handle "other" category
             if category == "other":
                 if not other_category:
                     messages.error(request, "Please specify the category when selecting 'Other'.")
-                    return render(request, 'projects/project_form.html', {'request': request})
+                    return render(request, 'projects/project_form.html', {
+                        'request': request,
+                        'preserve_data': True
+                    })
                 category = other_category
 
             # Validate GitHub URL format
             if not github_url.startswith(('http://', 'https://')):
                 messages.error(request, "Please enter a valid GitHub URL.")
-                return render(request, 'projects/project_form.html', {'request': request})
+                return render(request, 'projects/project_form.html', {
+                    'request': request,
+                    'preserve_data': True
+                })
 
             # Get or create UserProfile for the current user
             user_profile, created = UserProfile.objects.get_or_create(user=request.user)
@@ -127,7 +148,10 @@ def submit_project(request):
 
         except Exception as e:
             messages.error(request, f"Error submitting project: {str(e)}")
-            return render(request, 'projects/project_form.html', {'request': request})
+            return render(request, 'projects/project_form.html', {
+                'request': request,
+                'preserve_data': True
+            })
 
     return render(request, 'projects/project_form.html')
 
@@ -168,8 +192,9 @@ def edit_project(request, project_id):
             # Validate required fields
             if not title or not description or not category or not github_url or not tech_used:
                 messages.error(request, "Please fill in all required fields.")
+                # FIX: Always pass the project object back
                 return render(request, 'projects/project_form.html', {
-                    'project': project,
+                    'project': project,  # Keep the original project data
                     'editing': True
                 })
 
@@ -178,7 +203,7 @@ def edit_project(request, project_id):
                 if not other_category:
                     messages.error(request, "Please specify the category when selecting 'Other'.")
                     return render(request, 'projects/project_form.html', {
-                        'project': project,
+                        'project': project,  # Keep the original project data
                         'editing': True
                     })
                 category = other_category
@@ -187,7 +212,7 @@ def edit_project(request, project_id):
             if not github_url.startswith(('http://', 'https://')):
                 messages.error(request, "Please enter a valid GitHub URL.")
                 return render(request, 'projects/project_form.html', {
-                    'project': project,
+                    'project': project,  # Keep the original project data
                     'editing': True
                 })
 
@@ -206,12 +231,15 @@ def edit_project(request, project_id):
             
             project.save()
             messages.success(request, f"Project '{project.title}' updated successfully!")
-            return redirect('view_project', project_id=project.id)
+            
+            # Redirect back to previous page using next parameter
+            next_url = request.POST.get('next') or 'user_profile'
+            return redirect(next_url)
             
         except Exception as e:
             messages.error(request, f"Error updating project: {str(e)}")
             return render(request, 'projects/project_form.html', {
-                'project': project,
+                'project': project,  # Keep the original project data
                 'editing': True
             })
     
@@ -221,5 +249,3 @@ def edit_project(request, project_id):
         'editing': True
     }
     return render(request, 'projects/project_form.html', context)
-
-    
