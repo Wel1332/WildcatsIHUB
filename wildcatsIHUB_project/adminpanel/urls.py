@@ -15,4 +15,5 @@ urlpatterns = [
     path('submissions/', views.submissions, name='submissions'),
     path('profile/', views.admin_profile, name='admin_profile'),
     path('gallery/', views.gallery, name='gallery'),
+    path('projects/bulk-action/', views.bulk_project_action, name='bulk_project_action'),
 ]

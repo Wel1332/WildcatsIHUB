@@ -2,27 +2,46 @@
 {% block title %}Confirm Delete{% endblock %}
 {% block content %}
 
-<div class="welcome-header" style="background-color: #fce8e6; border-left: 6px solid #ff5252;">
-    <h1>Confirm Deletion</h1>
-    <p class="subtitle">You are about to permanently delete an account.</p>
-</div>
+<div class="projects-section" style="max-width: 800px; margin: 0 auto;">
+    <div class="section-header">
+        <h2 style="color: var(--danger-color);">Confirm Deletion</h2>
+        <p>This action is critical and irreversible.</p>
+    </div>
 
-<div class="projects-section">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-danger">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
+    <div style="background-color: #ffebee; border-left: 5px solid var(--danger-color); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+        <h3 style="color: #c62828; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-exclamation-triangle"></i> Warning
+        </h3>
+        <p style="color: #b71c1c; line-height: 1.6;">
+            You are about to permanently delete the user <strong>{{ user_to_delete.username }}</strong>.
+            <br>
+            This will remove:
+        </p>
+        <ul style="color: #b71c1c; margin-left: 20px; margin-top: 10px; line-height: 1.5;">
+            <li>Their user account and login access.</li>
+            <li>Their student profile data.</li>
+            <li>All projects they have submitted.</li>
+        </ul>
+    </div>
 
-    <div class="project-item" style="border-left: 4px solid #ff5252;">
-        <h2>User: {{ user_to_delete.username }}</h2>
-        <p><strong>This action is irreversible.</strong> All associated data (projects, profile) will be permanently lost. Are you absolutely sure you want to proceed?</p>
-        
-        <form method="post">
+    <div class="project-item">
+        <div class="project-header">
+            <div>
+                <h3>{{ user_to_delete.first_name }} {{ user_to_delete.last_name }}</h3>
+                <p style="color: #666; font-size: 0.9rem;">{{ user_to_delete.email }}</p>
+            </div>
+            <span class="status-badge rejected">Deletion Target</span>
+        </div>
+
+        <form method="post" style="margin-top: 2rem;">
             {% csrf_token %}
-            <div class="project-actions" style="margin-top: 20px;">
-                <button type="submit" class="btn btn-danger">Yes, Delete This Account</button>
-                <a href="{% url 'user_management' %}" class="btn btn-outline">Cancel</a>
+            <p style="margin-bottom: 20px;">Are you absolutely sure you want to proceed?</p>
+            
+            <div class="project-actions" style="display: flex; gap: 15px;">
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> Yes, Delete Account
+                </button>
+                <a href="{% url 'user_management' %}" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>

@@ -8,28 +8,73 @@
         <p>Track progress of all projects.</p>
     </div>
 
+    <div class="filter-bar">
+        <form method="get">
+            <input type="text" name="q" placeholder="Search title or student..." 
+                   value="{{ request.GET.q|default:'' }}" class="form-input" style="flex-grow: 1;">
+            
+            <select name="status" class="form-input" style="width: auto;">
+                <option value="">All Statuses</option>
+                <option value="Pending" {% if request.GET.status == 'Pending' %}selected{% endif %}>Pending</option>
+                <option value="Active" {% if request.GET.status == 'Active' %}selected{% endif %}>Active</option>
+                <option value="Approved" {% if request.GET.status == 'Approved' %}selected{% endif %}>Approved</option>
+                <option value="Rejected" {% if request.GET.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                <option value="Completed" {% if request.GET.status == 'Completed' %}selected{% endif %}>Completed</option>
+            </select>
+    
+            <button type="submit" class="btn btn-primary">Search</button>
+            {% if request.GET.q or request.GET.status %}
+                <a href="{% url 'project_tracking' %}" class="btn btn-secondary">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
     {% for project in projects %}
     <div class="project-item">
         <div class="project-header">
             <h3>{{ project.title }}</h3> 
             <div class="project-status">
-                <span class="status-badge"> 
-                    {{ project.status }}
-                </span>
+                <span class="status-badge {{ project.status|lower }}">{{ project.status }}</span>
             </div>
         </div>
-        <div class="project-description">{{ project.description }}</div>
-        <p><strong>Submitted by:</strong> {{ project.author.user.username }}</p> 
+        <div class="project-description">{{ project.description|truncatewords:20 }}</div>
+
+        <div style="margin-top: 10px; font-size: 0.9rem; color: #555; background: #f8f9fa; padding: 10px; border-radius: 8px;">
+            <p style="margin-bottom: 4px;">
+                <strong>Submitted:</strong> {{ project.created_at|date:"M d, Y" }}
+            </p>
+            
+            {% if project.approved_at and project.status == 'Approved' %}
+            <p style="color: #00c853;">
+                <strong>Approved:</strong> {{ project.approved_at|date:"M d, Y" }}
+            </p>
+            {% endif %}
+        </div>
+        <p style="margin-top: 10px; color: #666;">
+            <strong>Submitted by:</strong> {{ project.author.user.username }} 
+        </p> 
         <div class="project-actions">
-            <a href="{% url 'project_detail' pk=project.pk %}" class="btn btn-primary">View</a>
+            <a href="{% url 'project_detail' pk=project.pk %}" class="btn btn-primary">View Details</a>
+            <a href="{% url 'project_edit' pk=project.pk %}" class="btn btn-secondary">Edit</a>
         </div>
     </div>
     {% empty %}
     <div class="empty-state">
         <h3>No projects found</h3>
-        <p>Projects will appear here once added.</p>
+        <p>Try adjusting your filters.</p>
     </div>
     {% endfor %}
-</div>
 
+    <div class="pagination">
+        {% if projects.has_previous %}
+            <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="btn btn-outline">&laquo; First</a>
+            <a href="?page={{ projects.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="btn btn-outline">Previous</a>
+        {% endif %}
+        <span class="current">Page {{ projects.number }} of {{ projects.paginator.num_pages }}</span>
+        {% if projects.has_next %}
+            <a href="?page={{ projects.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="btn btn-outline">Next</a>
+            <a href="?page={{ projects.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="btn btn-outline">Last &raquo;</a>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

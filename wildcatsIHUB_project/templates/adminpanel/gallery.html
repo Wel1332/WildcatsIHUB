@@ -5,23 +5,45 @@
 <div class="projects-section">
     <div class="section-header">
         <h2>Gallery</h2>
-        <p>View uploaded images.</p>
+        <p>View uploaded project screenshots.</p>
     </div>
 
-    <div class="dashboard-content">
+    <div class="gallery-grid">
         {% for project in projects %} 
-        <div class="project-item">
-            <div class="project-header">
-                <h3>Project: {{ project.title }}</h3> 
+        <div class="gallery-card">
+            <div class="image-wrapper">
+                <a href="{% url 'project_detail' pk=project.pk %}">
+                    <img src="{{ project.screenshot.url }}" alt="{{ project.title }}" loading="lazy">
+                </a>
             </div>
-            <img src="{{ project.screenshot.url }}" alt="{{ project.title }}" style="width:100%; border-radius:12px;"> 
+            
+            <div class="gallery-info">
+                <h3>{{ project.title|truncatechars:20 }}</h3>
+                <p>by {{ project.author.user.username }}</p>
+                </div>
         </div>
         {% empty %}
-        <div class="empty-state">
+        <div class="empty-state" style="grid-column: 1 / -1;">
             <h3>No images found</h3>
             <p>The gallery will populate once users upload content.</p>
         </div>
         {% endfor %}
+    </div>
+
+    <div class="pagination">
+        {% if projects.has_previous %}
+            <a href="?page=1" class="btn btn-outline">&laquo; First</a>
+            <a href="?page={{ projects.previous_page_number }}" class="btn btn-outline">Previous</a>
+        {% endif %}
+    
+        <span class="current">
+            Page {{ projects.number }} of {{ projects.paginator.num_pages }}
+        </span>
+    
+        {% if projects.has_next %}
+            <a href="?page={{ projects.next_page_number }}" class="btn btn-outline">Next</a>
+            <a href="?page={{ projects.paginator.num_pages }}" class="btn btn-outline">Last &raquo;</a>
+        {% endif %}
     </div>
 </div>
 
