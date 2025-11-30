@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from datetime import timedelta
@@ -190,6 +190,7 @@ def user_profile(request):
                 'interests': ''
             }
         
+        # Get ONLY user's own projects
         django_projects = get_user_projects_django(request.user)
         
         context = {
@@ -200,7 +201,8 @@ def user_profile(request):
         
     except Exception as e:
         print(f"Error in user_profile view: {e}")
-        projects = Project.objects.all()
+        # Return EMPTY queryset - no projects
+        projects = Project.objects.none()
         user = request.user
         user_full_name = user.get_full_name() or user.username
         default_profile = {
@@ -218,43 +220,184 @@ def user_profile(request):
             'interests': ''
         }
         context = {
-            'projects': projects,
+            'projects': projects,  # Empty projects
             'user_profile_data': default_profile
         }
         return render(request, 'dashboard/userProfile.html', context)
 
 def get_user_projects_django(user):
-    user_projects = Project.objects.none()
-    
+    """
+    Get ONLY the projects that belong to the current user
+    Returns empty queryset if user has no projects
+    """
     try:
+        # Try to get user profile
         user_profile = UserProfile.objects.get(user=user)
         
-        if Project.objects.filter(author=user_profile).exists():
-            user_projects = Project.objects.filter(author=user_profile).order_by('-created_at')
-        elif Project.objects.filter(created_by=user_profile).exists():
-            user_projects = Project.objects.filter(created_by=user_profile).order_by('-created_at')
-        elif Project.objects.filter(user=user).exists():
-            user_projects = Project.objects.filter(user=user).order_by('-created_at')
-        elif Project.objects.filter(owner=user).exists():
-            user_projects = Project.objects.filter(owner=user).order_by('-created_at')
-        else:
-            user_projects = Project.objects.all().order_by('-created_at')
-            
+        # Return ONLY projects where author is this user's profile
+        return Project.objects.filter(author=user_profile).order_by('-created_at')
+        
     except UserProfile.DoesNotExist:
-        if Project.objects.filter(user=user).exists():
-            user_projects = Project.objects.filter(user=user).order_by('-created_at')
-        elif Project.objects.filter(owner=user).exists():
-            user_projects = Project.objects.filter(owner=user).order_by('-created_at')
-        else:
-            user_projects = Project.objects.all().order_by('-created_at')
+        # If no user profile exists, user has no projects
+        pass
     
-    return user_projects
+    # Return EMPTY queryset - user has no projects
+    return Project.objects.none()
+
+# PROJECT-RELATED VIEWS - ADD THESE FUNCTIONS
+
+@login_required
+def add_project(request):
+    """
+    Handle project creation - both form display and submission
+    """
+    if request.method == 'POST':
+        try:
+            # Get or create user profile
+            user_profile, created = UserProfile.objects.get_or_create(
+                user=request.user,
+                defaults={
+                    'full_name': request.user.get_full_name() or request.user.username,
+                    'bio': '',
+                    'school': '',
+                    'major': ''
+                }
+            )
+            
+            # Create the project WITH SCREENSHOT HANDLING
+            project = Project(
+                title=request.POST.get('title'),
+                description=request.POST.get('description'),
+                tech_used=request.POST.get('tech_used', ''),
+                github_url=request.POST.get('github_url', ''),
+                live_demo=request.POST.get('live_demo', ''),
+                category=request.POST.get('category', 'other'),
+                status='completed',
+                author=user_profile,
+                screenshot=request.FILES.get('screenshot')  # ADD THIS LINE
+            )
+            project.save()
+            
+            # Also save to Supabase for consistency
+            try:
+                supabase_data = {
+                    'user_id': str(request.user.id),
+                    'title': project.title,
+                    'description': project.description,
+                    'tech_used': project.tech_used,
+                    'github_url': project.github_url,
+                    'live_demo': project.live_demo,
+                    'category': project.category,
+                    'status': 'completed',
+                    'created_at': project.created_at.isoformat()
+                }
+                
+                supabase_client.table('projects_project') \
+                    .insert([supabase_data]) \
+                    .execute()
+            except Exception as e:
+                print(f"Warning: Could not sync to Supabase: {e}")
+            
+            return redirect('user_profile')
+            
+        except Exception as e:
+            print(f"Error creating project: {e}")
+            # Return form with error
+            return render(request, 'projects/project_form.html', {
+                'error': 'There was an error creating your project. Please try again.'
+            })
+    
+    # GET request - show the form
+    return render(request, 'projects/project_form.html')
+
+@login_required
+def view_project(request, project_id):
+    """
+    Display a specific project
+    """
+    project = get_object_or_404(Project, id=project_id)
+    
+    # Check if user owns this project or it's public
+    if project.author.user != request.user:
+        # For now, allow viewing any project
+        # You might want to add privacy controls later
+        pass
+    
+    # FIXED: Changed from project_detail.html to view_project.html
+    return render(request, 'projects/view_project.html', {'project': project})
+
+@login_required
+def edit_project(request, project_id):
+    """
+    Handle project editing
+    """
+    try:
+        # FIX: Use get_or_create to handle missing UserProfile
+        user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+        project = get_object_or_404(Project, id=project_id, author=user_profile)
+        
+        if request.method == 'POST':
+            try:
+                project.title = request.POST.get('title', project.title)
+                project.description = request.POST.get('description', project.description)
+                project.tech_used = request.POST.get('tech_used', project.tech_used)
+                project.github_url = request.POST.get('github_url', project.github_url)
+                project.live_demo = request.POST.get('live_demo', project.live_demo)
+                project.category = request.POST.get('category', project.category)
+                
+                # Handle new screenshot upload (only if file is provided)
+                if 'screenshot' in request.FILES and request.FILES['screenshot']:
+                    project.screenshot = request.FILES['screenshot']
+                
+                project.save()
+                
+                # Redirect back to previous page using next parameter
+                next_url = request.POST.get('next') or 'user_profile'
+                return redirect(next_url)
+                
+            except Exception as e:
+                print(f"Error updating project: {e}")
+                return render(request, 'projects/project_form.html', {
+                    'project': project,
+                    'editing': True,  # ADD THIS LINE
+                    'error': 'There was an error updating your project.'
+                })
+        
+        # GET request - show edit form WITH BOTH project AND editing
+        context = {
+            'project': project,
+            'editing': True  # THIS IS CRITICAL - WAS MISSING!
+        }
+        return render(request, 'projects/project_form.html', context)
+        
+    except Exception as e:
+        print(f"Error accessing project: {str(e)}")
+        return redirect('user_profile')
+
+@login_required
+def delete_project(request, project_id):
+    """
+    Handle project deletion
+    """
+    project = get_object_or_404(Project, id=project_id)
+    
+    # Check if user owns this project
+    if project.author.user != request.user:
+        return redirect('user_profile')
+    
+    if request.method == 'POST':
+        project.delete()
+        return redirect('user_profile')
+    
+    return render(request, 'projects/confirm_delete.html', {'project': project})
+
+# EXISTING VIEWS - KEEP THESE
 
 def landing_page(request):
     return render(request, 'dashboard/landing_page.html')
 
 def gallery(request):
-    """Project gallery view - publicly accessible"""
+    """Project gallery view - publicly accessible (shows ALL projects)"""
     print(f"Gallery accessed - User: {request.user}, Auth: {request.user.is_authenticated}")
     projects = Project.objects.all().select_related('author__user').order_by('-created_at')
     return render(request, "projects/gallery.html", {"projects": projects})
@@ -262,6 +405,7 @@ def gallery(request):
 
 @login_required
 def dashboard(request):
+    # Get ONLY the user's own projects
     user_projects = get_user_projects_django(request.user)
     
     total_projects = user_projects.count()
@@ -269,6 +413,7 @@ def dashboard(request):
         created_at__gte=timezone.now() - timedelta(days=30)
     ).count()
     
+    # Calculate technologies from user's projects only
     all_techs = []
     for project in user_projects:
         if project.tech_used:
@@ -276,6 +421,7 @@ def dashboard(request):
             all_techs.extend(techs)
     total_technologies = len(set(all_techs)) if all_techs else 0
     
+    # Calculate categories from user's projects only
     category_mapping = {
         'web': 'Web Development',
         'mobile': 'Mobile Development', 
@@ -298,9 +444,11 @@ def dashboard(request):
     unique_categories = list(set(project_categories))
     total_categories = len(unique_categories)
     
+    # Get user's most viewed and latest project (will be None if no projects)
     most_viewed_project = user_projects.order_by('-views').first()
     latest_project = user_projects.first()
     
+    # Calculate engagement based on user's own projects
     if total_projects > 0:
         engagement_score = min(100, total_projects * 20 + total_categories * 15)
     else:
@@ -314,7 +462,7 @@ def dashboard(request):
         engagement_status = "Getting Started"
     
     context = {
-        'user_projects': user_projects, 
+        'user_projects': user_projects,  # This will be EMPTY if user has no projects
         'total_projects': total_projects,
         'submitted_projects': total_projects, 
         'recent_submissions': recent_submissions,

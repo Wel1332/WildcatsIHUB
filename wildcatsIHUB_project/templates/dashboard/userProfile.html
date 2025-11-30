@@ -47,6 +47,93 @@
             gap: 10px;
             align-items: center;
         }
+        
+        /* Safe project link styling */
+        .project-link-safe {
+            pointer-events: none;
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+        
+        /* Modal styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -54,8 +141,8 @@
         <!-- Professional Header Section -->
         <div class="profile-header">
             <!-- Back to Home Button - Top Left -->
-          <div class="back-to-home-wrapper">
-                <a href="javascript:history.back()" class="back-btn" title="Go Back">
+            <div class="back-to-home-wrapper">
+                <a href="{% url 'dashboard' %}" class="back-btn" title="Go to Dashboard">
                     <i class="fas fa-arrow-left"></i>
                 </a>
             </div>
@@ -241,9 +328,10 @@
                             <i class="fas fa-folder-open"></i>
                             <h3>Projects</h3>
                         </div>
-                        <button class="add-project-btn" onclick="openProjectModal()">
+                        <!-- CHANGED: Direct link to submit_project form -->
+                        <a href="{% url 'submit_project' %}" class="add-project-btn">
                             <i class="fas fa-plus"></i> Add Project
-                        </button>
+                        </a>
                     </div>
                     <div class="card-content">
                         <div id="displayProjects" class="projects-list">
@@ -287,9 +375,16 @@
                                                 </a>
                                                 {% endif %}
                                             </div>
-                                            <a href="{% url 'view_project' project.id %}" class="btn-outline-primary">
-                                                <i class="fas fa-eye"></i> View Details
-                                            </a>
+                                            <!-- SAFE PROJECT LINK - Only show if project exists -->
+                                            {% if project.id %}
+                                                <a href="{% url 'view_project' project.id %}" class="btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> View Details
+                                                </a>
+                                            {% else %}
+                                                <span class="btn-outline-primary project-link-safe" title="Project no longer available">
+                                                    <i class="fas fa-eye-slash"></i> Unavailable
+                                                </span>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -416,56 +511,62 @@
                 </div>
             </div>
         </div>
-
-        <!-- Add Project Modal -->
-        <div class="modal-overlay" id="projectModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3><i class="fas fa-folder-plus"></i> Add Project</h3>
-                    <button class="modal-close" onclick="closeProjectModal()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form id="addProjectForm" onsubmit="saveProject(event)">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="projectName">Project Name *</label>
-                            <input type="text" id="projectName" name="projectName" placeholder="Enter project name" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="projectDescription">Description *</label>
-                            <textarea id="projectDescription" name="projectDescription" rows="4" placeholder="Describe your project..." required></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="projectLanguages">Technologies Used *</label>
-                            <input type="text" id="projectLanguages" name="projectLanguages" placeholder="e.g., Python, JavaScript, React (comma-separated)" required>
-                            <small class="form-hint">These will be added to your skills tracking</small>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="projectDate">Date Completed</label>
-                                <input type="month" id="projectDate" name="projectDate">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="projectLink">Project Link</label>
-                                <input type="url" id="projectLink" name="projectLink" placeholder="https://">
-                            </div>
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-secondary" onclick="closeProjectModal()">Cancel</button>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Add Project
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
+
+    <!-- SESSION STORAGE SCRIPT FOR BACK BUTTON FUNCTIONALITY -->
+    <script>
+    // Store current page when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        
+        // Only store if it's one of our main pages
+        if (currentPath.includes('/gallery') || 
+            currentPath.includes('/dashboard') || 
+            currentPath.includes('/user-profile') || 
+            currentPath.includes('/profile') ||
+            currentPath.includes('/home') ||
+            currentPath === '/') {
+            
+            sessionStorage.setItem('lastVisitedPage', window.location.href);
+            console.log('Stored last visited page:', window.location.href);
+        }
+    });
+
+    // Also store when clicking on project links (extra safety)
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href && link.href.includes('/project/')) {
+            sessionStorage.setItem('lastVisitedPage', window.location.href);
+            console.log('Stored last page before project click:', window.location.href);
+        }
+    });
+
+    // Modal Functions
+    function openEditModal() {
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    // Form submission handlers
+    function saveProfile(event) {
+        event.preventDefault();
+        // Add your profile saving logic here
+        alert('Profile saved successfully!');
+        closeEditModal();
+    }
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+        const editModal = document.getElementById('editModal');
+        
+        if (event.target === editModal) {
+            closeEditModal();
+        }
+    }
+    </script>
 
     <script src="{% static 'css/wildcatsIHUB/userProfile.js' %}"></script>
 </body>
