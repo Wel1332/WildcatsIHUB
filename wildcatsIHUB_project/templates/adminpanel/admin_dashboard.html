@@ -37,40 +37,107 @@
     </div>
 </div>
 
+<div class="projects-section" style="margin-bottom: 2rem;">
+    <div class="section-header">
+        <h2>Project Status Overview</h2>
+        <p>Real-time breakdown of student submissions.</p>
+    </div>
+    
+    <div style="height: 350px; width: 100%; display: flex; justify-content: center; align-items: center;">
+        <canvas id="statusChart"></canvas>
+    </div>
+</div>
+
 <div class="projects-section">
     <div class="section-header">
-        <h2>Recent Projects</h2>
-        <p>Check out the latest activities.</p>
+        <h2>Recent Activity</h2>
+        <p>Latest actions taken by administrators.</p>
     </div>
 
     {% for project in projects %}
-    <div class="project-item">
+    <div class="project-item status-{{ project.status|lower }}">
         <div class="project-header">
-            <h3>{{ project.title }}</h3> 
+            <div>
+                <h3>{{ project.title }}</h3>
+                <p style="font-size: 0.9rem; color: #555; margin-top: 5px;">
+                    {% if project.approved_by %}
+                        <span style="color: #1e5cff; font-weight: 600;">
+                            <i class="fas fa-user-shield"></i> {{ project.approved_by.username }}
+                        </span> 
+                        {{ project.status|lower }} this project on {{ project.approved_at|default:project.created_at|date:"M d, Y" }}
+                    {% else %}
+                        Submitted by {{ project.author.user.username }} on {{ project.created_at|date:"M d, Y" }}
+                    {% endif %}
+                </p>
+            </div>
+            
             <div class="project-status">
-                <span class="status-badge {{ project.badge_class }}"> 
+                <span class="status-badge {{ project.status|lower }}"> 
                     {{ project.status }}
                 </span>
             </div>
         </div>
-        <div class="project-description">{{ project.description }}</div>
-        <div class="project-languages">
-            {% for lang in project.languages %} 
-            <span class="language-tag">{{ lang }}</span>
-            {% endfor %}
-        </div>
-        <div class="project-actions">
-            <a href="{% url 'project_detail' pk=project.pk %}" class="btn-primary">View</a>
-            
-            <a href="{% url 'project_edit' pk=project.pk %}" class="btn-secondary">Edit</a>
+        
+        <div class="project-description">{{ project.description|truncatewords:20 }}</div>
+        
+        <div class="project-actions" style="margin-top: 15px;">
+            <a href="{% url 'project_detail' pk=project.pk %}" class="btn-secondary" style="font-size: 0.85rem;">View Details</a>
         </div>
     </div>
     {% empty %}
     <div class="empty-state">
-        <h3>No projects found</h3>
-        <p>Projects will appear here once added.</p>
+        <h3>No activity yet</h3>
+        <p>Recent actions will appear here.</p>
     </div>
     {% endfor %}
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('statusChart').getContext('2d');
+        
+        // Parse the data safely
+        const rawData = '{{ chart_data_json|default:"[]"|escapejs }}';
+        const chartData = JSON.parse(rawData);
+        
+        new Chart(ctx, {
+            type: 'doughnut', 
+            data: {
+                labels: ['Pending', 'Approved', 'Rejected'],
+                datasets: [{
+                    label: ' Projects',
+                    data: chartData,
+                    backgroundColor: [
+                        '#1e5cff', // Primary Blue (Pending)
+                        '#00c853', // Success Green (Approved)
+                        '#ff5252'  // Danger Red (Rejected)
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: { 
+                                family: "'Poppins', sans-serif", 
+                                size: 12 
+                            },
+                            usePointStyle: true, 
+                        }
+                    }
+                },
+                cutout: '75%', 
+            }
+        });
+    });
+</script>
 
 {% endblock %}
