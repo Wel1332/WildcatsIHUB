@@ -132,7 +132,8 @@ def submit_project(request):
     return render(request, 'projects/project_form.html')
 
 def gallery(request):
-    """Project gallery view"""
+    """Project gallery view - publicly accessible"""
+    print(f"Gallery accessed - User: {request.user}, Auth: {request.user.is_authenticated}")
     projects = Project.objects.all().select_related('author__user').order_by('-created_at')
     return render(request, "projects/gallery.html", {"projects": projects})
 
@@ -141,7 +142,7 @@ def user_profile(request):
     """User profile with their projects"""
     user_profile = UserProfile.objects.get(user=request.user)
     user_projects = Project.objects.filter(author=user_profile).order_by('-created_at')
-    return render(request, 'userProfile.html', {
+    return render(request, 'dashboard/userProfile.html', {  
         'projects': user_projects,
         'user': request.user
     })
@@ -220,3 +221,5 @@ def edit_project(request, project_id):
         'editing': True
     }
     return render(request, 'projects/project_form.html', context)
+
+    

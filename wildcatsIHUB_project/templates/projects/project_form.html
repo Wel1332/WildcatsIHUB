@@ -121,24 +121,13 @@
                     <button type="submit" class="btn btn-primary">
                         {% if editing %}Update Project{% else %}Submit Project{% endif %}
                     </button>
-                    <!-- Dynamic Cancel Button -->
-                    <a href="#" id="cancelButton" class="btn btn-secondary cancel-btn">
+                    <!-- SIMPLE CANCEL BUTTON - Uses browser back functionality -->
+                    <a href="javascript:history.back()" class="btn btn-secondary cancel-btn">
                         Cancel
                     </a>
                 </div>
             </form>
         </div>
-    </div>
-
-    <!-- Store URLs in data attributes for JavaScript access -->
-    <div id="urls-data" 
-         data-dashboard-url="{% url 'dashboard' %}"
-         data-profile-url="{% url 'userProfile' %}"
-         data-gallery-url="{% url 'gallery' %}"
-         data-home-url="{% url 'home' %}"
-         {% if editing %}
-         data-project-url="{% url 'view_project' project.id %}"
-         {% endif %}>
     </div>
 
 <script>
@@ -154,80 +143,6 @@ function toggleDarkMode() {
         localStorage.setItem("theme", "dark");
     } else {
         localStorage.setItem("theme", "light");
-    }
-}
-
-// Function to set the cancel button URL dynamically
-function setCancelButtonUrl() {
-    const cancelButton = document.getElementById('cancelButton');
-    const urlsData = document.getElementById('urls-data');
-    const referrer = document.referrer;
-    
-    // Get URLs from data attributes
-    const dashboardUrl = urlsData.getAttribute('data-dashboard-url');
-    const profileUrl = urlsData.getAttribute('data-profile-url');
-    const galleryUrl = urlsData.getAttribute('data-gallery-url');
-    const homeUrl = urlsData.getAttribute('data-home-url');
-    const projectUrl = urlsData.getAttribute('data-project-url');
-    
-    console.log('Referrer:', referrer); // Debug log
-    console.log('Project URL:', projectUrl); // Debug log
-    
-    // Check if there's a next parameter in the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const nextParam = urlParams.get('next');
-    
-    if (nextParam) {
-        // Use the next parameter if provided
-        cancelButton.href = nextParam;
-        console.log('Using next param:', nextParam);
-    } 
-    // If we're editing and have a project URL, prioritize going back to project view
-    else if (projectUrl) {
-        // Check if referrer is from project view page
-        if (referrer && referrer.includes('/project/') && referrer.includes('/view/')) {
-            cancelButton.href = projectUrl;
-            console.log('Going back to project view from referrer');
-        }
-        // If no referrer or referrer is not project view, still go to project view
-        else {
-            cancelButton.href = projectUrl;
-            console.log('Going back to project view (default for editing)');
-        }
-    }
-    // Check the referrer to see where the user came from (for create project form)
-    else if (referrer) {
-        if (referrer.includes('/dashboard')) {
-            cancelButton.href = dashboardUrl;
-            console.log('Going to dashboard');
-        } 
-        else if (referrer.includes('/profile') || referrer.includes('/user')) {
-            cancelButton.href = profileUrl;
-            console.log('Going to profile');
-        }
-        else if (referrer.includes('/gallery')) {
-            cancelButton.href = galleryUrl;
-            console.log('Going to gallery');
-        }
-        else if (referrer.includes('/home') || referrer.endsWith('/')) {
-            cancelButton.href = homeUrl;
-            console.log('Going to home');
-        }
-        else if (referrer.includes('/project/')) {
-            // If coming from any project page but not in edit mode, go to profile
-            cancelButton.href = profileUrl;
-            console.log('Going to profile from project page');
-        }
-        else {
-            // If referrer doesn't match known patterns, use browser back
-            cancelButton.href = "javascript:history.back()";
-            console.log('Using browser back');
-        }
-    }
-    // Fallback for create project form
-    else {
-        cancelButton.href = profileUrl;
-        console.log('Fallback to profile');
     }
 }
 
@@ -293,9 +208,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
-
-    // Set cancel button URL
-    setCancelButtonUrl();
 });
 </script>
 </body>

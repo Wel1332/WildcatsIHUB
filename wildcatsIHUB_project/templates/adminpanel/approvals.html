@@ -8,38 +8,87 @@
         <p>Manage user submissions here.</p>
     </div>
 
-    {% for project in pending_projects %} 
-    <div class="project-item">
-        <div class="project-header">
-            <h3>{{ project.title }}</h3>
-            <div class="project-status">
-                <span class="status-badge active">{{ project.status }}</span> 
+    <div class="filter-bar">
+        <form method="get" style="display: flex; width: 100%; gap: 10px;">
+            <input type="text" name="q" placeholder="Search project or student..." 
+                   value="{{ request.GET.q|default:'' }}" class="form-input" style="flex-grow: 1;">
+            <button type="submit" class="btn btn-primary">Search</button>
+            {% if request.GET.q %}
+                <a href="{% url 'approvals' %}" class="btn btn-secondary">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <form method="post" action="{% url 'bulk_project_action' %}" id="bulkForm">
+        {% csrf_token %}
+
+        <div class="bulk-toolbar" style="margin-bottom: 20px; padding: 15px; background: #e8f0fe; border: 1px solid #b3d7ff; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="checkbox" id="selectAll" style="width: 18px; height: 18px; cursor: pointer;">
+                <label for="selectAll" style="font-weight: 600; cursor: pointer; color: #1e5cff;">Select All</label>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" name="action" value="approve" class="btn btn-primary" style="background: #00c853; border: none;">
+                    <i class="fas fa-check-double"></i> Approve Selected
+                </button>
+                <button type="submit" name="action" value="reject" class="btn btn-danger">
+                    <i class="fas fa-times"></i> Reject Selected
+                </button>
             </div>
         </div>
-        <div class="project-description">{{ project.description }}</div>
-        <div class="project-actions" style="display: flex; gap: 10px;">
-            <div class="project-actions" style="display: flex; gap: 10px;">
-    
-                <form method="post" action="{% url 'approve_reject_project' pk=project.pk %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="Approve">
-                    <button type="submit" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Approve</button>
-                </form>
-                
-                <form method="post" action="{% url 'approve_reject_project' pk=project.pk %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="Reject">
-                    <button type="submit" class="btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Reject</button>
-                </form>
+
+        {% for project in pending_projects %} 
+        <div class="project-item" style="position: relative; padding-left: 3.5rem;">
             
+            <div style="position: absolute; left: 1.5rem; top: 50%; transform: translateY(-50%);">
+                <input type="checkbox" name="project_ids" value="{{ project.pk }}" class="project-checkbox" style="width: 20px; height: 20px; cursor: pointer;">
             </div>
+
+            <div class="project-header">
+                <div>
+                    <h3>{{ project.title }}</h3>
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 4px;">
+                        Submitted: {{ project.created_at|date:"M d, Y g:i A" }}
+                    </p>
+                </div>
+                <div class="project-status">
+                    <span class="status-badge active">{{ project.status }}</span> 
+                </div>
+            </div>
+            
+            <p><strong>Submitted by:</strong> {{ project.author.user.username }}</p>
+            <div class="project-description">{{ project.description }}</div>
+            
+            <div class="project-actions" style="margin-top: 15px;">
+                <a href="{% url 'project_detail' pk=project.pk %}" class="btn btn-secondary">View Details</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <h3>No approvals pending</h3>
+            <p>All submissions have been processed.</p>
+        </div>
+        {% endfor %}
+    </form>
+    <div class="pagination">
+        {% if pending_projects.has_previous %}
+            <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline">&laquo; First</a>
+            <a href="?page={{ pending_projects.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline">Previous</a>
+        {% endif %}
+        <span class="current">Page {{ pending_projects.number }} of {{ pending_projects.paginator.num_pages }}</span>
+        {% if pending_projects.has_next %}
+            <a href="?page={{ pending_projects.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline">Next</a>
+            <a href="?page={{ pending_projects.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline">Last &raquo;</a>
+        {% endif %}
     </div>
-    {% empty %}
-    <div class="empty-state">
-        <h3>No approvals pending</h3>
-        <p>All submissions have been processed.</p>
-    </div>
-    {% endfor %}
 </div>
+
+<script>
+    // Simple script to handle "Select All"
+    document.getElementById('selectAll').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.project-checkbox');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+    });
+</script>
 
 {% endblock %}
