@@ -4,20 +4,20 @@ from accounts.models import UserProfile
 from projects.models import Project
 
 class ProjectForm(forms.ModelForm):
-    """Form for editing all fields of the Project model."""
     class Meta:
         model = Project
-        fields = [
-            'title', 'description', 'category', 'tech_used', 'screenshot', 
-            'github_url', 'live_demo', 'video_demo', 'status', 'likes', 'views'
-        ]
-        # Basic styling for project fields
+        fields = '__all__' # or list fields specifically
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input'}),
-            'description': forms.Textarea(attrs={'class': 'form-input', 'rows': 4}),
-            'category': forms.Select(attrs={'class': 'form-input'}),
+            'description': forms.Textarea(attrs={'class': 'form-input', 'rows': 5}),
+            'category': forms.TextInput(attrs={'class': 'form-input'}),
             'tech_used': forms.TextInput(attrs={'class': 'form-input'}),
+            'github_url': forms.URLInput(attrs={'class': 'form-input', 'placeholder': 'https://github.com/...'}),
+            'live_demo': forms.URLInput(attrs={'class': 'form-input', 'placeholder': 'https://...'}),
+            'video_demo': forms.URLInput(attrs={'class': 'form-input', 'placeholder': 'https://youtube.com/...'}),
             'status': forms.Select(attrs={'class': 'form-input'}),
+            'likes': forms.NumberInput(attrs={'class': 'form-input'}),
+            'views': forms.NumberInput(attrs={'class': 'form-input'}),
         }
 
 class UserProfileEditForm(forms.ModelForm):

@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
@@ -16,4 +17,5 @@ urlpatterns = [
     path('profile/', views.admin_profile, name='admin_profile'),
     path('gallery/', views.gallery, name='gallery'),
     path('projects/bulk-action/', views.bulk_project_action, name='bulk_project_action'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 ]

@@ -66,10 +66,14 @@
           </a>
           </nav>
     
-          <a href="{% url 'login' %}" class="logout-btn">
+          <a href="#" onclick="document.getElementById('logout-form').submit(); return false;" class="logout-btn">
             <i class="fa-solid fa-right-from-bracket"></i>
             <span class="link-text">Logout</span>
           </a>
+          <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">
+            {% csrf_token %}
+          </form>
+
         </aside>
     
 
