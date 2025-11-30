@@ -6,6 +6,9 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('user-profile/', views.user_profile, name='user_profile'),
     
+    # ADD THIS LINE - Gallery URL
+    path('gallery/', views.gallery, name='gallery'),
+    
     # Supabase integration endpoints
     path('user-profile/save/', views.save_profile_to_supabase, name='save_profile'),
     path('user-profile/save-project/', views.save_project_to_supabase, name='save_project'),

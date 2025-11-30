@@ -1,0 +1,314 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildcats' Hub - Project Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/gallery.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="gallery-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h1>Wildcats' Hub</h1>
+                </div>
+                <nav class="main-nav">
+                    <a href="{% url 'home' %}" class="nav-link">Home</a>
+                    <a href="{% url 'gallery' %}" class="nav-link active">Project Gallery</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'submit_project' %}" class="nav-link">Submit Project</a>
+                    {% endif %}
+                </nav>
+                <div class="user-actions">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'user_profile' %}" class="user-profile-link" id="userProfileLink">
+                            <div class="user-profile">
+                                <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=1e5cff&color=fff" alt="{{ user.username }}">
+                            </div>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="login-btn">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Project Gallery</h2>
+                <p>Discover innovative student systems and explore their features.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search & Filter Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search by title, technology, or keyword..." id="searchInput">
+                    <button class="search-btn" type="button">Search</button>
+                </div>
+                <div class="filter-controls">
+                    <div class="category-filter">
+                        <button class="filter-btn active" type="button">All Categories</button>
+                        <div class="filter-dropdown">
+                            <div class="filter-option" data-category="all">
+                                <input type="radio" name="category" id="cat-all" checked>
+                                <label for="cat-all">All Categories</label>
+                            </div>
+                            <div class="filter-option" data-category="web">
+                                <input type="radio" name="category" id="cat-web">
+                                <label for="cat-web">Web Development</label>
+                            </div>
+                            <div class="filter-option" data-category="mobile">
+                                <input type="radio" name="category" id="cat-mobile">
+                                <label for="cat-mobile">Mobile Development</label>
+                            </div>
+                            <div class="filter-option" data-category="ai">
+                                <input type="radio" name="category" id="cat-ai">
+                                <label for="cat-ai">AI/ML Projects</label>
+                            </div>
+                            <div class="filter-option" data-category="data">
+                                <input type="radio" name="category" id="cat-data">
+                                <label for="cat-data">Data Science</label>
+                            </div>
+                            <div class="filter-option" data-category="game">
+                                <input type="radio" name="category" id="cat-game">
+                                <label for="cat-game">Game Development</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Grid -->
+    <section class="projects-section">
+        <div class="container">
+            {% if projects %}
+                <div class="projects-grid" id="projectsGrid">
+                    {% for project in projects %}
+                        <div class="project-card" data-category="{{ project.category|lower }}" data-search="{{ project.title|lower }} {{ project.description|lower }} {{ project.tech_used|lower }}">
+                            <div class="project-badge">{{ project.category }}</div>
+                            <div class="project-image">
+                                {% if project.screenshot %}
+                                    <img 
+                                        src="{{ project.screenshot.url }}" 
+                                        alt="{{ project.title }}"
+                                        loading="lazy"
+                                        width="400"
+                                        height="220"
+                                    >
+                                {% else %}
+                                    <img 
+                                        src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=220&q=80" 
+                                        alt="{{ project.title }}"
+                                        loading="lazy"
+                                        width="400"
+                                        height="220"
+                                    >
+                                {% endif %}
+                            </div>
+                            <div class="project-content">
+                                <h3>{{ project.title }}</h3>
+                                <p>{{ project.description|truncatewords:20 }}</p>
+                               <div class="tech-tags">
+                                    {% if project.tech_used %}
+                                        {% with tech_list=project.tech_used.split %}
+                                            {% for tech in tech_list %}
+                                                {% if tech and tech != " " and tech != "," %}
+                                                    <span class="tech-tag">{{ tech|upper }}</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endwith %}
+                                    {% endif %}
+                                </div>
+                                <div class="project-meta">
+                                    <div class="author">
+                                        <img 
+                                            src="https://ui-avatars.com/api/?name={{ project.author.user.username }}&background=1e5cff&color=fff&size=40" 
+                                            alt="{{ project.author.user.username }}"
+                                            loading="lazy"
+                                            width="40"
+                                            height="40"
+                                        >
+                                        <div class="author-info">
+                                            <span class="author-name">{{ project.author.user.first_name }} {{ project.author.user.last_name }}</span>
+                                            <span class="author-major">{{ project.author.major|default:"Student" }}</span>
+                                        </div>
+                                    </div>
+                                    <a href="{% url 'view_project' project.id %}?next={{ request.path }}" class="view-project-btn">View Project <i class="fas fa-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-projects">
+                    <i class="fas fa-folder-open"></i>
+                    <h3>No Projects Yet</h3>
+                    <p>Be the first to submit a project!</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'submit_project' %}" class="submit-project-btn">Submit Your Project</a>
+                    {% else %}
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="submit-project-btn">Login to Submit</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="gallery-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <span>Wildcats' Hub</span>
+                </div>
+
+                <div class="footer-copyright">
+                    &copy; 2023 Wildcats' Hub. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // MINIMAL JavaScript for filtering only
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterOptions = document.querySelectorAll('.filter-option');
+            const projectCards = document.querySelectorAll('.project-card');
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.querySelector('.search-btn');
+            
+            let currentCategory = 'all';
+            let searchTimeout = null;
+
+            // Simple filter function
+            function applyFilters() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                
+                projectCards.forEach(card => {
+                    const category = card.getAttribute('data-category');
+                    const searchData = card.getAttribute('data-search');
+                    
+                    const categoryMatch = currentCategory === 'all' || category === currentCategory;
+                    const searchMatch = !searchTerm || searchData.includes(searchTerm);
+                    
+                    card.style.display = (categoryMatch && searchMatch) ? 'block' : 'none';
+                });
+
+                // Show no results message
+                showNoResultsMessage();
+            }
+
+            function showNoResultsMessage() {
+                const visibleCards = document.querySelectorAll('.project-card[style="display: block"]');
+                let noResultsMessage = document.getElementById('no-results-message');
+                
+                if (visibleCards.length === 0 && projectCards.length > 0) {
+                    if (!noResultsMessage) {
+                        noResultsMessage = document.createElement('div');
+                        noResultsMessage.id = 'no-results-message';
+                        noResultsMessage.className = 'no-projects';
+                        noResultsMessage.innerHTML = `
+                            <i class="fas fa-search"></i>
+                            <h3>No Projects Found</h3>
+                            <p>Try adjusting your search or filter criteria</p>
+                            <button class="submit-project-btn" id="clearFiltersBtn">Clear Filters</button>
+                        `;
+                        document.querySelector('.projects-grid').appendChild(noResultsMessage);
+                        
+                        // Add event listener to clear filters button
+                        document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+                    }
+                } else if (noResultsMessage) {
+                    noResultsMessage.remove();
+                }
+            }
+
+            // Category filter
+            filterOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    currentCategory = this.getAttribute('data-category');
+                    
+                    const filterBtn = document.querySelector('.filter-btn');
+                    filterBtn.textContent = this.querySelector('label').textContent;
+                    
+                    filterOptions.forEach(opt => {
+                        opt.querySelector('input').checked = false;
+                    });
+                    this.querySelector('input').checked = true;
+                    
+                    applyFilters();
+                });
+            });
+            
+            // Search functionality
+            function handleSearch() {
+                applyFilters();
+            }
+
+            searchBtn.addEventListener('click', handleSearch);
+            
+            searchInput.addEventListener('input', function() {
+                if (searchTimeout) {
+                    clearTimeout(searchTimeout);
+                }
+                searchTimeout = setTimeout(handleSearch, 500); // Increased delay to reduce lag
+            });
+            
+            searchInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    if (searchTimeout) {
+                        clearTimeout(searchTimeout);
+                    }
+                    handleSearch();
+                }
+            });
+
+            // Clear all filters function
+            function clearFilters() {
+                currentCategory = 'all';
+                searchInput.value = '';
+                
+                const filterBtn = document.querySelector('.filter-btn');
+                filterBtn.textContent = 'All Categories';
+                
+                filterOptions.forEach(opt => {
+                    opt.querySelector('input').checked = false;
+                });
+                document.querySelector('#cat-all').checked = true;
+                
+                applyFilters();
+            }
+
+            // Ensure user profile link works without interference
+            const userProfileLink = document.getElementById('userProfileLink');
+            if (userProfileLink) {
+                userProfileLink.addEventListener('click', function(e) {
+                    // Let the link work normally - no prevention
+                    console.log('Navigating to user profile...');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

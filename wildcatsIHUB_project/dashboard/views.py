@@ -253,6 +253,13 @@ def get_user_projects_django(user):
 def landing_page(request):
     return render(request, 'dashboard/landing_page.html')
 
+def gallery(request):
+    """Project gallery view - publicly accessible"""
+    print(f"Gallery accessed - User: {request.user}, Auth: {request.user.is_authenticated}")
+    projects = Project.objects.all().select_related('author__user').order_by('-created_at')
+    return render(request, "projects/gallery.html", {"projects": projects})
+
+
 @login_required
 def dashboard(request):
     user_projects = get_user_projects_django(request.user)
