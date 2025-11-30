@@ -154,3 +154,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# settings.py
+
+# Email Backend (Prints to console for testing)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST_USER = 'admin@wildcatshub.com' # The "From" address
