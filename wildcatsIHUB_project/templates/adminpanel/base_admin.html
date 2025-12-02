@@ -59,6 +59,21 @@
               <i class="fas fa-project-diagram"></i>
               <span class="link-text">Projects</span>
             </a>
+
+            <a href="{% url 'audit_logs' %}" class="{% if request.resolver_match.url_name == 'audit_logs' %}active{% endif %}">
+                <i class="fas fa-history"></i>
+                <span class="link-text">Audit Logs</span>
+            </a>
+
+            <a href="{% url 'moderation_queue' %}" class="{% if request.resolver_match.url_name == 'moderation_queue' %}active{% endif %}">
+                <i class="fas fa-flag" style="color: #ff5252;"></i>
+                <span class="link-text">Moderation</span>
+            </a>
+
+            <a href="{% url 'manage_announcements' %}" class="{% if request.resolver_match.url_name == 'manage_announcements' %}active{% endif %}">
+                <i class="fas fa-bullhorn"></i>
+                <span class="link-text">Announcements</span>
+            </a>
             
             <a href="{% url 'admin_profile' %}" class="{% if request.resolver_match.url_name == 'admin_profile' %}active{% endif %}">
               <i class="fas fa-user"></i>
@@ -66,10 +81,14 @@
           </a>
           </nav>
     
-          <a href="{% url 'login' %}" class="logout-btn">
+          <a href="#" onclick="document.getElementById('logout-form').submit(); return false;" class="logout-btn">
             <i class="fa-solid fa-right-from-bracket"></i>
             <span class="link-text">Logout</span>
           </a>
+          <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">
+            {% csrf_token %}
+          </form>
+
         </aside>
     
 

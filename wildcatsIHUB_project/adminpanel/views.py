@@ -6,13 +6,16 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from django.utils import timezone # <--- NEW IMPORT
-from projects.models import Project 
+from projects.models import Project, Report
 from accounts.models import UserProfile 
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .forms import AdminUserForm, AdminProfileForm, UserManagementForm, UserProfileEditForm, ProjectForm
+from .forms import AdminUserForm, AdminProfileForm, UserManagementForm, UserProfileEditForm, ProjectForm, AnnouncementForm
 from django.core.mail import send_mail # <--- Make sure this is imported at the top!
 from django.conf import settings
 import json
+import csv
+from django.http import HttpResponse
+from .models import AuditLog, Announcement
 
 def is_admin(user):
     return user.is_active and user.is_staff
@@ -23,7 +26,7 @@ def admin_dashboard(request):
     # 1. Existing Counts
     total_users = UserProfile.objects.count()
     approved_projects_count = Project.objects.filter(status='Approved').count()
-    ongoing_projects_count = Project.objects.filter(status='Active').count()
+    ongoing_projects_count = Project.objects.filter(Q(status='Active') | Q(status='Approved')).count()
     
     # 2. Get Data for the Chart (Count by status)
     pending_count = Project.objects.filter(status='Pending').count()
@@ -64,64 +67,67 @@ def bulk_project_action(request):
         messages.warning(request, "No projects selected.")
         return redirect('approvals')
 
-    # Fetch all selected projects with author data
     projects = Project.objects.filter(id__in=project_ids).select_related('author__user')
-    
     success_count = 0
 
     for project in projects:
         student_email = project.author.user.email
         student_name = project.author.user.first_name or project.author.user.username
         
-        # 1. Update Data based on action
+        # 1. Update Data
         if action == 'approve':
             project.status = 'Approved'
             project.approved_at = timezone.now()
             project.approved_by = request.user
+            # Log the action
+            AuditLog.objects.create(
+                admin=request.user, 
+                action='APPROVE', 
+                target_object=f"Project: {project.title}", 
+                details="Bulk approval"
+            )
             
             subject = f"🎉 Good News! '{project.title}' was Approved"
-            message = (
-                f"Hi {student_name},\n\n"
-                f"Your project '{project.title}' has been APPROVED by the admin team.\n"
-                f"Great work!\n\n"
-                f"- Wildcats iHub Team"
-            )
+            message = f"Hi {student_name},\n\nYour project '{project.title}' has been APPROVED.\n\n- Wildcats iHub Team"
             
         elif action == 'reject':
             project.status = 'Rejected'
             project.approved_at = None
             project.approved_by = request.user
+            # Log the action
+            AuditLog.objects.create(
+                admin=request.user, 
+                action='REJECT', 
+                target_object=f"Project: {project.title}", 
+                details="Bulk rejection"
+            )
             
             subject = f"Update regarding '{project.title}'"
-            message = (
-                f"Hi {student_name},\n\n"
-                f"Unfortunately, your project '{project.title}' was NOT approved.\n"
-                f"Please review the guidelines.\n\n"
-                f"- Wildcats iHub Team"
-            )
+            message = f"Hi {student_name},\n\nUnfortunately, your project '{project.title}' was NOT approved.\n\n- Wildcats iHub Team"
         
-        # 2. Save Changes
         project.save()
         success_count += 1
 
-        # 3. Send Email (Console)
+        # 2. Send Email - CHANGED fail_silently TO FALSE
         if student_email:
             try:
+                print(f"Attempting to send email to {student_email}...") # Debug print
                 send_mail(
                     subject,
                     message,
                     settings.EMAIL_HOST_USER, 
                     [student_email],
-                    fail_silently=True,
+                    fail_silently=False,  # <--- CRITICAL CHANGE: Now it will crash if settings are wrong
                 )
+                print("Email sent successfully!")
             except Exception as e:
-                print(f"Failed to send email to {student_email}: {e}")
+                print(f"❌ CRITICAL EMAIL ERROR: {e}") # This will show in your terminal
+                # We don't stop the loop, but we print the error
 
-    # Final Success Message
     if action == 'approve':
-        messages.success(request, f"{success_count} projects approved and emails sent.")
+        messages.success(request, f"{success_count} projects approved.")
     else:
-        messages.warning(request, f"{success_count} projects rejected and notifications sent.")
+        messages.warning(request, f"{success_count} projects rejected.")
 
     return redirect('approvals')
 
@@ -154,7 +160,7 @@ def approvals(request):
 @user_passes_test(is_admin)
 @require_POST
 def approve_reject_project(request, pk):
-    """Handles updating a project's status, date, admin user, AND sending email."""
+    """Handles updating a project's status, date, admin user, sending email, AND logging the action."""
     project = get_object_or_404(Project, pk=pk)
     action = request.POST.get('action') 
     
@@ -166,6 +172,15 @@ def approve_reject_project(request, pk):
         project.status = 'Approved'
         project.approved_at = timezone.now()
         project.approved_by = request.user
+        
+        # --- NEW: Record Audit Log ---
+        AuditLog.objects.create(
+            admin=request.user,
+            action='APPROVE',
+            target_object=f"Project: {project.title}",
+            details=f"Approved project ID {project.id}"
+        )
+        # -----------------------------
         
         subject = f"🎉 Good News! '{project.title}' was Approved"
         message = (
@@ -181,6 +196,15 @@ def approve_reject_project(request, pk):
         project.status = 'Rejected'
         project.approved_at = None
         project.approved_by = request.user
+        
+        # --- NEW: Record Audit Log ---
+        AuditLog.objects.create(
+            admin=request.user,
+            action='REJECT',
+            target_object=f"Project: {project.title}",
+            details=f"Rejected project ID {project.id}"
+        )
+        # -----------------------------
         
         subject = f"Update regarding your project '{project.title}'"
         message = (
@@ -216,6 +240,7 @@ def approve_reject_project(request, pk):
 
     messages.success(request, alert_msg)
     return redirect('approvals')
+
 @login_required(login_url='/accounts/login/') 
 @user_passes_test(is_admin)
 def gallery(request):
@@ -302,13 +327,25 @@ def user_edit(request, pk):
 @user_passes_test(is_admin)
 def user_delete(request, pk):
     user_instance = get_object_or_404(User, pk=pk)
+    
     if request.method == 'POST':
         if user_instance.is_superuser:
             messages.error(request, "Cannot delete superuser accounts.")
             return redirect('user_management')
+            
+        # --- NEW LOGGING CODE ---
+        AuditLog.objects.create(
+            admin=request.user,
+            action='DELETE',
+            target_object=f"User: {user_instance.username}",
+            details=f"Permanently deleted user account ({user_instance.email})"
+        )
+        # ------------------------
+
         user_instance.delete()
         messages.success(request, f'User {user_instance.username} successfully deleted.')
         return redirect('user_management')
+        
     context = { 'user_to_delete': user_instance }
     return render(request, 'adminpanel/user_delete_confirm.html', context)
 
@@ -382,3 +419,115 @@ def admin_profile(request):
         profile_form = AdminProfileForm(instance=profile_instance)
     context = { "user": request.user, "user_form": user_form, "profile_form": profile_form }
     return render(request, "adminpanel/admin_profile.html", context)
+
+@login_required(login_url='/accounts/login/')
+@user_passes_test(is_admin)
+def export_projects_csv(request):
+    """Export all projects to a CSV file."""
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="projects_export.csv"'
+
+    writer = csv.writer(response)
+    # Write the header row
+    writer.writerow(['Title', 'Student', 'Email', 'Category', 'Status', 'Date Submitted', 'Views', 'Likes'])
+
+    # Fetch data (optimized query)
+    projects = Project.objects.all().select_related('author__user').order_by('-created_at')
+
+    for project in projects:
+        # Handle cases where user might not have a first/last name set
+        student_name = project.author.user.get_full_name() or project.author.user.username
+        
+        writer.writerow([
+            project.title,
+            student_name,
+            project.author.user.email,
+            project.category,
+            project.status,
+            project.created_at.strftime("%Y-%m-%d %H:%M"),
+            project.views,
+            project.likes
+        ])
+
+    return response
+
+
+@login_required(login_url='/accounts/login/')
+@user_passes_test(is_admin)
+def audit_logs(request):
+    logs_list = AuditLog.objects.all().select_related('admin')
+    paginator = Paginator(logs_list, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, "adminpanel/audit_logs.html", {"logs": page_obj})
+
+@login_required(login_url='/accounts/login/')
+@user_passes_test(is_admin)
+def moderation_queue(request):
+    # Get unresolved reports
+    reports = Report.objects.filter(is_resolved=False).select_related('project', 'reported_by')
+    return render(request, 'adminpanel/moderation_queue.html', {'reports': reports})
+
+@login_required(login_url='/accounts/login/')
+@user_passes_test(is_admin)
+def resolve_report(request, report_id):
+    report = get_object_or_404(Report, id=report_id)
+    action = request.POST.get('action')
+    
+    if action == 'dismiss':
+        report.is_resolved = True
+        report.save()
+        messages.success(request, "Report dismissed.")
+        
+    elif action == 'delete_project':
+        project_title = report.project.title
+        report.project.delete() # This deletes the project AND the report (cascade)
+        messages.warning(request, f"Project '{project_title}' has been deleted.")
+        
+    return redirect('moderation_queue')
+
+@login_required(login_url='/accounts/login/')
+@user_passes_test(is_admin)
+def manage_announcements(request):
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Announcement posted successfully!")
+            return redirect('manage_announcements')
+    else:
+        form = AnnouncementForm()
+    
+    announcements = Announcement.objects.all()
+    return render(request, 'adminpanel/manage_announcements.html', {'form': form, 'announcements': announcements})
+
+@login_required(login_url='/accounts/login/')
+@user_passes_test(is_admin)
+def delete_announcement(request, pk):
+    announcement = get_object_or_404(Announcement, pk=pk)
+    announcement.delete()
+    messages.success(request, "Announcement deleted.")
+    return redirect('manage_announcements')
+
+@login_required(login_url='/accounts/login/')
+@user_passes_test(is_admin)
+def admin_delete_project(request, pk):
+    """Allow admins to permanently delete any project."""
+    project = get_object_or_404(Project, pk=pk)
+    
+    if request.method == 'POST':
+        # Log the action first
+        AuditLog.objects.create(
+            admin=request.user,
+            action='DELETE',
+            target_object=f"Project: {project.title}",
+            details=f"Permanently deleted project submitted by {project.author.user.username}"
+        )
+        
+        project_title = project.title
+        project.delete()
+        messages.success(request, f"Project '{project_title}' has been permanently deleted.")
+        return redirect('project_tracking')
+    
+    context = {'project': project}
+    return render(request, 'adminpanel/project_delete_confirm.html', context)

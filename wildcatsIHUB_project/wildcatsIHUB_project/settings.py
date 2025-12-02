@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-cas^c1k)$=u+xqb^cjmb1!(aq1fo$yry$z0@%8*j$b+9a29yo*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['wildcatsihub-z029.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['wildcatsihub-z029.onrender.com', 'wildcatsihub.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'wildcatsIHUB_project.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL'),
-        conn_max_age=600,
+        conn_max_age=0,
         ssl_require=True
     )
 }
@@ -123,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Manila'
 
 USE_I18N = True
 
@@ -156,5 +156,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # settings.py
 
 # Email Backend (Prints to console for testing)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST_USER = 'admin@wildcatshub.com' # The "From" address
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'noelkethabalorio@gmail.com'
+EMAIL_HOST_PASSWORD = 'qddnblglxzmunvhw'
+DEFAULT_FROM_EMAIL = 'Wildcats iHub Admin <noelkethabalorio@gmail.com>'

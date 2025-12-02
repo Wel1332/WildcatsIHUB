@@ -1,0 +1,29 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% block title %}Delete Project{% endblock %}
+{% block content %}
+
+<div class="projects-section" style="max-width: 600px; margin: 0 auto;">
+    <div class="section-header">
+        <h2 style="color: #dc3545;">Delete Project?</h2>
+        <p>This action cannot be undone.</p>
+    </div>
+
+    <div class="project-item" style="border-left-color: #dc3545;">
+        <h3>{{ project.title }}</h3>
+        <p>Submitted by: <strong>{{ project.author.user.username }}</strong></p>
+        <p class="text-muted">{{ project.description|truncatewords:20 }}</p>
+    </div>
+
+    <form method="POST" style="margin-top: 2rem;">
+        {% csrf_token %}
+        <p>Are you sure you want to permanently delete this project?</p>
+        
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Yes, Delete it
+            </button>
+            <a href="{% url 'project_tracking' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

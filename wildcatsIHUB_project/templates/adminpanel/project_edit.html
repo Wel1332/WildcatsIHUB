@@ -3,31 +3,137 @@
 {% block title %}Edit Project: {{ project.title }}{% endblock %}
 {% block content %}
 
-<div class="welcome-header">
-    <h1>Edit Project: {{ project.title }}</h1>
-    <p class="subtitle">Modifying all submission details.</p>
-</div>
-
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-{% endif %}
-
 <div class="projects-section">
-    <form method="post" enctype="multipart/form-data">
+    <div class="section-header">
+        <h2>Edit Project</h2>
+        <p>Update submission details and status.</p>
+    </div>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start;">
         {% csrf_token %}
-        <div class="project-item">
+
+        <div class="profile-card" style="background: #f8f9fa; padding: 1.5rem; border-radius: 12px; border: 1px solid #e8e8e8;">
+            <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Project Screenshot</h3>
             
-            <h3>Project Details</h3>
-            {{ form.as_p }}
+            <div style="width: 100%; height: 200px; border-radius: 8px; overflow: hidden; background: #ddd; border: 1px solid #ccc; margin-bottom: 1rem;">
+                <img id="screenshotPreview" 
+                     src="{% if project.screenshot %}{{ project.screenshot.url }}{% else %}https://via.placeholder.com/400x200?text=No+Image{% endif %}" 
+                     alt="Project Screenshot" 
+                     style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <label for="{{ form.screenshot.id_for_label }}" class="btn btn-outline" style="width: 100%; cursor: pointer;">
+                    <i class="fas fa-upload" style="margin-right: 8px;"></i> Upload New Image
+                </label>
+                <div style="display: none;">
+                    {{ form.screenshot }}
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #e0e0e0; margin: 1.5rem 0;">
+
+            <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">External Links</h3>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 5px;"><i class="fab fa-github"></i> GitHub URL</label>
+                {{ form.github_url }} </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label style="font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 5px;"><i class="fas fa-globe"></i> Live Demo</label>
+                {{ form.live_demo }}
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label style="font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 5px;"><i class="fas fa-video"></i> Video Demo</label>
+                {{ form.video_demo }}
+            </div>
+        </div>
+
+        <div class="profile-details">
+            <h3 style="margin-bottom: 1.5rem;">Core Information</h3>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Project Title</label>
+                {{ form.title }}
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Description</label>
+                {{ form.description }}
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Category</label>
+                    
+                    {{ form.category_select }}
+                    
+                    <div style="margin-top: 8px;">
+                        <small style="color: #666; display: block; margin-bottom: 4px;">Or type custom category:</small>
+                        {{ form.category }}
+                    </div>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Tech Stack Used</label>
+                    {{ form.tech_used }}
+                </div>
+            </div>
+
+            <div style="background: #e8f5e9; padding: 1.5rem; border-radius: 8px; border: 1px solid #c8e6c9; margin-bottom: 2rem;">
+                <h4 style="color: #2e7d32; margin-bottom: 1rem;">Admin Controls</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Status</label>
+                        {{ form.status }}
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Likes</label>
+                        {{ form.likes }}
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Views</label>
+                        {{ form.views }}
+                    </div>
+                </div>
+            </div>
 
             <div class="project-actions">
                 <button type="submit" class="btn btn-primary">Save Changes</button>
                 <a href="{% url 'project_detail' pk=project.pk %}" class="btn btn-outline">Cancel</a>
+                
+                <a href="{% url 'admin_delete_project' pk=project.pk %}" class="btn btn-danger btn-right">
+                    <i class="fas fa-trash"></i> Delete Project
+                </a>
             </div>
         </div>
     </form>
 </div>
+
+<script>
+    const screenshotInput = document.getElementById('{{ form.screenshot.id_for_label }}');
+    const screenshotPreview = document.getElementById('screenshotPreview');
+
+    if (screenshotInput) {
+        screenshotInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    screenshotPreview.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+</script>
 
 {% endblock %}

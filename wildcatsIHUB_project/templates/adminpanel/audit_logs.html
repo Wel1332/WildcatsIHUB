@@ -1,0 +1,50 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% block title %}Audit Logs{% endblock %}
+{% block content %}
+
+<div class="projects-section">
+    <div class="section-header">
+        <h2>System Audit Logs</h2>
+        <p>Track administrative actions and history.</p>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+        <thead>
+            <tr style="background: #f8f9fa; text-align: left; border-bottom: 2px solid #e9ecef;">
+                <th style="padding: 12px;">Admin</th>
+                <th style="padding: 12px;">Action</th>
+                <th style="padding: 12px;">Target</th>
+                <th style="padding: 12px;">Details</th>
+                <th style="padding: 12px;">Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr style="border-bottom: 1px solid #e9ecef;">
+                <td style="padding: 12px; font-weight: 600;">{{ log.admin.username }}</td>
+                <td style="padding: 12px;">
+                    <span class="status-badge {% if log.action == 'DELETE' or log.action == 'REJECT' %}rejected{% elif log.action == 'APPROVE' %}approved{% else %}active{% endif %}">
+                        {{ log.action }}
+                    </span>
+                </td>
+                <td style="padding: 12px;">{{ log.target_object }}</td>
+                <td style="padding: 12px; color: #666;">{{ log.details }}</td>
+                <td style="padding: 12px; font-size: 0.85rem;">{{ log.timestamp|date:"M d, H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" style="padding: 20px; text-align: center;">No logs yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        {% if logs.has_previous %}
+            <a href="?page={{ logs.previous_page_number }}" class="btn btn-outline">Previous</a>
+        {% endif %}
+        <span class="current">Page {{ logs.number }} of {{ logs.paginator.num_pages }}</span>
+        {% if logs.has_next %}
+            <a href="?page={{ logs.next_page_number }}" class="btn btn-outline">Next</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

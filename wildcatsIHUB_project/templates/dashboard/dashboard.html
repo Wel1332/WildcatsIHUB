@@ -6,10 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Wildcats' iHub</title>
   <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-  <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-brand">
       <div class="logo-icon">&lt;&gt;</div>
@@ -22,9 +22,27 @@
     </ul>
   </nav>
 
-  <!-- Main Content -->
   <div class="container">
-    <!-- Welcome Header - Modern Black Section -->
+    
+    {% if announcements %}
+    <div style="margin-bottom: 2rem;">
+        {% for ann in announcements %}
+        <div style="background: linear-gradient(135deg, #1e5cff, #0f4ac9); color: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 1rem; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(30, 92, 255, 0.2);">
+            <div style="position: relative; z-index: 1;">
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-bullhorn"></i> {{ ann.title }}
+                </h3>
+                <p style="opacity: 0.9; line-height: 1.5; font-size: 0.95rem;">{{ ann.message }}</p>
+                <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 10px;">
+                    <i class="far fa-clock"></i> Posted {{ ann.created_at|timesince }} ago
+                </div>
+            </div>
+            <div style="position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="welcome-header">
       <div class="welcome-text">
         <h1>Welcome back, {{ user.get_full_name|default:user.username|cut:"2" }}!</h1>
@@ -43,7 +61,6 @@
       </div>
     </div>
 
-    <!-- Stats Grid -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-icon">
@@ -104,9 +121,7 @@
       </div>
     </div>
 
-    <!-- Dashboard Layout -->
     <div class="dashboard-layout">
-      <!-- Main Projects Section -->
       <div class="projects-section">
         <h2 class="section-title">Your Projects ({{ total_projects }})</h2>
         <p class="section-subtitle">All your submitted projects and their current status</p>
@@ -184,9 +199,7 @@
         </div>
       </div>
 
-      <!-- Sidebar -->
       <div class="sidebar">
-        <!-- Quick Actions -->
         <div class="sidebar-card">
           <h3 class="card-title">Quick Actions</h3>
           <div class="quick-actions">
@@ -215,7 +228,6 @@
           </div>
         </div>
 
-        <!-- Project Stats -->
         <div class="sidebar-card">
           <h3 class="card-title">Project Stats</h3>
           <div class="stats-list">
@@ -241,7 +253,6 @@
           </div>
         </div>
 
-        <!-- Recent Activity -->
         <div class="sidebar-card">
           <h3 class="card-title">Recent Activity</h3>
           <div class="activity-feed">
