@@ -17,12 +17,7 @@
 <body>
     <div class="nav-header">
         <div class="nav-content">
-<<<<<<< Updated upstream
-            <!-- SMART BACK LINK - Based on session storage -->
-            <a href="#" class="back-link" id="smartBackLink">
-=======
             <a href="javascript:history.back()" class="back-link">
->>>>>>> Stashed changes
                 <i class="fas fa-arrow-left"></i>
                 <span id="backText">Go Back</span>
             </a>
@@ -157,14 +152,6 @@
                                 Delete Project
                             </a>
                         </div>
-                    {% endif %}
-
-                    {% if user.is_authenticated and user != project.author.user %}
-                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
-                        <button onclick="openReportModal()" class="btn btn-outline-danger btn-full" style="border: 1px solid #dc3545; color: #dc3545; background: transparent; width: 100%; padding: 10px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            <i class="fas fa-flag"></i> Report Project
-                        </button>
-                    </div>
                     {% endif %}
                 </div>
             </div>

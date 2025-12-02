@@ -134,31 +134,151 @@
             gap: 10px;
             margin-top: 20px;
         }
+        
+        /* NEW: Improved About Me section styles */
+        .about-section {
+            padding: 5px 0;
+        }
+        
+        .about-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .about-icon-text {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        
+        .about-icon-text .fa-quote-left {
+            color: #9ca3af;
+            font-size: 18px;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+        
+        .about-text {
+            margin: 0;
+            line-height: 1.6;
+            color: #374151;
+            font-size: 15px;
+            flex: 1;
+        }
+        
+        .specialization-highlight {
+            background: linear-gradient(135deg, #f0f9ff 0%, #fefce8 100%);
+            border: 1px solid #e0f2fe;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 10px;
+        }
+        
+        .specialization-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .specialization-header .fa-star {
+            color: #f59e0b;
+            font-size: 14px;
+        }
+        
+        .highlight-label {
+            font-weight: 600;
+            color: #4b5563;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .specialization-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .specialization-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            line-height: 1.4;
+        }
+        
+        .specialization-hint {
+            color: #9ca3af;
+            font-size: 12px;
+            font-style: italic;
+        }
+        
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            padding: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .icon-btn:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .icon-btn.small {
+            font-size: 14px;
+            width: 32px;
+            height: 32px;
+        }
+        
+        .text-muted {
+            color: #9ca3af;
+        }
+        
+        /* For empty state */
+        .about-text:empty:before {
+            content: "No bio added yet. Share something about yourself, your academic journey, or your career aspirations.";
+            color: #9ca3af;
+            font-style: italic;
+        }
+        
+        .specialization-value:empty:before {
+            content: "Not specified";
+            color: #9ca3af;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
     <!-- PASS DATA FROM DJANGO TO JAVASCRIPT -->
-            <script>
-            // CORRECTED: Use EXACT field names from your Supabase JSON
-            window.profileDataFromDjango = {
-                name: '{{ user_name|escapejs }}',
-                title: '{{ user_title|escapejs }}',
-                school: '{{ user_school|escapejs }}',
-                year: '{{ user_year|escapejs }}',  // This is year_level in Supabase
-                location: '{{ user_location|escapejs }}',
-                about: '{{ user_about|escapejs }}',
-                graduation: '{{ user_graduation|escapejs }}',  // This is graduation_year in Supabase (NOT graduation_yr)
-                specialization: '{{ user_specialization|escapejs }}',
-                major: '{{ user_major|escapejs }}',
-                minor: '{{ user_minor|escapejs }}',
-                courses: '{{ user_courses|escapejs }}',
-                interests: '{{ user_interests|escapejs }}'
-            };
+    <script>
+    // CORRECTED: Use EXACT field names from your Supabase JSON
+    window.profileDataFromDjango = {
+        name: '{{ user_name|escapejs }}',
+        title: '{{ user_title|escapejs }}',
+        school: '{{ user_school|escapejs }}',
+        year: '{{ user_year|escapejs }}',  // This is year_level in Supabase
+        location: '{{ user_location|escapejs }}',
+        about: '{{ user_about|escapejs }}',
+        graduation: '{{ user_graduation|escapejs }}',  // This is graduation_year in Supabase (NOT graduation_yr)
+        specialization: '{{ user_specialization|escapejs }}',
+        major: '{{ user_major|escapejs }}',
+        minor: '{{ user_minor|escapejs }}',
+        courses: '{{ user_courses|escapejs }}',
+        interests: '{{ user_interests|escapejs }}'
+    };
 
-            console.log('🔥 Django Data Loaded - ACTUAL VALUES:');
-            console.log('Name:', window.profileDataFromDjango.name);
-            console.log('School:', window.profileDataFromDjango.school);
-            console.log('Graduation:', window.profileDataFromDjango.graduation);
+    console.log('🔥 Django Data Loaded - ACTUAL VALUES:');
+    console.log('Name:', window.profileDataFromDjango.name);
+    console.log('School:', window.profileDataFromDjango.school);
+    console.log('Graduation:', window.profileDataFromDjango.graduation);
     </script>
     
     <div class="profile-container">
@@ -175,10 +295,10 @@
             <div class="header-content">
                 <div class="user-avatar-section">
                     <div class="avatar-wrapper">
-                        <div class="avatar-img"></div>
-                        <button class="edit-avatar-btn" title="Change Photo">
-                            <i class="fas fa-camera"></i>
-                        </button>
+                        <div class="avatar-initials" id="avatarInitials">
+                            {{ user_name|make_list|first|upper }}
+                        </div>
+                    
                     </div>
                 </div>
                 
@@ -212,12 +332,6 @@
                         </div>
                     </div>
                     
-                    <div class="social-links">
-                        <a href="#" class="social-link" title="GitHub"><i class="fab fa-github"></i></a>
-                        <a href="#" class="social-link" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link" title="Portfolio"><i class="fas fa-globe"></i></a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -240,43 +354,47 @@
                     <span class="stat-label">Projects</span>
                 </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-icon"><i class="fas fa-users"></i></div>
-                <div class="stat-content">
-                    <span class="stat-number">0</span>
-                    <span class="stat-label">Clubs</span>
-                </div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-icon"><i class="fas fa-trophy"></i></div>
-                <div class="stat-content">
-                    <span class="stat-number" id="displaySkillsCount">0</span>
-                    <span class="stat-label">Skills</span>
-                </div>
-            </div>
         </div>
 
         <!-- Main Content -->
         <div class="profile-content">
             <!-- Left Column -->
             <div class="left-column">
-                <!-- About Section -->
+                <!-- About Section - IMPROVED DESIGN -->
                 <div class="info-card">
                     <div class="card-header">
                         <div class="card-title">
-                            <i class="fas fa-user"></i>
+                            <i class="fas fa-user-circle"></i>
                             <h3>About Me</h3>
                         </div>
+                        <button class="icon-btn small" onclick="openEditModal()" title="Edit About Me">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
                     </div>
                     <div class="card-content">
-                        <!-- CHANGED: Use Django variable -->
-                        <p id="displayAbout" class="about-text">{{ user_about|default:"No bio added yet. Click 'Edit Profile' to add one." }}</p>
-                        
-                        <div class="info-list">
-                            <div class="info-item">
-                                <span class="info-label">Specialization</span>
-                                <!-- CHANGED: Use Django variable -->
-                                <span class="info-value" id="displaySpecialization">{{ user_specialization|default:"Not specified" }}</span>
+                        <div class="about-section">
+                            <div class="about-content">
+                                <div class="about-icon-text">
+                                    <i class="fas fa-quote-left text-muted"></i>
+                                    <p id="displayAbout" class="about-text">
+                                        {{ user_about|default:"No bio added yet. Share something about yourself, your academic journey, or your career aspirations." }}
+                                    </p>
+                                </div>
+                                
+                                <div class="specialization-highlight">
+                                    <div class="specialization-header">
+                                        <i class="fas fa-star"></i>
+                                        <span class="highlight-label">Specialization Focus</span>
+                                    </div>
+                                    <div class="specialization-content">
+                                        <span id="displaySpecialization" class="specialization-value">
+                                            {{ user_specialization|default:"Not specified" }}
+                                        </span>
+                                        {% if not user_specialization %}
+                                        <small class="specialization-hint">Add your area of expertise</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -346,26 +464,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Right Column -->
-            <div class="right-column">
-                <!-- Skills Progress Section -->
-                <div class="info-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="fas fa-chart-line"></i>
-                            <h3>Technical Skills</h3>
-                        </div>
-                    </div>
-                    <div class="card-content">
-                        <div id="skillsProgressList" class="skills-list">
-                            <div class="empty-state-card">
-                                <i class="fas fa-code"></i>
-                                <p>Add projects to track your skill growth!</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Projects Section -->
                 <div class="info-card">
@@ -559,7 +657,7 @@
         </div>
     </div>
 
-    <!-- SESSION STORAGE SCRIPT FOR BACK BUTTON FUNCTIONALITY -->
+   <!-- SESSION STORAGE SCRIPT FOR BACK BUTTON FUNCTIONALITY -->
     <script>
     // Store current page when page loads
     document.addEventListener('DOMContentLoaded', function() {
@@ -576,9 +674,6 @@
             sessionStorage.setItem('lastVisitedPage', window.location.href);
             console.log('Stored last visited page:', window.location.href);
         }
-        
-        // Debug: Check what data we received from Django
-        console.log('🔥 Window.profileDataFromDjango:', window.profileDataFromDjango);
     });
 
     // Also store when clicking on project links (extra safety)
@@ -589,32 +684,6 @@
             console.log('Stored last page before project click:', window.location.href);
         }
     });
-
-    // Modal Functions
-    function openEditModal() {
-        document.getElementById('editModal').style.display = 'flex';
-    }
-
-    function closeEditModal() {
-        document.getElementById('editModal').style.display = 'none';
-    }
-
-    // Form submission handlers
-    function saveProfile(event) {
-        event.preventDefault();
-        // Add your profile saving logic here
-        alert('Profile saved successfully!');
-        closeEditModal();
-    }
-
-    // Close modals when clicking outside
-    window.onclick = function(event) {
-        const editModal = document.getElementById('editModal');
-        
-        if (event.target === editModal) {
-            closeEditModal();
-        }
-    }
     </script>
 
     <!-- Updated JavaScript that uses data from Django -->
@@ -670,6 +739,8 @@
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
         
+        console.log('📝 Opening edit modal with data:', profileData);
+        
         // Populate form with current data from profileData
         document.getElementById('name').value = profileData.name || '';
         document.getElementById('title').value = profileData.title || '';
@@ -692,21 +763,34 @@
     }
 
     // ============================================
-    // SAVE DATA TO SUPABASE
+    // SAVE DATA TO SUPABASE - CORRECT VERSION
     // ============================================
 
     async function saveProfile(event) {
         event.preventDefault();
         
+        console.log('🔄 === STARTING PROFILE SAVE ===');
+        
         try {
-            // Get form values - MATCH THESE TO YOUR SUPABASE COLUMN NAMES
+            // Show loading state
+            const saveBtn = document.querySelector('#editProfileForm button[type="submit"]');
+            const originalBtnText = saveBtn ? saveBtn.textContent : 'Save Changes';
+            if (saveBtn) {
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                saveBtn.disabled = true;
+            }
+            
+            // 1. COLLECT FORM DATA with CORRECT field names
+            console.log('1️⃣ Collecting form data...');
             const formData = new FormData();
+            
+            // Add all form fields with EXACT Supabase column names
             formData.append('full_name', document.getElementById('name').value);
             formData.append('title', document.getElementById('title').value);
             formData.append('school', document.getElementById('school').value);
-            formData.append('year_level', document.getElementById('year').value);  // Changed to match Supabase
+            formData.append('year_level', document.getElementById('year').value);  // year_level column
             formData.append('location', document.getElementById('location').value);
-            formData.append('graduation_yr', document.getElementById('graduation').value);  // Changed to match Supabase
+            formData.append('graduation_year', document.getElementById('graduation').value);  // graduation_year column
             formData.append('about', document.getElementById('about').value);
             formData.append('specialization', document.getElementById('specialization').value);
             formData.append('major', document.getElementById('major').value);
@@ -714,7 +798,29 @@
             formData.append('courses', document.getElementById('courses').value);
             formData.append('interests', document.getElementById('interests').value);
             
-            // Send to Django backend
+            // Also add first_name and last_name for auth_user table
+            const fullName = document.getElementById('name').value;
+            if (fullName) {
+                const nameParts = fullName.trim().split(' ');
+                if (nameParts.length >= 2) {
+                    formData.append('first_name', nameParts[0]);
+                    formData.append('last_name', nameParts.slice(1).join(' '));
+                } else {
+                    formData.append('first_name', fullName);
+                    formData.append('last_name', '');
+                }
+            }
+            
+            // Debug: Log what we're sending
+            console.log('📤 SENDING TO SERVER:');
+            const formDataObj = {};
+            for (let [key, value] of formData.entries()) {
+                formDataObj[key] = value;
+                console.log(`  ${key}: ${value}`);
+            }
+            
+            // 2. SEND TO SERVER
+            console.log('2️⃣ Sending to /save-profile-to-supabase/ ...');
             const response = await fetch('/save-profile-to-supabase/', {
                 method: 'POST',
                 headers: {
@@ -725,10 +831,19 @@
             });
 
             const result = await response.json();
+            console.log('📥 SERVER RESPONSE:', result);
+            
+            // Reset button
+            if (saveBtn) {
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+                saveBtn.disabled = false;
+            }
             
             if (result.success) {
-                // Update page display
-                updateProfileDisplay({
+                console.log('✅ Profile saved successfully!');
+                
+                // 3. UPDATE LOCAL DATA
+                profileData = {
                     name: document.getElementById('name').value,
                     title: document.getElementById('title').value,
                     school: document.getElementById('school').value,
@@ -741,17 +856,38 @@
                     minor: document.getElementById('minor').value,
                     courses: document.getElementById('courses').value,
                     interests: document.getElementById('interests').value
-                });
+                };
                 
+                console.log('🔄 Updated profileData:', profileData);
+                
+                // 4. UPDATE DISPLAY
+                updateProfileDisplay(profileData);
+                
+                // 5. SHOW SUCCESS & CLOSE MODAL
                 closeEditModal();
-                showNotification('Profile updated successfully!', 'success');
+                showNotification('Profile saved successfully!', 'success');
+                
+                // 6. REFRESH PAGE AFTER 2 SECONDS
+                console.log('🔄 Will refresh page in 2 seconds...');
+                setTimeout(() => {
+                    console.log('🔄 Refreshing page...');
+                    location.reload();
+                }, 2000);
+                
             } else {
-                throw new Error(result.message);
+                throw new Error(result.message || 'Server returned error');
             }
             
         } catch (error) {
-            console.error('Error saving profile:', error);
-            showNotification('Error saving profile. Please try again.', 'error');
+            console.error('❌ ERROR SAVING PROFILE:', error);
+            showNotification('Error: ' + error.message, 'error');
+            
+            // Reset button on error
+            const saveBtn = document.querySelector('#editProfileForm button[type="submit"]');
+            if (saveBtn) {
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+                saveBtn.disabled = false;
+            }
         }
     }
 
@@ -760,34 +896,49 @@
     // ============================================
 
     function updateProfileDisplay(updatedData) {
-        // Update profileData object
-        profileData = { ...profileData, ...updatedData };
+        console.log('🔥 Updating display with:', updatedData);
         
-        // Update the page display immediately
-        document.getElementById('displayName').textContent = profileData.name;
-        document.getElementById('displayTitle').textContent = profileData.title;
-        document.getElementById('displaySchool').textContent = profileData.school;
-        document.getElementById('displayYear').textContent = profileData.year;
-        document.getElementById('displayLocation').textContent = profileData.location || 'Add location';
-        document.getElementById('displayGraduation').textContent = profileData.graduation || 'Add graduation year';
-        document.getElementById('displayAbout').textContent = profileData.about || 'Add information about yourself...';
-        document.getElementById('displaySpecialization').textContent = profileData.specialization || 'Add specialization';
-        document.getElementById('displayMajor').textContent = profileData.major || 'Add major';
-        document.getElementById('displayMinor').textContent = profileData.minor || 'Not specified';
+        // Helper function to safely update element
+        function updateElement(id, value, fallback = 'Not specified') {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value && value.trim() ? value : fallback;
+            }
+        }
         
-        // Update courses display
+        // Update all display elements
+        updateElement('displayName', updatedData.name, 'No name set');
+        updateElement('displayTitle', updatedData.title, 'No title set');
+        updateElement('displaySchool', updatedData.school, 'School not specified');
+        updateElement('displayYear', updatedData.year, 'Year not specified');
+        updateElement('displayLocation', updatedData.location, 'Location not specified');
+        updateElement('displayGraduation', updatedData.graduation, 'Graduation not specified');
+        updateElement('displayAbout', updatedData.about, 'No information added');
+        updateElement('displaySpecialization', updatedData.specialization, 'Not specified');
+        updateElement('displayMajor', updatedData.major, 'Major not specified');
+        updateElement('displayMinor', updatedData.minor, 'Minor not specified');
+        
+        // Update courses (special handling for tags)
         const coursesEl = document.getElementById('displayCourses');
-        if (profileData.courses && profileData.courses.trim()) {
-            const coursesArray = profileData.courses.split(',').map(c => c.trim());
-            coursesEl.innerHTML = coursesArray.map(course => 
-                `<span class="tag">${course}</span>`
-            ).join('');
-        } else {
-            coursesEl.innerHTML = '<span class="tag">No courses added</span>';
+        if (coursesEl) {
+            if (updatedData.courses && updatedData.courses.trim()) {
+                const coursesArray = updatedData.courses.split(',').map(c => c.trim()).filter(c => c);
+                if (coursesArray.length > 0) {
+                    coursesEl.innerHTML = coursesArray.map(course => 
+                        `<span class="tag">${course}</span>`
+                    ).join('');
+                } else {
+                    coursesEl.innerHTML = '<span class="tag tag-empty">No courses listed</span>';
+                }
+            } else {
+                coursesEl.innerHTML = '<span class="tag tag-empty">No courses listed</span>';
+            }
         }
         
         // Update interests
-        document.getElementById('displayInterests').textContent = profileData.interests || 'No interests specified';
+        updateElement('displayInterests', updatedData.interests, 'No interests listed');
+        
+        console.log('✅ Display updated successfully');
     }
 
     // ============================================
@@ -828,7 +979,9 @@
         setTimeout(() => {
             notification.style.animation = 'slideOutRight 0.3s ease-out';
             setTimeout(() => {
-                document.body.removeChild(notification);
+                if (notification.parentNode) {
+                    document.body.removeChild(notification);
+                }
             }, 300);
         }, 3000);
     }
@@ -838,37 +991,39 @@
     // ============================================
 
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('🔥 userProfile.js loaded successfully');
+        
         // Close modal when clicking outside
         const editModal = document.getElementById('editModal');
-        const editModalContent = editModal.querySelector('.modal-content');
-        
-        editModal.addEventListener('click', function(e) {
-            if (e.target === editModal) {
-                closeEditModal();
-            }
-        });
-        
-        editModalContent.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
+        if (editModal) {
+            editModal.addEventListener('click', function(e) {
+                if (e.target === editModal) {
+                    closeEditModal();
+                }
+            });
+        }
         
         // Close modal with Escape key
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && editModal.style.display === 'flex') {
-                closeEditModal();
+            if (e.key === 'Escape') {
+                const editModal = document.getElementById('editModal');
+                if (editModal && editModal.style.display === 'flex') {
+                    closeEditModal();
+                }
             }
         });
         
         // Set up form submission
         const editProfileForm = document.getElementById('editProfileForm');
         if (editProfileForm) {
+            console.log('✅ Edit profile form found');
             editProfileForm.addEventListener('submit', saveProfile);
+        } else {
+            console.error('❌ Edit profile form NOT found!');
         }
         
-        // Update modal with data on page load
-        if (profileData.name) {
-            console.log('Profile data loaded successfully');
-        }
+        // Initial display update
+        updateProfileDisplay(profileData);
     });
 
     // Add animation styles
@@ -895,8 +1050,34 @@
                 opacity: 0;
             }
         }
+        
+        .tag {
+            display: inline-block;
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin: 2px;
+        }
+        
+        .tag-empty {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        
+        .fa-spin {
+            animation: fa-spin 1s infinite linear;
+        }
+        
+        @keyframes fa-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     `;
     document.head.appendChild(style);
+
+    console.log('✅ All JavaScript loaded and ready!');
     </script>
 </body>
 </html>
