@@ -9,11 +9,11 @@
     </div>
 
     <div class="filter-bar">
-        <form method="get">
+        <form method="get" style="display: flex; gap: 10px; align-items: center; width: 100%;">
             <input type="text" name="q" placeholder="Search title or student..." 
-                   value="{{ request.GET.q|default:'' }}" class="form-input" style="flex-grow: 1;">
+                   value="{{ request.GET.q|default:'' }}" class="form-input" style="flex-grow: 1; margin-bottom: 0;">
             
-            <select name="status" class="form-input" style="width: auto;">
+            <select name="status" class="form-input" style="width: auto; margin-bottom: 0;">
                 <option value="">All Statuses</option>
                 <option value="Pending" {% if request.GET.status == 'Pending' %}selected{% endif %}>Pending</option>
                 <option value="Active" {% if request.GET.status == 'Active' %}selected{% endif %}>Active</option>
@@ -23,9 +23,14 @@
             </select>
     
             <button type="submit" class="btn btn-primary">Search</button>
+            
             {% if request.GET.q or request.GET.status %}
                 <a href="{% url 'project_tracking' %}" class="btn btn-secondary">Clear</a>
             {% endif %}
+
+            <a href="{% url 'export_projects_csv' %}" class="btn btn-secondary" style="margin-left: auto; background-color: #28a745; color: white; border: none;">
+                <i class="fas fa-file-csv"></i> Export CSV
+            </a>
         </form>
     </div>
 

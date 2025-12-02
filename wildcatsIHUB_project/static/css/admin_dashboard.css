@@ -167,7 +167,12 @@ html, body { height:100%; font-family:var(--font-primary); color:var(--text-colo
 .projects-section p label { display: block; font-weight: 600; color: var(--text-color); margin-bottom: 0.5rem; font-size: 0.95rem; }
 .errorlist { list-style: none; padding: 0.5rem 0; margin-top: 0.25rem; color: #dc3545; font-size: 0.875rem; font-weight: 500; }
 .projects-section hr { margin: 2rem 0; border: 0; border-top: 1px solid #e8e8e8; }
-.project-actions { margin-top: 2rem; }
+.project-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
 
 /* ------------------------------
    Form Inputs
@@ -228,6 +233,9 @@ html, body { height:100%; font-family:var(--font-primary); color:var(--text-colo
 
 .btn-sm { display: inline-block; padding: 0.4rem 1rem; font-size: 0.85rem; }
 
+.btn-right {
+    margin-left: auto;
+}
 /* Status Badges */
 .status-badge {
     padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
@@ -282,6 +290,14 @@ html, body { height:100%; font-family:var(--font-primary); color:var(--text-colo
 .alert-error, .alert-danger { background-color: var(--danger-color); }
 .alert-warning { background-color: var(--warning-color); color: #333; }
 .alert-info { background-color: var(--primary-color); }
+
+.project-item.announcement-active {
+    border-left-color: var(--success-color); /* #00c853 */
+}
+
+.project-item.announcement-inactive {
+    border-left-color: #cccccc; /* Grey */
+}
 
 @keyframes slideIn {
     from { transform: translateX(100%); opacity: 0; }

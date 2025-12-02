@@ -74,7 +74,13 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                 <div>
                     <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Category</label>
-                    {{ form.category }}
+                    
+                    {{ form.category_select }}
+                    
+                    <div style="margin-top: 8px;">
+                        <small style="color: #666; display: block; margin-bottom: 4px;">Or type custom category:</small>
+                        {{ form.category }}
+                    </div>
                 </div>
                 <div>
                     <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Tech Stack Used</label>
@@ -100,9 +106,13 @@
                 </div>
             </div>
 
-            <div class="project-actions" style="display: flex; gap: 15px;">
+            <div class="project-actions">
                 <button type="submit" class="btn btn-primary">Save Changes</button>
                 <a href="{% url 'project_detail' pk=project.pk %}" class="btn btn-outline">Cancel</a>
+                
+                <a href="{% url 'admin_delete_project' pk=project.pk %}" class="btn btn-danger btn-right">
+                    <i class="fas fa-trash"></i> Delete Project
+                </a>
             </div>
         </div>
     </form>

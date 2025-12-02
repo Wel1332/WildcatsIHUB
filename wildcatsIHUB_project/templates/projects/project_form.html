@@ -22,6 +22,16 @@
     </div>
 
     <div class="container">
+        
+        {% if messages %}
+            <div class="messages" style="margin-bottom: 20px;">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         <div class="form-card">
             <h2 class="form-title">{% if editing %}Edit Project: {{ project.title }}{% else %}Submit Your Project{% endif %}</h2>
             <p class="form-subtitle">
@@ -31,10 +41,8 @@
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 
-                <!-- Hidden field to track where form was submitted from -->
                 <input type="hidden" name="next" value="{{ request.GET.next }}">
            
-                <!-- Your form fields here (same as before) -->
                 <div class="form-section">
                     <label for="project-title" class="required">Project Title</label>
                     <input type="text" id="project-title" name="title" placeholder="Enter your project title" required 
@@ -49,23 +57,25 @@
                 <div class="form-section">
                     <label for="category" class="required">Category</label>
                     <select id="category" name="category" required>
-                      <option value="">Select project category</option>
-                                        <option value="web" {% if editing and project.category == 'web' %}selected{% endif %}{% if not editing and request.POST.category == 'web' %}selected{% endif %}>Web Development</option>
-                                        <option value="mobile" {% if editing and project.category == 'mobile' %}selected{% endif %}{% if not editing and request.POST.category == 'mobile' %}selected{% endif %}>Mobile Development</option>
-                                        <option value="desktop" {% if editing and project.category == 'desktop' %}selected{% endif %}{% if not editing and request.POST.category == 'desktop' %}selected{% endif %}>Desktop Application</option>
-                                        <option value="ai" {% if editing and project.category == 'ai' %}selected{% endif %}{% if not editing and request.POST.category == 'ai' %}selected{% endif %}>Artificial Intelligence</option>
-                                        <option value="data" {% if editing and project.category == 'data' %}selected{% endif %}{% if not editing and request.POST.category == 'data' %}selected{% endif %}>Data Science</option>
-                                        <option value="game" {% if editing and project.category == 'game' %}selected{% endif %}{% if not editing and request.POST.category == 'game' %}selected{% endif %}>Game Development</option>
-                                        <option value="ml" {% if editing and project.category == 'ml' %}selected{% endif %}{% if not editing and request.POST.category == 'ml' %}selected{% endif %}>Machine Learning</option>
-                                        <option value="iot" {% if editing and project.category == 'iot' %}selected{% endif %}{% if not editing and request.POST.category == 'iot' %}selected{% endif %}>Internet of Things</option>
-                                        <option value="cloud" {% if editing and project.category == 'cloud' %}selected{% endif %}{% if not editing and request.POST.category == 'cloud' %}selected{% endif %}>Cloud Computing</option>
-                                        <option value="other" {% if editing and project.category not in 'web,mobile,desktop,ai,data,game,ml,iot,cloud' %}selected{% endif %}{% if not editing and request.POST.category == 'other' %}selected{% endif %}>Other</option>
+                        <option value="">Select project category</option>
+                        
+                        <option value="web" {% if editing and project.category == 'web' %}selected{% endif %}{% if not editing and request.POST.category == 'web' %}selected{% endif %}>Web Development</option>
+                        <option value="mobile" {% if editing and project.category == 'mobile' %}selected{% endif %}{% if not editing and request.POST.category == 'mobile' %}selected{% endif %}>Mobile Development</option>
+                        <option value="desktop" {% if editing and project.category == 'desktop' %}selected{% endif %}{% if not editing and request.POST.category == 'desktop' %}selected{% endif %}>Desktop Application</option>
+                        <option value="ai" {% if editing and project.category == 'ai' %}selected{% endif %}{% if not editing and request.POST.category == 'ai' %}selected{% endif %}>Artificial Intelligence</option>
+                        <option value="data" {% if editing and project.category == 'data' %}selected{% endif %}{% if not editing and request.POST.category == 'data' %}selected{% endif %}>Data Science</option>
+                        <option value="game" {% if editing and project.category == 'game' %}selected{% endif %}{% if not editing and request.POST.category == 'game' %}selected{% endif %}>Game Development</option>
+                        <option value="ml" {% if editing and project.category == 'ml' %}selected{% endif %}{% if not editing and request.POST.category == 'ml' %}selected{% endif %}>Machine Learning</option>
+                        <option value="iot" {% if editing and project.category == 'iot' %}selected{% endif %}{% if not editing and request.POST.category == 'iot' %}selected{% endif %}>Internet of Things</option>
+                        <option value="cloud" {% if editing and project.category == 'cloud' %}selected{% endif %}{% if not editing and request.POST.category == 'cloud' %}selected{% endif %}>Cloud Computing</option>
+                        <option value="other" {% if editing and project.category not in 'web,mobile,desktop,ai,data,game,ml,iot,cloud' %}selected{% endif %}{% if not editing and request.POST.category == 'other' %}selected{% endif %}>Other</option>
                     </select>
+
                     <div id="other-category-container" class="category-other-input" 
                          {% if editing and project.category not in 'web,mobile,ai,data,game,iot' %}style="display: block;"{% elif not editing and request.POST.category == 'other' %}style="display: block;"{% else %}style="display: none;"{% endif %}>
                         <label for="other-category">Please specify:</label>
                         <input type="text" id="other-category" name="other_category" placeholder="Enter your category" 
-                               value="{% if editing and project.category not in 'web,mobile,ai,data,game,iot' %}{{ project.category }}{% else %}{{ request.POST.other_category }}{% endif %}">
+                               value="{% if editing %}{{ project.category }}{% else %}{{ request.POST.other_category }}{% endif %}">
                     </div>
                 </div>
 
@@ -121,7 +131,6 @@
                     <button type="submit" class="btn btn-primary">
                         {% if editing %}Update Project{% else %}Submit Project{% endif %}
                     </button>
-                    <!-- SIMPLE CANCEL BUTTON - Uses browser back functionality -->
                     <a href="javascript:history.back()" class="btn btn-secondary cancel-btn">
                         Cancel
                     </a>

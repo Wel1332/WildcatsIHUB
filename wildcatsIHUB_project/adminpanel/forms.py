@@ -1,16 +1,29 @@
 from django import forms
 from django.contrib.auth.models import User
 from accounts.models import UserProfile 
-from projects.models import Project
+from projects.models import Project, Category
+from .models import Announcement
 
 class ProjectForm(forms.ModelForm):
+    # Dynamic Category Dropdown
+    category_select = forms.ModelChoiceField(
+        queryset=Category.objects.all(),
+        empty_label="Select Category (or type below)",
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-input'}),
+        label="Choose Existing Category"
+    )
+
     class Meta:
         model = Project
-        fields = '__all__' # or list fields specifically
+        # Exclude fields handled automatically to prevent validation errors
+        exclude = ['author', 'created_at', 'approved_at', 'approved_by']
+        
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input'}),
             'description': forms.Textarea(attrs={'class': 'form-input', 'rows': 5}),
-            'category': forms.TextInput(attrs={'class': 'form-input'}),
+            # Keep text input for manual override
+            'category': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Or type a new category here...'}),
             'tech_used': forms.TextInput(attrs={'class': 'form-input'}),
             'github_url': forms.URLInput(attrs={'class': 'form-input', 'placeholder': 'https://github.com/...'}),
             'live_demo': forms.URLInput(attrs={'class': 'form-input', 'placeholder': 'https://...'}),
@@ -20,6 +33,24 @@ class ProjectForm(forms.ModelForm):
             'views': forms.NumberInput(attrs={'class': 'form-input'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Pre-select the category in dropdown if it matches a database entry
+        if self.instance.pk and self.instance.category:
+            try:
+                cat = Category.objects.get(name=self.instance.category)
+                self.fields['category_select'].initial = cat
+            except Category.DoesNotExist:
+                pass
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # If admin picked a dropdown option, override the text box
+        cat_select = cleaned_data.get('category_select')
+        if cat_select:
+            cleaned_data['category'] = cat_select.name
+        return cleaned_data
+
 class UserProfileEditForm(forms.ModelForm):
     """Form for editing related UserProfile data."""
     class Meta:
@@ -28,15 +59,15 @@ class UserProfileEditForm(forms.ModelForm):
         widgets = {
             'department': forms.TextInput(attrs={'class': 'form-input'}),
             
-            # FIX: Change to a Dropdown (Select) with specific choices
+            # Change to a Dropdown (Select) with specific choices
             'year_level': forms.Select(
                 choices=[
-                    ('', 'Select Year Level'), # Default empty option
-                    (1, '1st Year'),
-                    (2, '2nd Year'),
-                    (3, '3rd Year'),
-                    (4, '4th Year'),
-                    (5, '5th Year'),
+                    ('', 'Select Year Level'), 
+                    ('1st Year', '1st Year'),
+                    ('2nd Year', '2nd Year'),
+                    ('3rd Year', '3rd Year'),
+                    ('4th Year', '4th Year'),
+                    ('5th Year', '5th Year'),
                 ],
                 attrs={'class': 'form-input'}
             ),
@@ -53,7 +84,6 @@ class UserManagementForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-input'}),
             'last_name': forms.TextInput(attrs={'class': 'form-input'}),
             'email': forms.EmailInput(attrs={'class': 'form-input'}),
-            # Checkboxes usually use default browser styling or specific toggle classes
             'is_active': forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
             'is_staff': forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
         }
@@ -73,3 +103,13 @@ class AdminProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['avatar']
+
+class AnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = Announcement
+        fields = ['title', 'message', 'is_active']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Announcement Title'}),
+            'message': forms.Textarea(attrs={'class': 'form-input', 'rows': 3, 'placeholder': 'Enter your message...'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
+        }

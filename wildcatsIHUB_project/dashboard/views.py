@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from adminpanel.models import Announcement
 from django.utils import timezone
 from datetime import timedelta
 from projects.models import Project
@@ -1230,6 +1231,9 @@ def dashboard(request):
     else:
         engagement_status = "Getting Started"
     
+    # --- FETCH ACTIVE ANNOUNCEMENTS ---
+    announcements = Announcement.objects.filter(is_active=True).order_by('-created_at')[:3]
+    
     context = {
         'user_projects': user_projects,  # This will be EMPTY if user has no projects
         'total_projects': total_projects,
@@ -1243,6 +1247,7 @@ def dashboard(request):
         'latest_project': latest_project,
         'engagement_score': engagement_score,
         'engagement_status': engagement_status,
+        'announcements': announcements, # <--- Added to context
     }
     
     return render(request, 'dashboard/dashboard.html', context)
