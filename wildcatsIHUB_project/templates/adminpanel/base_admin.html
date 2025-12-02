@@ -45,11 +45,6 @@
               <span class="link-text">Approvals</span>
             </a>
             
-            <a href="{% url 'gallery' %}" class="{% if request.resolver_match.url_name == 'gallery' %}active{% endif %}">
-              <i class="fas fa-image"></i>
-              <span class="link-text">Gallery</span>
-            </a>
-            
             <a href="{% url 'user_management' %}" class="{% if request.resolver_match.url_name == 'user_management' %}active{% endif %}">
               <i class="fas fa-users"></i>
               <span class="link-text">Users</span>
