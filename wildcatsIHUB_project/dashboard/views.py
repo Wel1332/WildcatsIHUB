@@ -798,7 +798,7 @@ def dashboard(request):
         engagement_status = "Getting Started"
     
     # --- FETCH ACTIVE ANNOUNCEMENTS ---
-    announcements = Announcement.objects.filter(is_active=True).order_by('-created_at')[:3]
+    announcements = Announcement.objects.filter(is_active=True).order_by('-created_at')[:1]
     
     context = {
         'user_projects': user_projects,  # This will be EMPTY if user has no projects

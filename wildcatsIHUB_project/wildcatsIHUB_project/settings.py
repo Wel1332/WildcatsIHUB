@@ -15,7 +15,6 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 
-
 # Load environment variables from .env 
 load_dotenv() 
 
@@ -141,10 +140,6 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "static",                   # KEEP - looks in project static
 ]
-
-# Media files (Uploaded images, files)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Default primary key field type
