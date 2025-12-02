@@ -151,7 +151,7 @@
                                             <span class="author-major">{{ project.author.major|default:"Student" }}</span>
                                         </div>
                                     </div>
-                                    <a href="{% url 'view_project' project.id %}?next={{ request.path }}" class="view-project-btn">View Project <i class="fas fa-arrow-right"></i></a>
+                                    <a href="{% url 'view_project' project.id %}" class="view-project-btn">View Project <i class="fas fa-arrow-right"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -189,6 +189,35 @@
             </div>
         </div>
     </footer>
+
+    <!-- SESSION STORAGE SCRIPT FOR BACK BUTTON FUNCTIONALITY -->
+    <script>
+    // Store current page when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        
+        // Only store if it's one of our main pages
+        if (currentPath.includes('/gallery') || 
+            currentPath.includes('/dashboard') || 
+            currentPath.includes('/user-profile') || 
+            currentPath.includes('/profile') ||
+            currentPath.includes('/home') ||
+            currentPath === '/') {
+            
+            sessionStorage.setItem('lastVisitedPage', window.location.href);
+            console.log('Stored last visited page:', window.location.href);
+        }
+    });
+
+    // Also store when clicking on project links (extra safety)
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href && link.href.includes('/project/')) {
+            sessionStorage.setItem('lastVisitedPage', window.location.href);
+            console.log('Stored last page before project click:', window.location.href);
+        }
+    });
+    </script>
 
     <script>
         // MINIMAL JavaScript for filtering only

@@ -16,9 +16,9 @@
       <h1>Wildcats' iHub</h1>
     </div>
     <ul class="nav-menu">
-      <li><a href="{% url 'home' %}">Home</a></li>
-      <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-      <li><a href="{% url 'submit_project' %}?next={{ request.path }}" class="btn-get-started">Submit Project</a></li>
+      <li><a href="/home/">Home</a></li>
+      <li><a href="/dashboard/">Dashboard</a></li>
+      <li><a href="/submit-project/" class="btn-get-started">Submit Project</a></li>
     </ul>
   </nav>
 
@@ -31,7 +31,7 @@
         <p class="subtitle">Here's what's happening with your projects today.</p>
       </div>
       <div class="user-info">
-        <a href="{% url 'user_profile' %}" class="avatar-link">
+        <a href="/user-profile/" class="avatar-link">
           <div class="user-avatar">
             <img src="https://ui-avatars.com/api/?name={{ user.get_full_name|default:user.username|cut:"2" }}&background=1e5cff&color=fff" alt="User Avatar">
           </div>
@@ -169,8 +169,8 @@
               </div>
               
               <div class="project-actions">
-                <a href="{% url 'view_project' project.id %}" class="btn-view">View Details</a>
-                <a href="{% url 'edit_project' project.id %}" class="btn-edit">Edit Project</a>
+                <a href="/projects/{{ project.id }}/" class="btn-view">View Details</a>
+                <a href="/projects/{{ project.id }}/edit/" class="btn-edit">Edit Project</a>
               </div>
             </div>
           </div>
@@ -178,7 +178,7 @@
           <div class="empty-state">
             <h3>No projects yet</h3>
             <p>Get started by submitting your first project and showcase your amazing work!</p>
-            <a href="{% url 'submit_project' %}?next={{ request.path }}" class="btn-view">Submit Your First Project</a>
+            <a href="/submit-project/" class="btn-view">Submit Your First Project</a>
           </div>
           {% endfor %}
         </div>
@@ -190,7 +190,7 @@
         <div class="sidebar-card">
           <h3 class="card-title">Quick Actions</h3>
           <div class="quick-actions">
-            <a href="{% url 'submit_project' %}?next={{ request.path }}" class="action-btn primary">
+            <a href="/submit-project/" class="action-btn primary">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="12" y1="8" x2="12" y2="16"/>
@@ -198,14 +198,14 @@
               </svg>
               <span>Submit New Project</span>
             </a>
-            <a href="{% url 'gallery' %}" class="action-btn">
+            <a href="/gallery/" class="action-btn">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-6z"/>
                 <polyline points="14 2 14 8 20 8"/>
               </svg>
               <span>Browse Gallery</span>
             </a>
-            <a href="{% url 'home' %}" class="action-btn">
+            <a href="/" class="action-btn">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                 <circle cx="9" cy="7" r="4"/>
@@ -291,6 +291,35 @@
       </div>
     </div>
   </div>
+
+  <!-- SESSION STORAGE SCRIPT FOR BACK BUTTON FUNCTIONALITY -->
+  <script>
+  // Store current page when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+      const currentPath = window.location.pathname;
+      
+      // Only store if it's one of our main pages
+      if (currentPath.includes('/gallery') || 
+          currentPath.includes('/dashboard') || 
+          currentPath.includes('/user-profile') || 
+          currentPath.includes('/profile') ||
+          currentPath.includes('/home') ||
+          currentPath === '/') {
+          
+          sessionStorage.setItem('lastVisitedPage', window.location.href);
+          console.log('Stored last visited page:', window.location.href);
+      }
+  });
+
+  // Also store when clicking on project links (extra safety)
+  document.addEventListener('click', function(e) {
+      const link = e.target.closest('a');
+      if (link && link.href && link.href.includes('/project/')) {
+          sessionStorage.setItem('lastVisitedPage', window.location.href);
+          console.log('Stored last page before project click:', window.location.href);
+      }
+  });
+  </script>
 
 </body>
 </html>

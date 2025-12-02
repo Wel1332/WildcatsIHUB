@@ -2,24 +2,8 @@
 // Professional Student Profile JavaScript
 // ============================================
 
-// Profile data storage
-let profileData = {
-    name: '',
-    title: '',
-    school: '',
-    year: '',
-    location: '',
-    about: '',
-    graduation: '',
-    specialization: '',
-    major: '',
-    minor: '',
-    courses: '',
-    interests: ''
-};
-
-// Skills tracking
-let skillsData = {};
+// This file should be loaded AFTER the HTML template has set window.profileDataFromDjango
+// The actual profileData is now in the HTML file, passed from Django
 
 // ============================================
 // CSRF TOKEN FUNCTION
@@ -42,71 +26,34 @@ function getCSRFToken() {
 }
 
 // ============================================
-// LOAD DATA FROM SUPABASE VIA DJANGO
-// ============================================
-
-async function loadUserProfile() {
-    try {
-        const response = await fetch('/user-profile/data/');
-        const result = await response.json();
-        
-        if (result.success && result.data) {
-            // Update profileData with real data from Supabase
-            profileData = {
-                name: result.data.full_name || '',
-                title: result.data.title || '',
-                school: result.data.school || '',
-                year: result.data.year_level || '',
-                location: result.data.location || '',
-                about: result.data.about || '',
-                graduation: result.data.graduation_year || '',
-                specialization: result.data.specialization || '',
-                major: result.data.major || '',
-                minor: result.data.minor || '',
-                courses: result.data.courses || '',
-                interests: result.data.interests || ''
-            };
-            
-            // Update display with real data
-            updateDisplay();
-        } else {
-            // Use default empty data if no profile found
-            updateDisplay();
-        }
-    } catch (error) {
-        console.error('Error loading user profile:', error);
-        // Fallback to empty data
-        updateDisplay();
-    }
-}
-
-// ============================================
-// SAVE DATA TO SUPABASE VIA DJANGO
+// SAVE DATA TO SUPABASE - CORRECTED FIELD NAMES
 // ============================================
 
 async function saveProfile(event) {
     event.preventDefault();
     
     try {
-        // Get form values
+        // Get form values - USE CORRECT SUPABASE COLUMN NAMES
         const formData = new FormData();
-        formData.append('name', document.getElementById('name').value);
+        formData.append('full_name', document.getElementById('name').value);
         formData.append('title', document.getElementById('title').value);
         formData.append('school', document.getElementById('school').value);
-        formData.append('year', document.getElementById('year').value);
+        formData.append('year_level', document.getElementById('year').value);  // Correct
         formData.append('location', document.getElementById('location').value);
+        formData.append('graduation_year', document.getElementById('graduation').value);  // CHANGED: graduation_year NOT graduation_yr
         formData.append('about', document.getElementById('about').value);
-        formData.append('graduation', document.getElementById('graduation').value);
         formData.append('specialization', document.getElementById('specialization').value);
         formData.append('major', document.getElementById('major').value);
         formData.append('minor', document.getElementById('minor').value);
         formData.append('courses', document.getElementById('courses').value);
         formData.append('interests', document.getElementById('interests').value);
         
-        const response = await fetch('/user-profile/save/', {
+        // Send to Django backend
+        const response = await fetch('/save-profile-to-supabase/', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': getCSRFToken(),
+                'X-Requested-With': 'XMLHttpRequest'
             },
             body: formData
         });
@@ -114,30 +61,30 @@ async function saveProfile(event) {
         const result = await response.json();
         
         if (result.success) {
-            // Update profileData with new values
-            profileData = {
-                name: document.getElementById('name').value,
-                title: document.getElementById('title').value,
-                school: document.getElementById('school').value,
-                year: document.getElementById('year').value,
-                location: document.getElementById('location').value,
-                about: document.getElementById('about').value,
-                graduation: document.getElementById('graduation').value,
-                specialization: document.getElementById('specialization').value,
-                major: document.getElementById('major').value,
-                minor: document.getElementById('minor').value,
-                courses: document.getElementById('courses').value,
-                interests: document.getElementById('interests').value
-            };
+            // Get the global profileData from HTML template
+            if (window.profileDataFromDjango) {
+                window.profileDataFromDjango = {
+                    ...window.profileDataFromDjango,
+                    name: document.getElementById('name').value,
+                    title: document.getElementById('title').value,
+                    school: document.getElementById('school').value,
+                    year: document.getElementById('year').value,
+                    location: document.getElementById('location').value,
+                    about: document.getElementById('about').value,
+                    graduation: document.getElementById('graduation').value,
+                    specialization: document.getElementById('specialization').value,
+                    major: document.getElementById('major').value,
+                    minor: document.getElementById('minor').value,
+                    courses: document.getElementById('courses').value,
+                    interests: document.getElementById('interests').value
+                };
+                
+                // Update the page display
+                updateProfileDisplay(window.profileDataFromDjango);
+            }
             
-            // Update display
-            updateDisplay();
-            
-            // Close modal
             closeEditModal();
-            
-            // Show success message
-            showNotification('Profile updated successfully in Supabase!', 'success');
+            showNotification('Profile updated successfully!', 'success');
         } else {
             throw new Error(result.message);
         }
@@ -148,37 +95,59 @@ async function saveProfile(event) {
     }
 }
 
-async function saveProject(event) {
-    event.preventDefault();
-    
-    try {
-        const formData = new FormData();
-        formData.append('projectName', document.getElementById('projectName').value);
-        formData.append('projectDescription', document.getElementById('projectDescription').value);
-        formData.append('projectLanguages', document.getElementById('projectLanguages').value);
-        formData.append('projectDate', document.getElementById('projectDate').value);
-        formData.append('projectLink', document.getElementById('projectLink').value);
-        
-        const response = await fetch('/user-profile/save-project/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCSRFToken(),
-            },
-            body: formData
-        });
+// ============================================
+// UPDATE DISPLAY FUNCTIONS
+// ============================================
 
-        const result = await response.json();
-        
-        if (result.success) {
-            // Reload the page to show the new project from database
-            location.reload();
-        } else {
-            throw new Error(result.message);
-        }
-        
-    } catch (error) {
-        console.error('Error saving project:', error);
-        showNotification('Error saving project. Please try again.', 'error');
+function updateProfileDisplay(updatedData) {
+    console.log('🔥 Updating display with:', updatedData);
+    
+    // Update the page display immediately
+    if (updatedData.name) {
+        document.getElementById('displayName').textContent = updatedData.name;
+    }
+    if (updatedData.title) {
+        document.getElementById('displayTitle').textContent = updatedData.title;
+    }
+    if (updatedData.school) {
+        document.getElementById('displaySchool').textContent = updatedData.school;
+    }
+    if (updatedData.year) {
+        document.getElementById('displayYear').textContent = updatedData.year;
+    }
+    if (updatedData.location) {
+        document.getElementById('displayLocation').textContent = updatedData.location;
+    }
+    if (updatedData.graduation) {
+        document.getElementById('displayGraduation').textContent = updatedData.graduation;
+    }
+    if (updatedData.about) {
+        document.getElementById('displayAbout').textContent = updatedData.about;
+    }
+    if (updatedData.specialization) {
+        document.getElementById('displaySpecialization').textContent = updatedData.specialization;
+    }
+    if (updatedData.major) {
+        document.getElementById('displayMajor').textContent = updatedData.major;
+    }
+    if (updatedData.minor) {
+        document.getElementById('displayMinor').textContent = updatedData.minor;
+    }
+    
+    // Update courses display
+    const coursesEl = document.getElementById('displayCourses');
+    if (updatedData.courses && updatedData.courses.trim()) {
+        const coursesArray = updatedData.courses.split(',').map(c => c.trim());
+        coursesEl.innerHTML = coursesArray.map(course => 
+            `<span class="tag">${course}</span>`
+        ).join('');
+    } else {
+        coursesEl.innerHTML = '<span class="tag tag-empty">No courses listed</span>';
+    }
+    
+    // Update interests
+    if (updatedData.interests) {
+        document.getElementById('displayInterests').textContent = updatedData.interests;
     }
 }
 
@@ -188,152 +157,35 @@ async function saveProject(event) {
 
 function openEditModal() {
     const modal = document.getElementById('editModal');
-    modal.classList.add('active');
     modal.style.display = 'flex';
-    
-    // Populate form with current real data
-    document.getElementById('name').value = profileData.name;
-    document.getElementById('title').value = profileData.title;
-    document.getElementById('school').value = profileData.school;
-    document.getElementById('year').value = profileData.year;
-    document.getElementById('location').value = profileData.location;
-    document.getElementById('about').value = profileData.about;
-    document.getElementById('graduation').value = profileData.graduation;
-    document.getElementById('specialization').value = profileData.specialization;
-    document.getElementById('major').value = profileData.major;
-    document.getElementById('minor').value = profileData.minor;
-    document.getElementById('courses').value = profileData.courses;
-    document.getElementById('interests').value = profileData.interests;
-    
-    // Prevent body scroll
     document.body.style.overflow = 'hidden';
+    
+    // Populate form with current data from global profileData
+    if (window.profileDataFromDjango) {
+        document.getElementById('name').value = window.profileDataFromDjango.name || '';
+        document.getElementById('title').value = window.profileDataFromDjango.title || '';
+        document.getElementById('school').value = window.profileDataFromDjango.school || '';
+        document.getElementById('year').value = window.profileDataFromDjango.year || '';
+        document.getElementById('location').value = window.profileDataFromDjango.location || '';
+        document.getElementById('about').value = window.profileDataFromDjango.about || '';
+        document.getElementById('graduation').value = window.profileDataFromDjango.graduation || '';
+        document.getElementById('specialization').value = window.profileDataFromDjango.specialization || '';
+        document.getElementById('major').value = window.profileDataFromDjango.major || '';
+        document.getElementById('minor').value = window.profileDataFromDjango.minor || '';
+        document.getElementById('courses').value = window.profileDataFromDjango.courses || '';
+        document.getElementById('interests').value = window.profileDataFromDjango.interests || '';
+    }
 }
 
 function closeEditModal() {
     const modal = document.getElementById('editModal');
-    modal.classList.remove('active');
-    setTimeout(() => {
-        modal.style.display = 'none';
-    }, 200);
-    
-    // Restore body scroll
+    modal.style.display = 'none';
     document.body.style.overflow = '';
-}
-
-function openProjectModal() {
-    const modal = document.getElementById('projectModal');
-    modal.classList.add('active');
-    modal.style.display = 'flex';
-    
-    // Reset form
-    document.getElementById('addProjectForm').reset();
-    
-    // Prevent body scroll
-    document.body.style.overflow = 'hidden';
-}
-
-function closeProjectModal() {
-    const modal = document.getElementById('projectModal');
-    modal.classList.remove('active');
-    setTimeout(() => {
-        modal.style.display = 'none';
-    }, 200);
-    
-    // Restore body scroll
-    document.body.style.overflow = '';
-}
-
-// ============================================
-// UPDATE DISPLAY FUNCTIONS
-// ============================================
-
-function updateDisplay() {
-    // Header information
-    document.getElementById('displayName').textContent = profileData.name;
-    document.getElementById('displayTitle').textContent = profileData.title;
-    document.getElementById('displaySchool').textContent = profileData.school;
-    document.getElementById('displayYear').textContent = profileData.year;
-    
-    // Location
-    const locationEl = document.getElementById('displayLocation');
-    locationEl.textContent = profileData.location || 'Add location';
-    
-    // Graduation
-    const graduationEl = document.getElementById('displayGraduation');
-    graduationEl.textContent = profileData.graduation || 'Add graduation year';
-    
-    // About section
-    const aboutEl = document.getElementById('displayAbout');
-    aboutEl.textContent = profileData.about || 'Add information about yourself...';
-    
-    // Specialization
-    const specializationEl = document.getElementById('displaySpecialization');
-    specializationEl.textContent = profileData.specialization || 'Add specialization';
-    
-    // Academic information
-    document.getElementById('displayMajor').textContent = profileData.major || 'Add major';
-    document.getElementById('displayMinor').textContent = profileData.minor || 'Not specified';
-    
-    // Courses
-    const coursesEl = document.getElementById('displayCourses');
-    if (profileData.courses && profileData.courses.trim()) {
-        const coursesArray = profileData.courses.split(',').map(c => c.trim());
-        coursesEl.innerHTML = coursesArray.map(course => 
-            `<span class="tag">${course}</span>`
-        ).join('');
-    } else {
-        coursesEl.innerHTML = '<span class="tag">No courses added</span>';
-    }
-    
-    // Interests
-    const interestsEl = document.getElementById('displayInterests');
-    interestsEl.textContent = profileData.interests || 'No interests specified';
-}
-
-function updateSkillsDisplay() {
-    const skillsEl = document.getElementById('skillsProgressList');
-    
-    // This will be populated from projects data
-    const skillsArray = Object.entries(skillsData).sort((a, b) => b[1].count - a[1].count);
-    
-    if (skillsArray.length === 0) {
-        skillsEl.innerHTML = `
-            <div class="empty-state-card">
-                <i class="fas fa-code"></i>
-                <p>Add projects to track your skill growth!</p>
-            </div>
-        `;
-        return;
-    }
-    
-    skillsEl.innerHTML = skillsArray.map(([skill, data]) => {
-        const level = getSkillLevel(data.count);
-        const percentage = Math.min((data.count / 5) * 100, 100);
-        
-        return `
-            <div class="skill-item">
-                <div class="skill-header">
-                    <span class="skill-name">${skill}</span>
-                    <span class="skill-level">${level}</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${percentage}%"></div>
-                </div>
-            </div>
-        `;
-    }).join('');
 }
 
 // ============================================
 // HELPER FUNCTIONS
 // ============================================
-
-function getSkillLevel(count) {
-    if (count >= 5) return 'Expert';
-    if (count >= 3) return 'Advanced';
-    if (count >= 2) return 'Intermediate';
-    return 'Beginner';
-}
 
 function showNotification(message, type = 'success') {
     // Create notification element
@@ -379,46 +231,30 @@ function showNotification(message, type = 'success') {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Load real data from Supabase when page loads
-    loadUserProfile();
+    console.log('🔥 userProfile.js loaded');
+    console.log('🔥 Profile data available:', window.profileDataFromDjango);
     
-    // Close modals when clicking outside (but not on the modal content)
+    // Set up form submission
+    const editProfileForm = document.getElementById('editProfileForm');
+    if (editProfileForm) {
+        editProfileForm.addEventListener('submit', saveProfile);
+    }
+    
+    // Close modal when clicking outside
     const editModal = document.getElementById('editModal');
-    const projectModal = document.getElementById('projectModal');
-    const editModalContent = editModal.querySelector('.modal-content');
-    const projectModalContent = projectModal.querySelector('.modal-content');
-    
-    // Close modals when clicking on overlay
-    editModal.addEventListener('click', function(e) {
-        if (e.target === editModal) {
-            closeEditModal();
-        }
-    });
-    
-    projectModal.addEventListener('click', function(e) {
-        if (e.target === projectModal) {
-            closeProjectModal();
-        }
-    });
-    
-    // Prevent clicks inside modal content from closing the modal
-    editModalContent.addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
-    
-    projectModalContent.addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
-    
-    // Close modals with Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            if (editModal.classList.contains('active')) {
+    if (editModal) {
+        editModal.addEventListener('click', function(e) {
+            if (e.target === editModal) {
                 closeEditModal();
             }
-            if (projectModal.classList.contains('active')) {
-                closeProjectModal();
-            }
+        });
+    }
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        const editModal = document.getElementById('editModal');
+        if (e.key === 'Escape' && editModal && editModal.style.display === 'flex') {
+            closeEditModal();
         }
     });
 });

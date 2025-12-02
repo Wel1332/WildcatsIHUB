@@ -47,15 +47,126 @@
             gap: 10px;
             align-items: center;
         }
+        
+        /* Safe project link styling */
+        .project-link-safe {
+            pointer-events: none;
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+        
+        /* Modal styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
+    <!-- PASS DATA FROM DJANGO TO JAVASCRIPT -->
+            <script>
+            // CORRECTED: Use EXACT field names from your Supabase JSON
+            window.profileDataFromDjango = {
+                name: '{{ user_name|escapejs }}',
+                title: '{{ user_title|escapejs }}',
+                school: '{{ user_school|escapejs }}',
+                year: '{{ user_year|escapejs }}',  // This is year_level in Supabase
+                location: '{{ user_location|escapejs }}',
+                about: '{{ user_about|escapejs }}',
+                graduation: '{{ user_graduation|escapejs }}',  // This is graduation_year in Supabase (NOT graduation_yr)
+                specialization: '{{ user_specialization|escapejs }}',
+                major: '{{ user_major|escapejs }}',
+                minor: '{{ user_minor|escapejs }}',
+                courses: '{{ user_courses|escapejs }}',
+                interests: '{{ user_interests|escapejs }}'
+            };
+
+            console.log('🔥 Django Data Loaded - ACTUAL VALUES:');
+            console.log('Name:', window.profileDataFromDjango.name);
+            console.log('School:', window.profileDataFromDjango.school);
+            console.log('Graduation:', window.profileDataFromDjango.graduation);
+    </script>
+    
     <div class="profile-container">
         <!-- Professional Header Section -->
         <div class="profile-header">
             <!-- Back to Home Button - Top Left -->
-          <div class="back-to-home-wrapper">
-                <a href="javascript:history.back()" class="back-btn" title="Go Back">
+            <div class="back-to-home-wrapper">
+                <a href="{% url 'dashboard' %}" class="back-btn" title="Go to Dashboard">
                     <i class="fas fa-arrow-left"></i>
                 </a>
             </div>
@@ -73,26 +184,31 @@
                 
                 <div class="user-info-section">
                     <div class="user-main-info">
-                        <h1 class="user-name" id="displayName">Loading...</h1>
+                        <!-- CHANGED: Use Django variable -->
+                        <h1 class="user-name" id="displayName">{{ user_name }}</h1>
                         <div class="header-buttons">
                             <button class="edit-profile-btn" onclick="openEditModal()">
                                 <i class="fas fa-edit"></i> Edit Profile
                             </button>
                         </div>
                     </div>
-                    <p class="user-title" id="displayTitle">Loading...</p>
+                    <!-- CHANGED: Use Django variable -->
+                    <p class="user-title" id="displayTitle">{{ user_title|default:"No title set" }}</p>
                     <div class="user-details">
                         <div class="detail-badge">
                             <i class="fas fa-university"></i>
-                            <span id="displaySchool">Loading...</span>
+                            <!-- CHANGED: Use Django variable -->
+                            <span id="displaySchool">{{ user_school|default:"School not specified" }}</span>
                         </div>
                         <div class="detail-badge">
                             <i class="fas fa-map-marker-alt"></i>
-                            <span id="displayLocation">Loading...</span>
+                            <!-- CHANGED: Use Django variable -->
+                            <span id="displayLocation">{{ user_location|default:"Location not specified" }}</span>
                         </div>
                         <div class="detail-badge">
                             <i class="fas fa-graduation-cap"></i>
-                            <span id="displayGraduation">Loading...</span>
+                            <!-- CHANGED: Use Django variable -->
+                            <span id="displayGraduation">{{ user_graduation|default:"Graduation year not set" }}</span>
                         </div>
                     </div>
                     
@@ -111,14 +227,16 @@
             <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-calendar"></i></div>
                 <div class="stat-content">
-                    <span class="stat-number" id="displayYear">Loading...</span>
+                    <!-- CHANGED: Use Django variable -->
+                    <span class="stat-number" id="displayYear">{{ user_year|default:"Not set" }}</span>
                     <span class="stat-label">Year</span>
                 </div>
             </div>
             <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-code"></i></div>
                 <div class="stat-content">
-                    <span class="stat-number" id="displayProjectsCount">{{ projects|length }}</span>
+                    <!-- CHANGED: Use Django variable -->
+                    <span class="stat-number" id="displayProjectsCount">{{ projects_count }}</span>
                     <span class="stat-label">Projects</span>
                 </div>
             </div>
@@ -151,12 +269,14 @@
                         </div>
                     </div>
                     <div class="card-content">
-                        <p id="displayAbout" class="about-text">Loading...</p>
+                        <!-- CHANGED: Use Django variable -->
+                        <p id="displayAbout" class="about-text">{{ user_about|default:"No bio added yet. Click 'Edit Profile' to add one." }}</p>
                         
                         <div class="info-list">
                             <div class="info-item">
                                 <span class="info-label">Specialization</span>
-                                <span class="info-value" id="displaySpecialization">Loading...</span>
+                                <!-- CHANGED: Use Django variable -->
+                                <span class="info-value" id="displaySpecialization">{{ user_specialization|default:"Not specified" }}</span>
                             </div>
                         </div>
                     </div>
@@ -174,11 +294,13 @@
                         <div class="info-list">
                             <div class="info-item">
                                 <span class="info-label">Major</span>
-                                <span class="info-value" id="displayMajor">Loading...</span>
+                                <!-- CHANGED: Use Django variable -->
+                                <span class="info-value" id="displayMajor">{{ user_major|default:"Not specified" }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Minor</span>
-                                <span class="info-value" id="displayMinor">Loading...</span>
+                                <!-- CHANGED: Use Django variable -->
+                                <span class="info-value" id="displayMinor">{{ user_minor|default:"Not specified" }}</span>
                             </div>
                         </div>
                         
@@ -186,7 +308,17 @@
                         
                         <h4 class="section-subtitle">Current Courses</h4>
                         <div id="displayCourses" class="tags-container">
-                            <span class="tag">Loading...</span>
+                            <!-- CHANGED: Use Django variable -->
+                            {% if user_courses %}
+                                {% for course in user_courses.split|slice:":5" %}
+                                    <span class="tag">{{ course.strip }}</span>
+                                {% endfor %}
+                                {% if user_courses.split|length > 5 %}
+                                    <span class="tag">+{{ user_courses.split|length|add:-5 }} more</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="tag tag-empty">No courses listed</span>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -200,7 +332,8 @@
                         </div>
                     </div>
                     <div class="card-content">
-                        <p id="displayInterests" class="content-text">Loading...</p>
+                        <!-- CHANGED: Use Django variable -->
+                        <p id="displayInterests" class="content-text">{{ user_interests|default:"No interests listed yet." }}</p>
                     </div>
                 </div>
 
@@ -241,9 +374,10 @@
                             <i class="fas fa-folder-open"></i>
                             <h3>Projects</h3>
                         </div>
-                        <button class="add-project-btn" onclick="openProjectModal()">
+                        <!-- CHANGED: Direct link to submit_project form -->
+                        <a href="{% url 'submit_project' %}" class="add-project-btn">
                             <i class="fas fa-plus"></i> Add Project
-                        </button>
+                        </a>
                     </div>
                     <div class="card-content">
                         <div id="displayProjects" class="projects-list">
@@ -287,9 +421,16 @@
                                                 </a>
                                                 {% endif %}
                                             </div>
-                                            <a href="{% url 'view_project' project.id %}" class="btn-outline-primary">
-                                                <i class="fas fa-eye"></i> View Details
-                                            </a>
+                                            <!-- SAFE PROJECT LINK - Only show if project exists -->
+                                            {% if project.id %}
+                                                <a href="{% url 'view_project' project.id %}" class="btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> View Details
+                                                </a>
+                                            {% else %}
+                                                <span class="btn-outline-primary project-link-safe" title="Project no longer available">
+                                                    <i class="fas fa-eye-slash"></i> Unavailable
+                                                </span>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -416,57 +557,346 @@
                 </div>
             </div>
         </div>
-
-        <!-- Add Project Modal -->
-        <div class="modal-overlay" id="projectModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3><i class="fas fa-folder-plus"></i> Add Project</h3>
-                    <button class="modal-close" onclick="closeProjectModal()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form id="addProjectForm" onsubmit="saveProject(event)">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="projectName">Project Name *</label>
-                            <input type="text" id="projectName" name="projectName" placeholder="Enter project name" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="projectDescription">Description *</label>
-                            <textarea id="projectDescription" name="projectDescription" rows="4" placeholder="Describe your project..." required></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="projectLanguages">Technologies Used *</label>
-                            <input type="text" id="projectLanguages" name="projectLanguages" placeholder="e.g., Python, JavaScript, React (comma-separated)" required>
-                            <small class="form-hint">These will be added to your skills tracking</small>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="projectDate">Date Completed</label>
-                                <input type="month" id="projectDate" name="projectDate">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="projectLink">Project Link</label>
-                                <input type="url" id="projectLink" name="projectLink" placeholder="https://">
-                            </div>
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-secondary" onclick="closeProjectModal()">Cancel</button>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Add Project
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <script src="{% static 'css/wildcatsIHUB/userProfile.js' %}"></script>
+    <!-- SESSION STORAGE SCRIPT FOR BACK BUTTON FUNCTIONALITY -->
+    <script>
+    // Store current page when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        
+        // Only store if it's one of our main pages
+        if (currentPath.includes('/gallery') || 
+            currentPath.includes('/dashboard') || 
+            currentPath.includes('/user-profile') || 
+            currentPath.includes('/profile') ||
+            currentPath.includes('/home') ||
+            currentPath === '/') {
+            
+            sessionStorage.setItem('lastVisitedPage', window.location.href);
+            console.log('Stored last visited page:', window.location.href);
+        }
+        
+        // Debug: Check what data we received from Django
+        console.log('🔥 Window.profileDataFromDjango:', window.profileDataFromDjango);
+    });
+
+    // Also store when clicking on project links (extra safety)
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href && link.href.includes('/project/')) {
+            sessionStorage.setItem('lastVisitedPage', window.location.href);
+            console.log('Stored last page before project click:', window.location.href);
+        }
+    });
+
+    // Modal Functions
+    function openEditModal() {
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    // Form submission handlers
+    function saveProfile(event) {
+        event.preventDefault();
+        // Add your profile saving logic here
+        alert('Profile saved successfully!');
+        closeEditModal();
+    }
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+        const editModal = document.getElementById('editModal');
+        
+        if (event.target === editModal) {
+            closeEditModal();
+        }
+    }
+    </script>
+
+    <!-- Updated JavaScript that uses data from Django -->
+    <script>
+    // ============================================
+    // Professional Student Profile JavaScript
+    // ============================================
+
+    // Use data passed from Django template via window.profileDataFromDjango
+    let profileData = window.profileDataFromDjango || {
+        name: '',
+        title: '',
+        school: '',
+        year: '',
+        location: '',
+        about: '',
+        graduation: '',
+        specialization: '',
+        major: '',
+        minor: '',
+        courses: '',
+        interests: ''
+    };
+
+    console.log('🔥 DEBUG: profileData loaded:', profileData);
+
+    // ============================================
+    // CSRF TOKEN FUNCTION
+    // ============================================
+
+    function getCSRFToken() {
+        const name = 'csrftoken';
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // ============================================
+    // MODAL FUNCTIONS
+    // ============================================
+
+    function openEditModal() {
+        const modal = document.getElementById('editModal');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+        // Populate form with current data from profileData
+        document.getElementById('name').value = profileData.name || '';
+        document.getElementById('title').value = profileData.title || '';
+        document.getElementById('school').value = profileData.school || '';
+        document.getElementById('year').value = profileData.year || '';
+        document.getElementById('location').value = profileData.location || '';
+        document.getElementById('about').value = profileData.about || '';
+        document.getElementById('graduation').value = profileData.graduation || '';
+        document.getElementById('specialization').value = profileData.specialization || '';
+        document.getElementById('major').value = profileData.major || '';
+        document.getElementById('minor').value = profileData.minor || '';
+        document.getElementById('courses').value = profileData.courses || '';
+        document.getElementById('interests').value = profileData.interests || '';
+    }
+
+    function closeEditModal() {
+        const modal = document.getElementById('editModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    // ============================================
+    // SAVE DATA TO SUPABASE
+    // ============================================
+
+    async function saveProfile(event) {
+        event.preventDefault();
+        
+        try {
+            // Get form values - MATCH THESE TO YOUR SUPABASE COLUMN NAMES
+            const formData = new FormData();
+            formData.append('full_name', document.getElementById('name').value);
+            formData.append('title', document.getElementById('title').value);
+            formData.append('school', document.getElementById('school').value);
+            formData.append('year_level', document.getElementById('year').value);  // Changed to match Supabase
+            formData.append('location', document.getElementById('location').value);
+            formData.append('graduation_yr', document.getElementById('graduation').value);  // Changed to match Supabase
+            formData.append('about', document.getElementById('about').value);
+            formData.append('specialization', document.getElementById('specialization').value);
+            formData.append('major', document.getElementById('major').value);
+            formData.append('minor', document.getElementById('minor').value);
+            formData.append('courses', document.getElementById('courses').value);
+            formData.append('interests', document.getElementById('interests').value);
+            
+            // Send to Django backend
+            const response = await fetch('/save-profile-to-supabase/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                // Update page display
+                updateProfileDisplay({
+                    name: document.getElementById('name').value,
+                    title: document.getElementById('title').value,
+                    school: document.getElementById('school').value,
+                    year: document.getElementById('year').value,
+                    location: document.getElementById('location').value,
+                    about: document.getElementById('about').value,
+                    graduation: document.getElementById('graduation').value,
+                    specialization: document.getElementById('specialization').value,
+                    major: document.getElementById('major').value,
+                    minor: document.getElementById('minor').value,
+                    courses: document.getElementById('courses').value,
+                    interests: document.getElementById('interests').value
+                });
+                
+                closeEditModal();
+                showNotification('Profile updated successfully!', 'success');
+            } else {
+                throw new Error(result.message);
+            }
+            
+        } catch (error) {
+            console.error('Error saving profile:', error);
+            showNotification('Error saving profile. Please try again.', 'error');
+        }
+    }
+
+    // ============================================
+    // UPDATE DISPLAY FUNCTIONS
+    // ============================================
+
+    function updateProfileDisplay(updatedData) {
+        // Update profileData object
+        profileData = { ...profileData, ...updatedData };
+        
+        // Update the page display immediately
+        document.getElementById('displayName').textContent = profileData.name;
+        document.getElementById('displayTitle').textContent = profileData.title;
+        document.getElementById('displaySchool').textContent = profileData.school;
+        document.getElementById('displayYear').textContent = profileData.year;
+        document.getElementById('displayLocation').textContent = profileData.location || 'Add location';
+        document.getElementById('displayGraduation').textContent = profileData.graduation || 'Add graduation year';
+        document.getElementById('displayAbout').textContent = profileData.about || 'Add information about yourself...';
+        document.getElementById('displaySpecialization').textContent = profileData.specialization || 'Add specialization';
+        document.getElementById('displayMajor').textContent = profileData.major || 'Add major';
+        document.getElementById('displayMinor').textContent = profileData.minor || 'Not specified';
+        
+        // Update courses display
+        const coursesEl = document.getElementById('displayCourses');
+        if (profileData.courses && profileData.courses.trim()) {
+            const coursesArray = profileData.courses.split(',').map(c => c.trim());
+            coursesEl.innerHTML = coursesArray.map(course => 
+                `<span class="tag">${course}</span>`
+            ).join('');
+        } else {
+            coursesEl.innerHTML = '<span class="tag">No courses added</span>';
+        }
+        
+        // Update interests
+        document.getElementById('displayInterests').textContent = profileData.interests || 'No interests specified';
+    }
+
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+
+    function showNotification(message, type = 'success') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span>${message}</span>
+        `;
+        
+        // Add styles
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#10b981' : '#ef4444'};
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease-out;
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+
+    // ============================================
+    // EVENT LISTENERS
+    // ============================================
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Close modal when clicking outside
+        const editModal = document.getElementById('editModal');
+        const editModalContent = editModal.querySelector('.modal-content');
+        
+        editModal.addEventListener('click', function(e) {
+            if (e.target === editModal) {
+                closeEditModal();
+            }
+        });
+        
+        editModalContent.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && editModal.style.display === 'flex') {
+                closeEditModal();
+            }
+        });
+        
+        // Set up form submission
+        const editProfileForm = document.getElementById('editProfileForm');
+        if (editProfileForm) {
+            editProfileForm.addEventListener('submit', saveProfile);
+        }
+        
+        // Update modal with data on page load
+        if (profileData.name) {
+            console.log('Profile data loaded successfully');
+        }
+    });
+
+    // Add animation styles
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    </script>
 </body>
 </html>

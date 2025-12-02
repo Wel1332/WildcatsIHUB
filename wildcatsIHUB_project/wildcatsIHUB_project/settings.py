@@ -68,7 +68,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'wildcatsIHUB_app/templates'),  # ADDED - looks in app templates
             os.path.join(BASE_DIR, 'templates'),                   # KEEP - looks in project templates
         ],
         'APP_DIRS': True,
@@ -140,7 +139,6 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
-    BASE_DIR / "wildcatsIHUB_app/static",  # ADDED - looks in app static
     BASE_DIR / "static",                   # KEEP - looks in project static
 ]
 
