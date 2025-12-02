@@ -243,17 +243,6 @@ def approve_reject_project(request, pk):
 
 @login_required(login_url='/accounts/login/') 
 @user_passes_test(is_admin)
-def gallery(request):
-    projects_list = Project.objects.exclude(screenshot='').order_by('-created_at')
-    paginator = Paginator(projects_list, 9) 
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    context = { "projects": page_obj }
-    return render(request, "adminpanel/gallery.html", context)
-
-@login_required(login_url='/accounts/login/') 
-@user_passes_test(is_admin)
 def submissions(request):
     all_submissions = Project.objects.all().select_related('author').order_by('-created_at')
     submission_stats = {
