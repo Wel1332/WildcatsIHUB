@@ -1,11 +1,13 @@
 from django.urls import path
 from . import views
+from dashboard.views import user_profile
 
 urlpatterns = [
     path('', views.landing_page, name='landing_page'), 
     path('dashboard/', views.dashboard, name='dashboard'),
     path('user-profile/', views.user_profile, name='user_profile'),
-    
+    path('view-supabase-data/', views.view_all_supabase_data, name='view_supabase_data'),
+  
     # ADD THIS LINE - Gallery URL
     path('gallery/', views.gallery, name='gallery'),
     

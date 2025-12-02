@@ -162,7 +162,7 @@ def gallery(request):
     return render(request, "projects/gallery.html", {"projects": projects})
 
 @login_required
-def user_profile(request):
+def user_projects_profile(request):
     """User profile with their projects"""
     user_profile = UserProfile.objects.get(user=request.user)
     user_projects = Project.objects.filter(author=user_profile).order_by('-created_at')
